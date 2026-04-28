@@ -1,0 +1,9 @@
+// Page chrome only — global XUI styles come from the CDN link in `layout.tsx`
+// (same pattern as mybills). Add `@import "@xero/xui/sass/vars"` here when you
+// need Sass tokens for custom component styles.
+
+.pspoc-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #f3f5f7;
+}

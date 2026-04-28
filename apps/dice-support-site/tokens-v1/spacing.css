@@ -1,0 +1,50 @@
+/**
+ * JAX Design System - Spacing Tokens
+ * Extracted from: source-jax-styles/
+ *
+ * Usage: var(--spacing-md), var(--gap-md)
+ */
+
+:root {
+  /* ===== Base Spacing Scale ===== */
+  --spacing-2xs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 28px;
+  --spacing-3xl: 30px;
+
+  /* ===== Component-specific spacing ===== */
+  /* Gaps (for flexbox/grid) */
+  --gap-2xs: 4px;
+  --gap-xs: 8px;
+  --gap-sm: 12px;
+  --gap-md: 14px;
+  --gap-lg: 16px;
+  --gap-xl: 24px;
+  --gap-2xl: 28px;
+
+  /* Padding presets */
+  --padding-button: 6px 12px;
+  --padding-button-icon: 6px;
+  --padding-pill: 8px 16px;
+  --padding-composer: 8px;
+  --padding-bubble: 8px 14px;
+  --padding-artefact: 16px 20px;
+  --padding-header: 12px 12px 12px 16px;
+
+  /* ===== Layout Widths ===== */
+  --width-chat-panel: 400px;
+  --width-message-max: 328px;
+  --width-canvas-max: 760px;
+  --width-composer-max: 720px;
+  --width-artefact: 360px;
+
+  /* ===== Icon Sizes ===== */
+  --icon-size-sm: 12px;
+  --icon-size-md: 16px;
+  --icon-size-lg: 24px;
+  --icon-size-xl: 40px;
+}

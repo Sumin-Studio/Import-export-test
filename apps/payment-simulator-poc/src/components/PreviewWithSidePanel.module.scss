@@ -1,0 +1,38 @@
+// Layout: side panel (left) + preview (right)
+// Matches Figma preview frame positioning
+
+.layout {
+  /* Match CustomisePreviewSidePanel widths — promo banner inset so it doesn’t cover the panel */
+  --poc-side-panel-width: 400px;
+  /* Shared with CustomisePreviewSidePanel + OneTimeInvoiceCheckout (fixed promo banner) */
+  --poc-promo-banner-offset: calc(72px + env(safe-area-inset-bottom, 0px));
+  /* previewArea adds bottom inset for promo; checkout wrapper skips duplicate padding-bottom */
+  --poc-checkout-scroll-gutter: 0px;
+
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #f6f6f8;
+}
+
+.layoutSidePanelCollapsed {
+  --poc-side-panel-width: 56px;
+}
+
+.previewArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: safe center;
+  /* Centre content in the region above the fixed promo (same offset as checkout scroll clearance) */
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 20px;
+  padding-bottom: calc(
+    20px + var(--poc-promo-banner-offset, calc(72px + env(safe-area-inset-bottom, 0px)))
+  );
+  box-sizing: border-box;
+}

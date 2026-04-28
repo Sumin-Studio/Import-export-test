@@ -1,0 +1,50 @@
+// Stacked wallet buttons: same cell, opacity cross-fade. Light sweep lives on the
+// button background (PocPaymentTile.scss — pspoc-mock-wallet-light).
+
+.pspoc-ExpressCheckoutCycle {
+  position: relative;
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 8px;
+  border-radius: 5px;
+  overflow: hidden;
+
+  button.pspoc-MockApplePayButton,
+  button.pspoc-MockGooglePayButton {
+    margin-bottom: 0 !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  &__apple,
+  &__google {
+    grid-row: 1;
+    grid-column: 1;
+    min-width: 0;
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+    backface-visibility: hidden;
+  }
+
+  &__visible {
+    opacity: 1;
+    /* Capture taps for “user touched → stop sweep” while inner button stays inert */
+    pointer-events: auto;
+    z-index: 2;
+  }
+
+  &__hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pspoc-ExpressCheckoutCycle {
+    &__apple,
+    &__google {
+      transition-duration: 0.01ms;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+/**
+ * JAX Design System - Token Entry Point
+ *
+ * Import this file to get all design tokens.
+ * Usage: @import 'tokens/index.css';
+ */
+
+@import 'colors.css';
+@import 'typography.css';
+@import 'spacing.css';
+@import 'borders.css';
+@import 'shadows.css';

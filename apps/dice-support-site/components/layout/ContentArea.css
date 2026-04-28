@@ -1,0 +1,102 @@
+/**
+ * Content Area Component
+ *
+ * The "simple content area" for displaying articles, text, images.
+ * Provides context to the Fluid UI panel.
+ */
+
+/* ===== Content Container ===== */
+.content-area {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--s-xlarge) var(--s-large);
+}
+
+/* ===== Content Header ===== */
+.content-area__header {
+  margin-bottom: var(--s-xlarge);
+}
+
+.content-area__title {
+  font-size: var(--font-size-xlarge);
+  font-weight: var(--font-weight-emphasis);
+  line-height: var(--font-line-height-xlarge);
+  color: var(--color-text-primary);
+  margin-bottom: var(--s-small);
+}
+
+.content-area__meta {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+/* ===== Content Body ===== */
+.content-area__body {
+  font-size: var(--font-size-medium);
+  line-height: var(--font-line-height-standard);
+  color: var(--color-text-primary);
+}
+
+.content-area__body p {
+  margin-bottom: var(--s-standard);
+}
+
+.content-area__body h2 {
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-emphasis);
+  margin-top: var(--s-xlarge);
+  margin-bottom: var(--s-small);
+}
+
+.content-area__body h3 {
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-emphasis);
+  margin-top: var(--s-large);
+  margin-bottom: var(--s-xsmall);
+}
+
+.content-area__body ul,
+.content-area__body ol {
+  margin-bottom: var(--s-standard);
+  padding-left: var(--s-large);
+}
+
+.content-area__body li {
+  margin-bottom: var(--s-xsmall);
+}
+
+.content-area__body a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.content-area__body a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Content Images ===== */
+.content-area__image {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin: var(--s-large) 0;
+}
+
+/* ===== Responsive: Adjust when space is tight ===== */
+@media (max-width: 1200px) {
+  .canvas[data-state="side-assist"] .content-area {
+    /* Only reduce padding when space is limited, keep max-width */
+    padding: var(--s-large) var(--s-standard);
+  }
+}
+
+@media (max-width: 1024px) {
+  .canvas[data-state="side-assist"] .content-area {
+    padding: var(--s-standard);
+  }
+
+  .canvas[data-state="side-assist"] .content-area__title {
+    font-size: var(--font-size-large);
+  }
+}

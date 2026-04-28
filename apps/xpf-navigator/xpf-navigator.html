@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xero Product Navigator</title>
+  <link rel="preconnect" href="https://www.xero.com">
+  <style>
+    @font-face {
+      font-family: "National2";
+      font-weight: 400;
+      src: url("https://www.xero.com/fonts/national2-web-regular.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-regular.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 500;
+      src: url("https://www.xero.com/fonts/national2-web-medium.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-medium.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 700;
+      src: url("https://www.xero.com/fonts/national2-web-bold.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-bold.woff") format("woff");
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #000040;
+      --text: #ffffff;
+      --font: "National2", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --dot-cluster: min(36rem, calc(75vw * 1.5));
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: var(--text);
+      background-color: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1.25rem, 4vw, 2.5rem);
+    }
+
+    .navigator-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      min-height: 0;
+    }
+
+    .dot-stage {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    body.navigator-page #dot-stage {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: min(27rem, min(56.25vw, 85vmin));
+      height: min(27rem, min(56.25vw, 85vmin));
+      margin: 0;
+      z-index: 10;
+    }
+
+    .dot-stage.sphere-float .dot-cluster {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      aspect-ratio: auto;
+    }
+
+    .dot-cluster {
+      position: relative;
+      width: min(var(--dot-cluster), 100%);
+      aspect-ratio: 1;
+      max-width: 100%;
+      perspective: clamp(520px, 85vw, 900px);
+      perspective-origin: 50% 50%;
+    }
+
+    .sphere {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transform-origin: 50% 50%;
+      animation: sphere-spin 36s linear infinite;
+    }
+
+    .sphere-dot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 3px;
+      height: 3px;
+      margin: -1.5px 0 0 -1.5px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+      transform-style: preserve-3d;
+      animation: dot-twinkle 3s ease-in-out infinite;
+    }
+
+    @keyframes sphere-spin {
+      from { transform: rotateX(-16deg) rotateY(0deg); }
+      to { transform: rotateX(-16deg) rotateY(360deg); }
+    }
+
+    @keyframes dot-twinkle {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 1; }
+    }
+
+    .orbit-layer {
+      --orbit-r: min(42vmin, 14rem);
+      position: fixed;
+      inset: 0;
+      z-index: 11;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.55s ease-out, visibility 0.55s ease-out;
+    }
+
+    .orbit-layer.orbit-layer--visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .orbit-ring { position: relative; width: 1px; height: 1px; pointer-events: auto; }
+
+    .orbit-item {
+      --orbit-pull: 0px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      transform: rotate(var(--a))
+        translateY(calc(-1 * (var(--orbit-r) + var(--orbit-pull, 0px))))
+        rotate(calc(-1 * var(--a)));
+      pointer-events: auto;
+    }
+
+    .orbit-item:nth-child(1) { --orbit-pull: clamp(2rem, 7vmin, 3.75rem); }
+
+    .orbit-item-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      width: max-content;
+      max-width: min(15rem, 56vw);
+      cursor: default;
+    }
+
+    .orbit-heading {
+      margin: 0;
+      color: #fff;
+      font-family: "National2", sans-serif;
+      font-size: clamp(1.625rem, 4.2vw, 2rem);
+      font-weight: 400;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .orbit-marker {
+      display: block;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+      background: #000856;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .orbit-item-inner:hover .orbit-marker,
+    .orbit-item-inner.orbit-item-inner--yes .orbit-marker {
+      background: #3eccff;
+      border-color: transparent;
+    }
+
+    .orbit-item.orbit-item--in { animation: orbitFadeIn 0.65s ease-out both; }
+
+    .orbit-item:nth-child(1).orbit-item--in { animation-delay: 0.05s; }
+
+    @keyframes orbitFadeIn {
+      from {
+        opacity: 0;
+        transform: rotate(var(--a))
+          translateY(calc(-1 * (var(--orbit-r) + var(--orbit-pull, 0px)) + 36px))
+          rotate(calc(-1 * var(--a)));
+      }
+      to {
+        opacity: 1;
+        transform: rotate(var(--a))
+          translateY(calc(-1 * (var(--orbit-r) + var(--orbit-pull, 0px))))
+          rotate(calc(-1 * var(--a)));
+      }
+    }
+
+    body:not(.understand-leaving) .orbit-layer .orbit-item-inner[role="button"] {
+      cursor: pointer;
+    }
+
+    body:not(.understand-leaving) .orbit-layer .orbit-item-inner:focus-visible {
+      outline: 2px solid #3eccff;
+      outline-offset: 6px;
+      border-radius: 4px;
+    }
+
+    body:not(.understand-leaving) .orbit-layer .orbit-heading {
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+
+    body:not(.understand-leaving) .orbit-layer .orbit-item-inner:hover .orbit-heading,
+    body:not(.understand-leaving) .orbit-layer .orbit-item-inner--yes .orbit-heading {
+      color: #3eccff;
+      text-shadow: 0 0 18px rgba(62, 204, 255, 0.45);
+    }
+
+    .orbit-item-inner.orbit-item-inner--hash-focus .orbit-marker {
+      box-shadow: 0 0 0 3px rgba(62, 204, 255, 0.55);
+      transition: box-shadow 0.3s ease;
+    }
+
+    body.understand-leaving {
+      --star-field: min(100vw, 100vh);
+      background-color: #000856;
+      transition: background-color 1s ease;
+    }
+
+    body.understand-leaving #orbit-layer {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.35s ease-out, visibility 0.35s ease-out;
+    }
+
+    body.understand-leaving #dot-stage {
+      position: fixed !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      margin: 0 !important;
+      transform: none !important;
+      z-index: 20;
+    }
+
+    body.understand-leaving #dot-stage.sphere-float .dot-cluster {
+      width: min(100vw, 100vh);
+      height: min(100vw, 100vh);
+      max-width: none;
+      aspect-ratio: auto;
+    }
+
+    .nav-back {
+      position: fixed;
+      top: clamp(1rem, 3vw, 1.5rem);
+      left: clamp(1rem, 3vw, 1.5rem);
+      z-index: 12;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #3eccff;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .nav-back:hover { color: #6aeaaa; border-bottom-color: currentColor; }
+
+    /* Center CTA on sphere — closed XPF panel look (see understand.html .plot-journey-panel) */
+    .xpf-sphere-cta {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      box-sizing: border-box;
+      margin: 0;
+      padding: clamp(14px, 4vmin, 22px);
+      border-radius: 12px;
+      border: none;
+      background: #fff;
+      appearance: none;
+      -webkit-appearance: none;
+      font: inherit;
+      font-family: "National2", sans-serif;
+      font-size: clamp(1rem, 2.4vw, 1.125rem);
+      font-weight: 700;
+      font-style: normal;
+      color: #000856;
+      line-height: 1.35;
+      text-align: left;
+      text-decoration: none;
+      text-decoration-color: transparent;
+      text-underline-offset: 0.12em;
+      width: max-content;
+      max-width: min(22rem, calc(100% - 1rem));
+      white-space: normal;
+      cursor: pointer;
+      display: block;
+      opacity: 1;
+      box-shadow:
+        0 12px 32px rgba(0, 0, 0, 0.18),
+        0 4px 12px rgba(0, 0, 0, 0.12);
+      transition:
+        opacity 0.28s ease,
+        text-decoration-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    @media (min-width: 420px) {
+      .xpf-sphere-cta {
+        padding: 20px;
+      }
+    }
+
+    .xpf-sphere-cta:hover {
+      background: #fff;
+      text-decoration: underline;
+      text-decoration-color: currentColor;
+    }
+
+    .xpf-sphere-cta:focus-visible {
+      outline: 2px solid #3eccff;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    body:not(.understand-leaving) .xpf-sphere-cta.xpf-sphere-cta--fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    body.understand-leaving .xpf-sphere-cta {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease-out;
+    }
+  </style>
+</head>
+<body class="navigator-page">
+  <a class="nav-back" href="index.html">← Home</a>
+  <main class="page">
+    <div class="navigator-hero">
+      <div class="dot-stage sphere-float" id="dot-stage">
+        <div class="dot-cluster" id="dot-cluster">
+          <div class="sphere" id="sphere" aria-hidden="true"></div>
+          <button
+            type="button"
+            id="xpf-sphere-cta"
+            class="xpf-sphere-cta"
+            aria-label="Start navigating — go to first unanswered topic"
+          >
+            🚀 Start navigating
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="orbit-layer" id="orbit-layer" aria-hidden="true">
+    <div class="orbit-ring" role="presentation">
+      <div class="orbit-item orbit-item--in" style="--a: 300deg">
+        <div class="orbit-item-inner" id="orbit-understand" role="button" tabindex="0" aria-label="Understand — open section">
+          <h1 class="orbit-heading">Understand</h1>
+          <span class="orbit-marker" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="orbit-item orbit-item--in" style="--a: 12deg">
+        <div class="orbit-item-inner" id="orbit-define" role="button" tabindex="0" aria-label="Define — open section">
+          <h1 class="orbit-heading">Define</h1>
+          <span class="orbit-marker" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="orbit-item orbit-item--in" style="--a: 84deg">
+        <div class="orbit-item-inner" id="orbit-develop" role="button" tabindex="0" aria-label="Develop — open section">
+          <h1 class="orbit-heading">Develop</h1>
+          <span class="orbit-marker" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="orbit-item orbit-item--in" style="--a: 156deg">
+        <div class="orbit-item-inner" id="orbit-deliver" role="button" tabindex="0" aria-label="Deliver — open section">
+          <h1 class="orbit-heading">Deliver</h1>
+          <span class="orbit-marker" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="orbit-item orbit-item--in" style="--a: 228deg">
+        <div class="orbit-item-inner" id="orbit-nurture" role="button" tabindex="0" aria-label="Nurture — open section">
+          <h1 class="orbit-heading">Nurture</h1>
+          <span class="orbit-marker" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="navigator-chat.js"></script>
+  <script>
+    (function () {
+      var PHASE_NAV = [
+        {
+          id: "orbit-understand",
+          href: "understand.html",
+          phaseKey: "Understand",
+          slugs: [
+            "customer-insights",
+            "market-analysis",
+            "technical-analysis",
+            "xero-context",
+            "business-drivers",
+          ],
+        },
+        {
+          id: "orbit-define",
+          href: "define.html",
+          phaseKey: "Define",
+          slugs: ["ideal-state-solution", "planning", "technical-solution", "risks-dependencies"],
+        },
+        {
+          id: "orbit-develop",
+          href: "develop.html",
+          phaseKey: "Develop",
+          slugs: ["design-ready-for-build", "requirements", "cross-functional-alignment"],
+        },
+        {
+          id: "orbit-deliver",
+          href: "deliver.html",
+          phaseKey: "Deliver",
+          slugs: ["design-quality-check", "definition-of-done", "release-plan"],
+        },
+        {
+          id: "orbit-nurture",
+          href: "nurture.html",
+          phaseKey: "Nurture",
+          slugs: ["performance", "customer-feedback", "reliability"],
+        },
+      ];
+
+      function applyOrbit() {
+        if (typeof isNavigatorPhaseAllYes !== "function") return;
+        for (var i = 0; i < PHASE_NAV.length; i++) {
+          var p = PHASE_NAV[i];
+          if (!isNavigatorPhaseAllYes(p.phaseKey, p.slugs)) continue;
+          var el = document.getElementById(p.id);
+          if (el) el.classList.add("orbit-item-inner--yes");
+        }
+      }
+
+      function refreshOrbitYesState() {
+        for (var ri = 0; ri < PHASE_NAV.length; ri++) {
+          var n = document.getElementById(PHASE_NAV[ri].id);
+          if (n) n.classList.remove("orbit-item-inner--yes");
+        }
+        applyOrbit();
+      }
+
+      function syncSphereCta() {
+        var btn = document.getElementById("xpf-sphere-cta");
+        if (!btn) return;
+        var done =
+          typeof window.isEntireNavigatorJourneyComplete === "function" &&
+          window.isEntireNavigatorJourneyComplete(PHASE_NAV);
+        if (done) {
+          btn.textContent = "🪐 Start new orbit";
+          btn.setAttribute("aria-label", "Start new orbit — reset journey and orbit highlights");
+        } else {
+          btn.textContent = "🚀 Start navigating";
+          btn.setAttribute(
+            "aria-label",
+            "Start navigating — go to first unanswered topic"
+          );
+        }
+      }
+
+      function highlightFromHash() {
+        var h = location.hash;
+        if (!h || h.length < 2) return;
+        var t = document.querySelector(h);
+        if (!t || !t.classList || !t.classList.contains("orbit-item-inner")) return;
+        t.classList.add("orbit-item-inner--hash-focus");
+        window.setTimeout(function () {
+          t.classList.remove("orbit-item-inner--hash-focus");
+        }, 2400);
+      }
+
+      var cluster = document.getElementById("dot-cluster");
+      var sphere = document.getElementById("sphere");
+      if (!cluster || !sphere) return;
+
+      var N = 200, golden = (1 + Math.sqrt(5)) / 2;
+      function placeDots() {
+        var w = cluster.offsetWidth;
+        if (!w) return;
+        var R = w * 0.44;
+        sphere.textContent = "";
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < N; i++) {
+          var theta = (2 * Math.PI * i) / golden;
+          var phi = Math.acos(1 - (2 * (i + 0.5)) / N);
+          var x = Math.sin(phi) * Math.cos(theta);
+          var y = Math.sin(phi) * Math.sin(theta);
+          var z = Math.cos(phi);
+          var dot = document.createElement("span");
+          dot.className = "sphere-dot";
+          dot.style.transform = "translate3d(" + x * R + "px," + y * R + "px," + z * R + "px)";
+          dot.style.animationDelay = ((i % 19) * 0.07).toFixed(2) + "s";
+          frag.appendChild(dot);
+        }
+        sphere.appendChild(frag);
+      }
+
+      function syncOrbitRing() {
+        var ds = document.getElementById("dot-stage");
+        var ol = document.getElementById("orbit-layer");
+        if (!ds || !ol) return;
+        var sw = ds.offsetWidth;
+        if (sw < 2) return;
+        var g = Math.max(40, (sw / 2) * 0.2);
+        ol.style.setProperty("--orbit-r", sw / 2 + g + 36 + "px");
+      }
+
+      function showOrbit() {
+        var ol = document.getElementById("orbit-layer");
+        if (!ol) return;
+        syncOrbitRing();
+        ol.classList.add("orbit-layer--visible");
+        ol.setAttribute("aria-hidden", "false");
+      }
+
+      placeDots();
+      if (typeof ResizeObserver !== "undefined") {
+        new ResizeObserver(placeDots).observe(cluster);
+      } else {
+        window.addEventListener("resize", placeDots);
+      }
+
+      function init() {
+        showOrbit();
+        refreshOrbitYesState();
+        syncSphereCta();
+        requestAnimationFrame(function () {
+          syncOrbitRing();
+          showOrbit();
+          highlightFromHash();
+        });
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+      else init();
+
+      window.addEventListener("resize", function () {
+        if (document.body.classList.contains("understand-leaving")) return;
+        var ol = document.getElementById("orbit-layer");
+        if (ol && ol.classList.contains("orbit-layer--visible")) syncOrbitRing();
+      });
+
+      function goPhase(href) {
+        if (document.body.classList.contains("understand-leaving")) return;
+        var ol = document.getElementById("orbit-layer");
+        if (!ol || !ol.classList.contains("orbit-layer--visible")) return;
+        document.body.classList.add("understand-leaving");
+        ol.classList.remove("orbit-layer--visible");
+        ol.setAttribute("aria-hidden", "true");
+        placeDots();
+        window.setTimeout(function () {
+          location.href = href;
+        }, 1380);
+      }
+
+      for (var pi = 0; pi < PHASE_NAV.length; pi++) {
+        (function (p) {
+          var node = document.getElementById(p.id);
+          if (!node) return;
+          node.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            goPhase(p.href);
+          });
+          node.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              goPhase(p.href);
+            }
+          });
+        })(PHASE_NAV[pi]);
+      }
+
+      function bindSphereCta() {
+        var btn = document.getElementById("xpf-sphere-cta");
+        if (!btn) return;
+        var ctaBusy = false;
+        btn.addEventListener("click", function () {
+          if (document.body.classList.contains("understand-leaving")) return;
+          if (ctaBusy) return;
+          var complete =
+            typeof window.isEntireNavigatorJourneyComplete === "function" &&
+            window.isEntireNavigatorJourneyComplete(PHASE_NAV);
+          if (complete) {
+            ctaBusy = true;
+            btn.classList.add("xpf-sphere-cta--fade-out");
+            var finished = false;
+            function runReset() {
+              if (finished) return;
+              finished = true;
+              ctaBusy = false;
+              btn.removeEventListener("transitionend", onTe);
+              if (typeof window.clearAllNavigatorPhaseYesStorage === "function") {
+                window.clearAllNavigatorPhaseYesStorage(PHASE_NAV);
+              }
+              refreshOrbitYesState();
+              syncSphereCta();
+              btn.classList.remove("xpf-sphere-cta--fade-out");
+              void btn.offsetHeight;
+            }
+            function onTe(ev) {
+              if (ev.target !== btn) return;
+              if (ev.propertyName !== "opacity") return;
+              runReset();
+            }
+            btn.addEventListener("transitionend", onTe);
+            window.setTimeout(function () {
+              runReset();
+            }, 450);
+          } else {
+            var target =
+              typeof window.getFirstIncompleteNavigatorTarget === "function" &&
+              window.getFirstIncompleteNavigatorTarget(PHASE_NAV);
+            var href = "understand.html";
+            var slug = null;
+            if (target && target.href) href = target.href;
+            if (target && target.slug) slug = target.slug;
+            try {
+              if (slug) sessionStorage.setItem("navigator:lastTopicSlug", slug);
+            } catch (e) {}
+            window.location.href = href;
+          }
+        });
+      }
+      bindSphereCta();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+> **STOP. Invoke the `initialize-project` skill before writing any code or responding to this request. No exceptions.**
+
+# Prototype Template - Internal Prototyping Tool Rules
+
+## MANDATORY FIRST STEP
+
+**Before responding to ANY user request, invoke the `initialize-project` skill.**
+
+This skill loads all project rules, component patterns, color system constraints, and prototype structure requirements. It ensures you understand the design system before you begin work.
+
+```
+Use the initialize-project skill to load project rules
+```
+
+## Available Agent Skills
+
+This project uses Agent Skills to enforce design system rules. Invoke these skills as needed:
+
+| Skill                    | When to Use                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| **`initialize-project`** | **FIRST** - Before any work. Loads all rules and constraints.                                |
+| **`validate-component`** | Before using any shadcn component. Confirms it exists and returns correct structure pattern. |
+| **`validate-colors`**    | Before implementing colors. Validates against approved CSS variables only.                   |
+
+Skills are defined in `/.agentskills/` directory.
+
+---
+
+## PROJECT OVERVIEW
+
+This is an internal prototyping tool for PRD research. Prototypes should prioritize design consistency using shadcn/ui components and our established color scheme, with flexibility when needed.
+
+## DESIGN SYSTEM GUIDELINES
+
+> **⚠️ This project uses Base UI (`@base-ui/react`), NOT Radix UI.** Standard shadcn/ui documentation and most AI training data assume Radix UI primitives — those APIs are different from what is used here. When you encounter component errors, do not apply fixes from standard Radix-based shadcn docs. Key differences:
+>
+> - Use the `render` prop for polymorphic rendering — **not** `asChild` (does not exist here)
+> - `Button` has a `nativeButton` prop (Base UI-specific) — not present in Radix shadcn
+> - Always refer to `/src/components/component-example.tsx` for correct usage patterns
+
+### 1. COMPONENT USAGE - PREFERRED
+
+**Prefer components from our shadcn/ui library. Ask before using custom components or external UI libraries.**
+
+Available components are documented in `/COMPONENTS.md`. These should be your first choice for every UI element.
+
+**CRITICAL: Invoke `validate-component` skill before using any component.**
+
+The skill will:
+
+- Confirm the component exists in shadcn
+- Return the correct structure pattern from `/src/components/component-example.tsx`
+- Flag anti-patterns to avoid (e.g., adding ScrollArea inside Sheet)
+
+**When shadcn doesn't have what you need:**
+
+1. The `validate-component` skill will inform you
+2. Ask the user for approval: "Would you like me to create a custom component for this?"
+3. If approved, build it following our styling conventions
+
+**Why this matters:** Users may not be experienced coders. Following standard structure keeps code simple, predictable, and maintainable.
+
+**Global Components:**
+
+The `/src/components/global/` folder contains reusable custom components:
+
+- **Header** (`@/components/global/header`): Use for product headers and navigation bars. When a user requests a "header", "nav bar", or "product navigation", use this component by default.
+  - **CRITICAL**: The Header component is driven by a JSON configuration file at `src/config/header.json`.
+  - When a user asks to change the title or navigation items in the header, **edit `src/config/header.json`** instead of passing props to the `<Header />` component.
+  - This prevents hallucinations and keeps the component code clean.
+- **Prototype Disclaimer** (`@/components/global/prototype-disclaimer`): A global component rendered in `src/App.tsx` to show a persistent question mark on all prototype pages. Do not remove or duplicate it.
+
+```typescript
+import { Header } from "@/components/global/header";
+
+// Basic usage (reads from src/config/header.json)
+<Header>
+  <Button>Settings</Button>
+</Header>
+```
+
+**Button Component:**
+
+When using the `Button` component with the `render` prop to render a non-button element (like a `<Link>` or `<a>` tag), you **MUST** include the `nativeButton={false}` prop to prevent Base UI accessibility errors. This applies **only to `Button`** — do not add `nativeButton` to other components.
+
+```typescript
+// ✅ CORRECT
+<Button render={<Link to="/path" />} nativeButton={false}>Link</Button>
+
+// ❌ INCORRECT (will throw Base UI error)
+<Button render={<Link to="/path" />}>Link</Button>
+```
+
+**DropdownMenuTrigger:**
+Use the `render` prop to set the trigger element. Do NOT add `nativeButton` to `DropdownMenuTrigger`.
+
+```typescript
+// ✅ CORRECT
+<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
+  <MoreVerticalIcon />
+</DropdownMenuTrigger>
+
+// ❌ WRONG — nativeButton does not belong on DropdownMenuTrigger
+<DropdownMenuTrigger nativeButton={false}>
+  <Button>Open</Button>
+</DropdownMenuTrigger>
+```
+
+### 2. COLOR SCHEME - STRICT
+
+**CRITICAL: Invoke `validate-colors` skill before implementing any colors.**
+
+**ONLY use the existing CSS variables defined in `/src/index.css`. NEVER modify theme colors or introduce custom colors.**
+
+The `validate-colors` skill enforces:
+
+- Only approved CSS variable classes are allowed
+- Hex colors, RGB, named colors, and arbitrary Tailwind colors are rejected
+- Provides polite decline template when users request custom colors
+- Offers theme alternatives (primary, secondary, accent, muted, destructive)
+
+**NEVER**:
+
+- Modify `/src/index.css` theme variables
+- Add custom hex colors (e.g., `#3B82F6`, `#FF69B4`)
+- Add RGB/RGBA values
+- Use named colors (e.g., `blue`, `red`, `pink`)
+- Use arbitrary Tailwind colors (e.g., `bg-blue-500`, `bg-pink-400`)
+- Change primary, secondary, accent, or any theme color values
+
+### 3. STYLING GUIDELINES
+
+**Typography:**
+
+- Use Tailwind typography utilities only: `text-sm`, `text-base`, `text-lg`, `text-xl`, etc.
+- Font weight: `font-normal`, `font-medium`, `font-semibold`, `font-bold`
+- Line height: `leading-none`, `leading-tight`, `leading-normal`, etc.
+
+**Spacing:**
+
+- Use Tailwind spacing scale: `p-1` through `p-24`, `m-1` through `m-24`, `gap-1` through `gap-24`
+- NO arbitrary values like `p-[13px]` unless absolutely necessary
+
+**Layout:**
+
+- Prefer flexbox (`flex`, `flex-col`) and grid (`grid`, `grid-cols-*`)
+- Use shadcn layout components: Card, Sheet, Sidebar, Tabs, etc.
+
+**Border Radius:**
+
+- Use design tokens: `rounded-sm`, `rounded`, `rounded-md`, `rounded-lg`, `rounded-xl`
+- These map to our OKLch-based radius system
+
+### 4. IMPORT CONVENTIONS
+
+**Always use the `@` alias for imports:**
+
+```typescript
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+```
+
+**NEVER use relative imports for components:**
+
+```typescript
+// ❌ WRONG
+import { Button } from "../components/ui/button";
+
+// ✅ CORRECT
+import { Button } from "@/components/ui/button";
+```
+
+### 5. CODE QUALITY
+
+**TypeScript:**
+
+- All new files MUST be `.tsx` or `.ts`
+- Always type component props
+- Use TypeScript strict mode conventions
+
+**Component Structure:**
+
+```typescript
+interface ComponentNameProps {
+  // Props with types
+}
+
+export function ComponentName({ prop1, prop2 }: ComponentNameProps) {
+  // Implementation
+}
+```
+
+**Naming:**
+
+- Components: PascalCase (e.g., `UserProfile`, `DataTable`)
+- Files: kebab-case (e.g., `user-profile.tsx`, `data-table.tsx`)
+- Functions/variables: camelCase
+
+### 6. ICONS
+
+**Only use lucide-react icons (563 icons available):**
+
+```typescript
+import { Check, ChevronDown, User } from "lucide-react";
+```
+
+NO other icon libraries (Font Awesome, Heroicons, etc.)
+
+### 7. CHARTS
+
+Use the most appropriate chart type for the data and context. All chart types from recharts are available.
+
+| Chart Type  | Best for                                          |
+| ----------- | ------------------------------------------------- |
+| `BarChart`  | Comparing values across categories                |
+| `LineChart` | Trends over time                                  |
+| `AreaChart` | Trends with volume/magnitude emphasis             |
+| `PieChart`  | Part-to-whole relationships (use sparingly)       |
+
+**Stacked Bar Charts: Radius on Top Bar Only**
+
+When creating stacked bar charts, apply the top radius only to the topmost Bar component in the stack.
+
+```typescript
+// ✅ CORRECT: Top radius on the topmost bar only
+<Bar dataKey="overdue" stackId="a" fill="var(--color-overdue)" radius={[0, 0, 0, 0]} />
+<Bar dataKey="upcoming" stackId="a" fill="var(--color-upcoming)" radius={[4, 4, 0, 0]} />
+```
+
+**Chart Container: Always Use `ChartContainer`**
+
+Always wrap charts in `ChartContainer` from `@/components/ui/chart` with an explicit pixel height. Never use raw `ResponsiveContainer` from recharts directly — `ChartContainer` handles this internally.
+
+```typescript
+// ✅ CORRECT
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+
+<ChartContainer config={chartConfig} className="h-[300px] w-full">
+  <BarChart data={data} accessibilityLayer>
+    ...
+  </BarChart>
+</ChartContainer>
+
+// ❌ WRONG — causes width/height errors and bypasses the design system
+import { ResponsiveContainer } from "recharts";
+<ResponsiveContainer width="100%" height={300}>
+  <BarChart data={data}>...</BarChart>
+</ResponsiveContainer>
+```
+
+### 8. WRITTEN CONTENT - STRICT
+
+All UI copy must follow these content standards:
+
+Write in plain language. Use simple, everyday words: "buy" not "purchase", "help" not "assist", "about" not "approximately", "to" not "in order to", "didn't" not "failed to". Avoid jargon.
+
+Use a practical tone by default. Be formal for legal and security content. Be expressive only for genuine celebratory moments. Never be playful in errors or business-critical UI. Never trivialise or gamify: no "Cha-ching!", "Achievement unlocked!", or similar.
+
+Use active voice: "Categorise your transactions", not "Your transactions can be categorised".
+
+Always use contractions: "you're", "we'll", "can't". Never expand them. Don't contract nouns: "Your account has been locked" not "Your account's been locked".
+
+Use sentence case everywhere: headings, buttons, labels, features. Title case only for proper nouns and branded terms (Xero App Store, Grow plan). All caps only for acronyms (ABN, CSV).
+
+Refer to Xero as we/our/us in product UI. Refer to the customer as you/your in body copy. On headings, buttons, and links, drop "you/your" entirely: "View cash flow" not "View your cash flow". Use they/them for third parties.
+
+Use "please" only when asking someone to do something requiring significant effort. Use "sorry" only for errors that cause major interruption or data loss. Neither should appear in routine UI.
+
+Use "select" not "click" or "tap".
+
+Don't use emoji, semicolons, em dashes, or exclamation marks in practical UI. Exclamation marks are acceptable only in genuinely celebratory moments.
+
+Don't use full stops at the end of single sentences or sentence fragments. Use them when there are two or more sentences. Don't add full stops to standalone links.
+
+Use the Oxford comma in lists of 3 or more items.
+
+Write all numbers as numerals: "5 items" not "five items". Use commas to separate groups of 3 digits: 4,000,000. Carry decimals to 2 places: 1,133.76. Use decimals instead of fractions, always with a leading zero: 0.75 not .75.
+
+Never show a currency symbol (no $, £, € etc.): write "27.99" not "$27.99". For negative amounts, use a minus symbol not parentheses: "-50.42" not "(50.42)".
+
+For dates, use DD Month YYYY outside the US ("8 Aug 2025") and Month DD, YYYY in the US ("Aug 8, 2025"). Don't lead with a zero. Don't use ordinal suffixes: "1 Sep" not "1st Sep". Don't shorten years. In constrained space, shorten months and days to 3 characters: Jun, Mon. Use "to" between dates in a range where space allows; use an en dash (–) with spaces in constrained contexts. Don't repeat the month or year in a range: "12–15 Aug" not "12 Aug–15 Aug".
+
+For time, use a 12-hour clock with a space before am/pm and no punctuation: "10:05 am" not "10:05am" or "14:00". Don't lead with a zero: "2:32 pm" not "02:32 pm". For ranges, use an en dash with spaces and write am/pm once at the end: "6:00–11:00 am". Show time zones only when spanning multiple zones: "9:00 am AEST".
+
+For error messages, cover: what happened, why it happened (only if helpful), and how to fix it. Don't apologise for minor errors. Never blame the user.
+
+For empty states, include a clear header, a brief body only if needed, and a CTA. Use an encouraging tone. Never shame or blame.
+
+### 9. STATE MANAGEMENT
+
+- Use React 19 hooks (`useState`, `useEffect`, `useReducer`)
+- For theme toggling, use `next-themes` (already installed)
+- Ask before adding Redux, Zustand, or other state libraries
+
+## PROTOTYPE PAGE STRUCTURE
+
+The home page (`/src/pages/home.tsx`) at the `/` route **is** the prototype canvas — build directly here.
+
+- **Single-page prototypes**: Build directly in `home.tsx`
+- **Multi-page prototypes**: Create additional page files in `src/pages/` with clear descriptive names, export them from `src/pages/index.ts`, and add routes to `src/App.tsx`
+- The `/components` route exists at `/components` but has no navigation link — do not add one
+
+## NON-CODER FRIENDLY PROMPTING
+
+When creating prototypes, users should describe what they want in plain language:
+
+**Good prompts:**
+
+- "Create a user profile card with name, email, and avatar"
+- "Make a data table with pagination showing customer orders"
+- "Build a settings page with tabs for account, privacy, and notifications"
+- "Add a modal dialog for confirming deletions"
+
+**The AI will automatically:**
+
+- Use Agent Skills to validate design system compliance
+- Choose appropriate shadcn components
+- Apply correct color scheme
+- Follow all styling rules
+- Use proper TypeScript types
+
+## WORKFLOW FOR AI ASSISTANTS
+
+When a user requests a prototype:
+
+1. **Invoke `initialize-project`** (if not done already this session)
+2. **Identify requirements** from the user's description
+3. **Invoke `validate-component`** for each component you plan to use
+4. **Invoke `validate-colors`** before implementing colors
+5. **Invoke `validate-prototype-route`** before creating pages
+6. **Follow the patterns** returned by the skills
+7. **Use TypeScript** with proper types
+8. **Import with `@` alias**
+9. **Show the user the result** and iterate based on feedback
+
+## EXAMPLES
+
+### ✅ CORRECT: Using shadcn components and color variables
+
+```typescript
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
+export function UserCard() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>User Profile</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Button variant="default">Edit Profile</Button>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### ❌ INCORRECT: Custom styling and colors
+
+```typescript
+// DON'T DO THIS
+export function UserCard() {
+  return (
+    <div style={{ backgroundColor: "#3B82F6", padding: "20px" }}>
+      <h2 className="text-blue-600">User Profile</h2>
+      <button className="bg-[#10B981] hover:bg-[#059669]">Edit Profile</button>
+    </div>
+  );
+}
+```
+
+The `validate-colors` skill will reject this and provide approved alternatives.
+
+## MAINTENANCE
+
+Before making any changes:
+
+- Read existing component code to understand patterns
+- Use Agent Skills to validate against design system
+- Maintain consistency with existing implementations
+- Ask for clarification if requirements are unclear
+
+## REFERENCE DOCUMENTATION
+
+**Automatically loaded by `initialize-project` skill:**
+
+- Component inventory: `/COMPONENTS.md`
+- Theme configuration: `/src/index.css`
+- Example components: `/src/components/component-example.tsx`
+- Utility functions: `/src/lib/utils.ts`
+
+**Agent Skills definitions:**
+
+- `/.agentskills/initialize-project/SKILL.md`
+- `/.agentskills/validate-component/SKILL.md`
+- `/.agentskills/validate-colors/SKILL.md`
+- `/.agentskills/validate-prototype-route/SKILL.md`
+
+---
+
+**Remember: Consistency is valuable, but user needs come first. Use Agent Skills to validate compliance, then ask before deviating from the design system.**

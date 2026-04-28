@@ -1,0 +1,65 @@
+/**
+ * XUI-inspired semantic tokens — spacing, type, color approximations for research prototype.
+ */
+:root {
+  /* Brand */
+  --x-color-action: #13b5ea;
+  --x-color-action-hover: #0fa3d4;
+  --x-color-action-pressed: #0c8fb8;
+  --x-color-text: #1d1d1f;
+  --x-color-text-secondary: #5c5c5c;
+  --x-color-text-tertiary: #767676;
+  --x-color-border: #d9d9d9;
+  --x-color-border-subtle: #e8e8e8;
+  --x-color-surface: #ffffff;
+  --x-color-surface-muted: #f4f7f9;
+  --x-color-surface-info: #e8f6fc;
+  --x-color-surface-warning: #fff4e5;
+  --x-color-surface-success: #e8f7ef;
+  --x-color-landing-bg: #2c353f;
+  --x-color-landing-accent: #13b5ea;
+  --x-color-status-info: #0b79bf;
+  --x-color-status-warning: #c25700;
+  --x-color-status-critical: #b00020;
+  --x-color-status-success: #0d8050;
+  --x-color-qb: #2ca01c;
+
+  /* Spacing scale (4px base) */
+  --x-space-1: 4px;
+  --x-space-2: 8px;
+  --x-space-3: 12px;
+  --x-space-4: 16px;
+  --x-space-5: 20px;
+  --x-space-6: 24px;
+  --x-space-8: 32px;
+  --x-space-10: 40px;
+  --x-space-12: 48px;
+
+  /* Radii */
+  --x-radius-sm: 4px;
+  --x-radius-md: 8px;
+  --x-radius-lg: 12px;
+  --x-radius-full: 9999px;
+
+  /* Typography */
+  --x-font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --x-text-xs: 0.75rem;
+  --x-text-sm: 0.8125rem;
+  --x-text-md: 0.875rem;
+  --x-text-base: 1rem;
+  --x-text-lg: 1.125rem;
+  --x-text-xl: 1.25rem;
+  --x-text-2xl: 1.5rem;
+  --x-text-3xl: 1.75rem;
+  --x-weight-regular: 400;
+  --x-weight-medium: 500;
+  --x-weight-semibold: 600;
+  --x-weight-bold: 700;
+
+  /* Elevation */
+  --x-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --x-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* Focus */
+  --x-focus-ring: 0 0 0 2px var(--x-color-surface), 0 0 0 4px var(--x-color-action);
+}

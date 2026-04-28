@@ -1,0 +1,2353 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+// ── XUI Banner overrides ─────────────────────────────────────────────────────
+// hasDefaultLayout={false} drops .xui-banner-layout (the grid class).
+// We replace it with a simple flex row so text stays vertically centred.
+
+.xui-banner {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 10px !important;
+
+  // Close button arrives first in the DOM — push it to the end visually.
+  .xui-banner--close {
+    order: 2;
+    flex-shrink: 0;
+    margin-left: auto !important;
+    float: none;
+  }
+}
+
+// ── XUI TextInput normalisation ──────────────────────────────────────────────
+
+.xui-textinput {
+  border-color: #a6a9b0 !important;
+
+  &--sideelement {
+    height: 100% !important;
+    align-items: center !important;
+  }
+
+  &:focus-within {
+    border-color: #2490eb !important;
+    box-shadow: 0 0 0 2px rgba(36, 144, 235, 0.15) !important;
+  }
+}
+
+// ── XUI PageHeader overrides ──────────────────────────────────────────────────
+
+.xui-pageheading--content {
+  min-height: 76px !important;
+  align-items: center !important;
+}
+
+.xui-pageheading--leftcontent {
+  padding: 0 !important;
+  gap: 0 !important;
+  justify-content: center !important;
+}
+
+.xui-pageheading--rightcontent {
+  padding: 0 !important;
+  align-items: center !important;
+  align-self: center !important;
+}
+
+// ── Page shell ──────────────────────────────────────────────────────────────
+
+.ap-page {
+  min-height: 100vh;
+  background: #f3f5f7;
+}
+
+// ── Invoice shell + side panel ───────────────────────────────────────────────
+
+.ap-invoice-shell {
+  display: flex;
+  min-height: calc(100vh - 56px);
+  background: #f3f5f7;
+}
+
+.ap-invoice-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  position: relative;
+  // Slide content left when panel is open to avoid overlap
+  transition: margin-right 0.25s ease;
+
+  &--panel-open {
+    margin-right: 400px;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    cursor: not-allowed;
+  }
+}
+
+.ap-sidepanel {
+  position: fixed;
+  top: 56px;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  overflow: hidden;
+  background: #fff;
+  border-left: 1px solid #ccced2;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.25s ease;
+  z-index: 2000;
+
+  &--open {
+    width: 400px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    padding: 0 20px;
+    border-bottom: 1px solid #ccced2;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #000a1e;
+    line-height: 28px;
+  }
+
+  &__error-banner {
+    margin-bottom: 16px;
+
+    .xui-banner {
+      padding: 10px;
+    }
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #59606d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    padding: 0;
+
+    &:hover { background: #f3f5f7; color: #000a1e; }
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 20px;
+    gap: 0;
+  }
+
+  &__section {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0;
+  }
+
+  &__divider {
+    height: 1px;
+    background: #ccced2;
+  }
+
+  &__row-label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000a1e;
+  }
+
+  &__sublabel {
+    font-size: 13px;
+    color: rgba(0, 10, 30, 0.55);
+  }
+
+  &__deposit-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__deposit-amount,
+  &__balance-amount {
+    font-size: 14px;
+    font-weight: 400;
+    color: #000a1e;
+    min-width: 60px;
+    text-align: right;
+  }
+
+  &__footer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 12px 24px 12px 20px;
+    background: #fff;
+    box-shadow: 0px -3px 0px 0px rgba(0, 10, 30, 0.05), 0px -1px 0px 0px rgba(0, 10, 30, 0.2);
+
+    &-left {
+      flex: 1;
+    }
+  }
+}
+
+// ── Manage panel ──────────────────────────────────────────────────────────────
+
+.ap-manage {
+  &__section {
+    margin-bottom: 20px;
+  }
+
+  &__section-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(0, 10, 30, 0.75);
+    margin-bottom: 8px;
+  }
+
+  &__checkbox-group {
+    // No outer border — individual rows are borderless
+  }
+
+  &__divider {
+    height: 1px;
+    background: #ccced2;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  &__checkbox-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 9px;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+
+    &--shimmer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(36, 144, 235, 0.22) 50%,
+        transparent 100%
+      );
+      animation: ap-row-shimmer 0.8s ease-out forwards;
+      pointer-events: none;
+    }
+
+    // Tighten XUI checkbox label size
+    .xui-checkbox--label {
+      font-size: 15px;
+      color: #000a1e;
+    }
+  }
+
+  &__method-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    color: #000a1e;
+  }
+
+  &__method-icon {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+    margin-left: auto;
+    flex-shrink: 0;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__checkbox-row--dd-disabled {
+    position: relative;
+    cursor: not-allowed;
+
+    // Block pointer events on the disabled checkbox so the overlay handles hover
+    .xui-checkbox {
+      pointer-events: none;
+    }
+  }
+
+  &__dd-tooltip-trigger {
+    position: absolute;
+    inset: 0;
+    cursor: not-allowed;
+    pointer-events: all;
+  }
+
+  &__toggle-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    // No border, radius, or background — sits flush in the panel
+  }
+
+  &__toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__toggle-label {
+    flex: 1;
+    font-size: 15px;
+    color: #000a1e;
+    line-height: 24px;
+  }
+
+  &__toggle-icon {
+    flex-shrink: 0;
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  &__toggle-desc {
+    font-size: 13px;
+    color: #404756;
+    line-height: 20px;
+    margin: 0;
+  }
+
+  &__info-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f2f8fc;
+    border-radius: 3px;
+    padding: 4px 4px 4px 4px;
+    gap: 4px;
+  }
+
+  &__info-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+
+  &__info-bar-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #59606d;
+    flex-shrink: 0;
+
+    &:hover { color: #000a1e; }
+  }
+}
+
+// ── Tess "method on file" panel ───────────────────────────────────────────────
+
+.ap-tess {
+  &__method-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1e3145;
+    line-height: 1.3;
+    margin: 0 0 16px;
+    letter-spacing: 0;
+  }
+
+  &__radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  &__radio-option {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid #a6a9b0;
+    border-radius: 4px;
+    padding: 20px;
+    background: #fff;
+    position: relative;
+
+    &--selected {
+      border-color: #0078c8;
+    }
+  }
+
+  &__radio-label {
+    display: block;
+    cursor: pointer;
+  }
+
+  &__radio-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__radio-left {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__radio-title-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__radio-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #a6a9b0;
+    flex-shrink: 0;
+    position: relative;
+
+    &--checked {
+      border-color: #0078c8;
+      background: #0078c8;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 8px;
+        height: 8px;
+        background: #fff;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  &__radio-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__radio-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #000a1e;
+    line-height: 24px;
+  }
+
+  &__card-wrap {
+    position: relative;
+    width: 65px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        110deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.55) 50%,
+        transparent 80%
+      );
+      transform: translateX(-100%);
+      animation: ap-card-shimmer 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+  }
+
+  &__card-img {
+    width: 65px;
+    height: 44px;
+    object-fit: contain;
+    display: block;
+  }
+
+  &__radio-helper {
+    font-size: 13px;
+    color: #404756;
+    line-height: 20px;
+    margin-top: 8px;
+    padding-left: 28px;
+  }
+}
+
+@keyframes ap-row-shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(200%); }
+}
+
+@keyframes ap-card-shimmer {
+  0%, 65% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  68% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+// ── Tess expanded change-method card ─────────────────────────────────────────
+
+.ap-tess__change-expand {
+  margin-top: 20px;
+}
+
+.ap-tess__change-divider {
+  height: 1px;
+  background: #ccced2;
+  margin-bottom: 20px;
+}
+
+// ── Xero top nav ─────────────────────────────────────────────────────────────
+
+.ap-topnav {
+  z-index: 3000;
+  background: #0078c8;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 4px;
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    margin-right: 4px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  &__org {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+    white-space: nowrap;
+
+    &:hover { background: rgba(255,255,255,0.12); }
+
+    svg { opacity: 0.7; flex-shrink: 0; }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__navitem {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 0 12px;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+
+    &:hover { color: #fff; }
+
+    &--active {
+      color: #fff;
+      border-bottom-color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  &__iconbtn {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    border: none;
+    background: rgba(0, 10, 30, 0.1);
+    padding: 8px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background: rgba(0, 10, 30, 0.2);
+      color: #fff;
+    }
+  }
+
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #9EEEFD;
+    color: #154D58;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 4px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Invoice page header ───────────────────────────────────────────────────────
+
+.xui-pageheading--content .xui-tag-neutral {
+  font-weight: 400;
+}
+
+// ── Cycle icon inactive state ─────────────────────────────────────────────────
+
+svg.ap-cycle-inactive {
+  fill: #59606D;
+}
+
+.ap-invoice__header {
+  padding: 16px 0 12px;
+}
+
+.ap-invoice__breadcrumb {
+  font-size: 13px;
+  color: #5d6b7a;
+  margin-bottom: 8px;
+
+  a {
+    color: #2490eb;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.ap-invoice__breadcrumb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  li {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.ap-invoice__titlerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ap-invoice__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 21px;
+  font-weight: 600;
+  color: #1c2b3f;
+  margin: 0;
+}
+
+.ap-invoice__more {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: none;
+  background: none;
+  color: #5d6b7a;
+  cursor: pointer;
+  font-size: 18px;
+
+  &:hover { background: #e8ecef; }
+}
+
+// ── Form card ─────────────────────────────────────────────────────────────────
+
+.ap-form-card {
+  background: #fff;
+  border: 1px solid #ccced2;
+  border-radius: 6px;
+}
+
+// ── Form field rows ───────────────────────────────────────────────────────────
+
+.ap-form__fields {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  padding: 20px;
+}
+
+.ap-form__field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+// ── Select wrapper (with optional icon) ──────────────────────────────────────
+
+.ap-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &__icon {
+    position: absolute;
+    left: 10px;
+    pointer-events: none;
+    z-index: 1;
+    color: #5d6b7a;
+    width: 16px;
+    height: 16px;
+  }
+
+  &__select {
+    width: 100%;
+    height: 32px;
+    padding: 0 28px 0 32px;
+    border: 1px solid #a6a9b0;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #1c2b3f;
+    background: #fff;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%235d6b7a' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+    outline: none;
+    font-family: inherit;
+
+    &:focus {
+      border-color: #2490eb;
+      box-shadow: 0 0 0 2px rgba(36, 144, 235, 0.15);
+    }
+
+    &--no-icon {
+      padding-left: 10px;
+    }
+  }
+}
+
+// ── Static "None" field for Online payments ───────────────────────────────────
+
+.ap-static-field {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid #a6a9b0;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #000a1e;
+  background: #f2f2f2;
+}
+
+// ── Static field pill variant ─────────────────────────────────────────────────
+
+.ap-static-field--pills {
+  gap: 8px;
+  background: #fff;
+  padding: 0 8px;
+  overflow: hidden;
+}
+
+.ap-payment-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid #a6a9b0;
+  border-radius: 11px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 400;
+  color: #3d4a5c;
+  white-space: nowrap;
+  line-height: 1;
+
+  &__cycle {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.ap-static-field--card {
+  gap: 4px;
+  background: #fff;
+  padding: 0 4px;
+  overflow: hidden;
+}
+
+.ap-static-field__card-text {
+  font-size: 13px;
+  font-weight: 400;
+  color: #000a1e;
+  white-space: nowrap;
+  line-height: 20px;
+}
+
+// ── Online payments "Manage" link ─────────────────────────────────────────────
+
+.ap-onlinepay-manage {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #0078c8;
+  font-size: 13px;
+  font-weight: 400;
+  font-family: inherit;
+  padding: 0;
+
+  &:hover { text-decoration: underline; }
+}
+
+// ── Online payments "+ Add" button ────────────────────────────────────────────
+
+.ap-onlinepay-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #0078c8;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: inherit;
+
+  &:hover {
+    background: rgba(0, 120, 200, 0.06);
+  }
+}
+
+// ── Contact selector ──────────────────────────────────────────────────────────
+
+.ap-contact {
+  position: relative;
+
+  &__inputwrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__input-avatar {
+    position: absolute;
+    left: 6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &__input {
+    width: 100%;
+    height: 32px;
+    padding: 0 32px 0 10px;
+    border: 1px solid #a6a9b0;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #1c2b3f;
+    background: #fff;
+    outline: none;
+    font-family: inherit;
+
+    &--has-avatar {
+      padding-left: 32px;
+    }
+
+    &::placeholder {
+      color: #9aa5b1;
+    }
+
+    &:focus {
+      border-color: #2490eb;
+      box-shadow: 0 0 0 2px rgba(36, 144, 235, 0.15);
+    }
+  }
+
+  &__clear {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9aa5b1;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+
+    &:hover { color: #5d6b7a; }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #a6a9b0;
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    z-index: 200;
+    overflow: hidden;
+  }
+
+  &__create {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #1c2b3f;
+    cursor: pointer;
+    background: #f8fafc;
+    border-bottom: 1px solid #e8ecef;
+
+    &:hover { background: #f0f7ff; }
+
+    strong { font-weight: 600; }
+  }
+
+  &__create-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    background: #e8f4fd;
+    color: #0078c8;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__divider {
+    height: 1px;
+    background: #e8ecef;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f3f6;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f0f7ff; }
+
+    &[aria-selected='true'] { background: #e8f4fd; }
+  }
+
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1c2b3f;
+  }
+
+  &__email {
+    font-size: 11px;
+    color: #9aa5b1;
+    margin-top: 1px;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &--enrolled { background: #d4f0ea; color: #0a5c4a; }
+    &--unenrolled { background: #e8f4fd; color: #0f4c7a; }
+  }
+}
+
+// ── Line items table ──────────────────────────────────────────────────────────
+
+.ap-table-wrap {
+  padding: 0 20px;
+}
+
+// Outer border frame — wraps table + add row row
+.ap-table-outer {
+  border: 1px solid #ccced2;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.ap-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    font-size: 13px;
+    font-weight: 700;
+    color: #404756;
+    padding: 10px 16px;
+    text-align: left;
+    border-top: none;
+    border-bottom: 1px solid #ccced2;
+    border-left: none;
+    border-right: none;
+    background: rgba(0, 10, 30, 0.05);
+    white-space: nowrap;
+    height: 40px;
+  }
+
+  td {
+    padding: 0;
+    border: 1px solid #ccced2;
+    vertical-align: middle;
+    height: 40px;
+  }
+
+  &__drag {
+    color: #59606d;
+    cursor: grab;
+    font-size: 14px;
+    user-select: none;
+  }
+
+  &__input {
+    width: 100%;
+    border: none;
+    border-radius: 0;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #000a1e;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+    height: 40px;
+
+    &:hover,
+    &:focus {
+      background: #f0f7ff;
+    }
+  }
+
+  &__amount {
+    text-align: right;
+    font-size: 13px;
+    color: #1c2b3f;
+    padding: 0 16px;
+  }
+
+  &__removebtn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #9aa5b1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    height: 40px;
+
+    &:hover { color: #5d6b7a; }
+  }
+
+  &__addrow {
+    padding: 6px 4px;
+    background: #fff;
+  }
+
+  &__footer-actions {
+    padding: 8px 20px;
+    display: flex;
+    gap: 8px;
+  }
+}
+
+// ── Add row split button ──────────────────────────────────────────────────────
+
+.ap-addrow-btn-group {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid #a6a9b0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.ap-addrow-btn__main {
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0078c8;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1;
+
+  &:hover { background: rgba(0, 120, 200, 0.06); }
+}
+
+.ap-addrow-btn__caret {
+  background: none;
+  border: none;
+  border-left: 1px solid #a6a9b0;
+  width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #5d6b7a;
+
+  &:hover { background: #f0f3f6; }
+}
+
+// ── Form footer (buttons + totals side by side) ───────────────────────────────
+
+.ap-form__footer {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 20px;
+}
+
+.ap-table__footer-actions {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  padding: 0;
+}
+
+// ── Totals ────────────────────────────────────────────────────────────────────
+
+.ap-totals {
+  padding: 0;
+  display: flex;
+  justify-content: flex-end;
+
+  &__inner { width: 320px; }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 3px 0;
+    font-size: 13px;
+    color: #1c2b3f;
+
+    &--muted {
+      color: #5d6b7a;
+      font-size: 12px;
+    }
+
+    &--total {
+      border-top: 2px solid #1c2b3f;
+      margin-top: 8px;
+      padding-top: 10px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+  }
+
+  &__deposit {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  &__deposit-divider {
+    height: 1px;
+    background: #ccced2;
+    align-self: stretch;
+  }
+}
+
+// ── eInvoice toggle ───────────────────────────────────────────────────────────
+
+.ap-einvoice {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+
+  &__classic {
+    font-size: 13px;
+    color: #2490eb;
+    text-decoration: none;
+    align-self: center;
+
+    &:hover { text-decoration: underline; }
+  }
+
+  &__text {
+    font-size: 12px;
+    color: #5d6b7a;
+    text-align: right;
+    line-height: 1.4;
+    margin-top: 4px;
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+
+.ap-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  font-family: inherit;
+
+  &--secondary {
+    background: #fff;
+    color: #1c2b3f;
+    border-color: #a6a9b0;
+    &:hover { border-color: #8a8e96; background: #f5f8fa; }
+  }
+
+  &--sm {
+    height: 28px;
+    font-size: 12px;
+    padding: 0 10px;
+  }
+}
+
+.ap-btn-group {
+  display: inline-flex;
+  align-items: stretch;
+
+  .ap-btn {
+    &:not(:last-child) { border-right: none; border-radius: 4px 0 0 4px; }
+    &:last-child { border-radius: 0 4px 4px 0; }
+  }
+}
+
+// ── Expired payment method — inline field ────────────────────────────────────
+
+.ap-static-field--expired {
+  border-color: #d0002c;
+  gap: 8px;
+
+  .ap-static-field__card-text {
+    flex: 1;
+    color: #000a1e;
+
+    &--expired {
+      font-weight: 700;
+    }
+  }
+
+  .ap-static-field__invalid-icon {
+    flex-shrink: 0;
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+// ── Eric Expired — manage panel ───────────────────────────────────────────────
+
+.ap-tag-expiring {
+  font-size: 11px;
+  font-weight: 700;
+  color: #7a4200;
+  background: #fef3e2;
+  border: 1px solid #e87722;
+  border-radius: 2px;
+  padding: 1px 6px;
+  line-height: 16px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ap-static-field--expiring {
+  // no special border — amber border removed
+}
+
+@keyframes card-shimmer {
+  0%   { left: -100%; }
+  60%  { left: 160%; }
+  100% { left: 160%; }
+}
+
+.ap-warning-card {
+  &__container {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__img-wrap {
+    width: 65px;
+    height: 44px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.45),
+        transparent
+      );
+      animation: card-shimmer 2.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+  }
+
+  &__img {
+    width: 65px;
+    height: 44px;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__badge {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+  }
+}
+
+// ── William — info box inside expiring card option ───────────────────────────
+
+.ap-warning-info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #f2f8fc;
+  border-radius: 3px;
+  padding: 8px;
+  margin-top: 16px;
+
+  &__icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  p {
+    font-size: 13px;
+    color: #000a1e;
+    line-height: 20px;
+    margin: 0;
+  }
+}
+
+.ap-expired {
+  &__card-box {
+    border: 1px solid #a6a9b0;
+    border-radius: 4px;
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 16px;
+
+  }
+
+  &__card-inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__card-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  &__card-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__card-brand {
+    font-size: 15px;
+    font-weight: 700;
+    color: #000a1e;
+    line-height: 24px;
+  }
+
+  &__card-number {
+    font-size: 13px;
+    color: #404756;
+    line-height: 20px;
+  }
+
+  &__card-img {
+    width: 65px;
+    height: 44px;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+
+  &__card-help {
+    font-size: 13px;
+    color: rgba(0, 10, 30, 0.65);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+// ── Eric expired card panel ──────────────────────────────────────────────────
+
+// Eric expired card tile — single flat container, no sections, no dividers
+.ap-eric__tile {
+  margin-bottom: 20px;
+  border: 1px solid #a6a9b0;
+  border-radius: 6px;
+  background: #f3f5f7;
+  padding: 14px 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+
+  &-card-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+  }
+
+  &-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  &-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &-brand {
+    font-size: 15px;
+    font-weight: 700;
+    color: #000a1e;
+  }
+
+  &-number {
+    font-size: 13px;
+    color: #404756;
+  }
+
+  &-img {
+    width: 65px;
+    height: 44px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+  }
+}
+
+// ── Toast fixed positioning ──────────────────────────────────────────────────
+
+.ap-toast-fixed {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 9999;
+}
+
+// ── Learn More modal — keyframes ─────────────────────────────────────────────
+
+@keyframes ap-lm-enter-forward {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes ap-lm-enter-back {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes ap-lm-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.3); }
+}
+@keyframes ap-lm-stagger-in {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes ap-lm-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes ap-lm-illustration-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes ap-lm-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+@keyframes ap-lm-tick-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+// ── Modal shell ───────────────────────────────────────────────────────────────
+
+.ap-lm__xui-close { display: none !important; }
+
+// XUIModal root — override XUI's 3px radius, force consistent clip
+.ap-lm__modal {
+  padding: 0 !important;
+  background: #0e1c30 !important;
+  overflow: hidden !important;
+  border-radius: 12px !important; // override XUI's 3px — one source of truth
+}
+
+// Body wrapper — NO radius, the modal root handles all clipping
+.ap-lm__modal-body {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;      // DO NOT add radius here — modal root clips it
+  overflow: hidden;      // belt-and-braces for inner gradients
+  background: #0e1c30;
+}
+
+// Hero visual — no radius needed, parent clips it
+.ap-lm__visual-wrap {
+  position: relative;
+  height: 264px;
+  overflow: hidden;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+// Dark close button — large circle like Google
+.ap-lm__close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s;
+  &:hover { background: rgba(0, 0, 0, 0.65); }
+}
+
+// Dark content section — radius handled by parent wrapper
+.ap-lm__dark-section {
+  background: #0e1c30;
+}
+
+// ── Shared visual container ───────────────────────────────────────────────────
+
+.ap-lm-visual {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ── Slide 1 — animated toggle panel ──────────────────────────────────────────
+
+.ap-lm-visual--s1 {
+  background: #0078c8; // xui: blue
+}
+
+// Panel mock — wider, more realistic side-panel feel
+.ap-lm-panel-mock {
+  width: 296px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+// Subtle panel title bar
+.ap-lm-pm__header {
+  background: #f5f6f7;
+  border-bottom: 1px solid #dde0e4;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #404756;
+  letter-spacing: 0.01em;
+}
+
+.ap-lm-pm__body {
+  padding: 14px;
+}
+
+.ap-lm-pm__toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ap-lm-pm__switch {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border-radius: 11px;
+  background: #a6a9b0;
+  flex-shrink: 0;
+  transition: background 0.45s ease;
+  &--on { background: #0078c8; }
+}
+
+.ap-lm-pm__switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  .ap-lm-pm__switch--on & { transform: translateX(16px); }
+}
+
+.ap-lm-pm__toggle-label {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #000a1e;
+}
+
+.ap-lm-pm__cycle-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.15;
+  transition: opacity 0.5s ease 0.2s;
+  &--on { opacity: 1; }
+  svg { width: 18px !important; height: 18px !important; }
+}
+
+.ap-lm-pm__methods {
+  border: 1px solid #dde0e4;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ap-lm-pm__method-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #fff;
+  border-top: 1px solid #dde0e4;
+  &--first { border-top: none; }
+}
+
+.ap-lm-pm__checkbox {
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid #a6a9b0;
+  border-radius: 3px;
+  flex-shrink: 0;
+  position: relative;
+  &--checked {
+    background: #0078c8;
+    border-color: #0078c8;
+    &::after {
+      content: '';
+      position: absolute;
+      left: 2px;
+      top: 1px;
+      width: 9px;
+      height: 5px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg);
+    }
+  }
+}
+
+.ap-lm-pm__method-text {
+  font-size: 12px;
+  color: #000a1e;
+  flex: 1;
+}
+
+.ap-lm-pm__method-cycle {
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.2s;
+  &--on { opacity: 1; }
+  svg { width: 16px !important; height: 16px !important; }
+}
+
+// ── Slide 2 — invoice field with pulsing cycle pill ───────────────────────────
+
+.ap-lm-visual--s2 {
+  background: #3cdcfa; // xui: turquoise
+}
+
+.ap-lm-field-mock {
+  width: 288px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.ap-lm-fm__mock-header {
+  background: #f5f6f7;
+  border-bottom: 1px solid #dde0e4;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #404756;
+}
+
+.ap-lm-fm__mock-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ap-lm-fm__label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #59606d;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ap-lm-fm__field {
+  height: 36px;
+  border: 1px solid #a6a9b0;
+  border-radius: 4px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 8px;
+}
+
+.ap-lm-fm__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 10px 0 12px;
+  border: 1px solid #c0e0f5;
+  border-radius: 12px;
+  background: #eef7fd;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0064b0;
+}
+
+.ap-lm-fm__pill-cycle {
+  display: inline-flex;
+  align-items: center;
+  animation: ap-lm-pulse 2s ease-in-out infinite;
+  svg { width: 15px !important; height: 15px !important; }
+}
+
+.ap-lm-fm__hint {
+  font-size: 11px;
+  color: #1a8a6b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  &::before {
+    content: '✓';
+    font-size: 10px;
+  }
+}
+
+// ── Slide 3 — animated checkout form ─────────────────────────────────────────
+
+.ap-lm-visual--s3 {
+  background: #5a5ae6; // xui: violet
+}
+
+.ap-lm-co {
+  background: #fff;
+  border-radius: 10px;
+  padding: 32px;
+  width: 80%;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.38);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  transform: scale(0.82);
+  transform-origin: center center;
+}
+
+.ap-lm-co__field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ap-lm-co__label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.ap-lm-co__input {
+  border: 1.5px solid #d0d3d8;
+  border-radius: 6px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;         // fixed — never grows when text is typed in
+  overflow: hidden;
+  background: #fff;
+}
+
+.ap-lm-co__row {
+  display: flex;
+  gap: 8px;
+  .ap-lm-co__field-group { flex: 1; }
+}
+
+.ap-lm-co__cardnum {
+  font-size: 13px;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+  color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.ap-lm-co__caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 14px;
+  background: #1a1a2e;
+  border-radius: 1px;
+  animation: ap-lm-cursor-blink 0.7s step-end infinite;
+}
+
+.ap-lm-co__visa {
+  font-size: 9px;
+  font-weight: 900;
+  color: #1a1f71;
+  letter-spacing: -0.3px;
+  border: 1.5px solid #1a1f71;
+  padding: 1px 4px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  flex-shrink: 0;
+  line-height: 1;
+  &--show { opacity: 1; }
+}
+
+.ap-lm-co__val {
+  font-size: 13px;
+  color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.ap-lm-co__check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ap-lm-co__box {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #b0b5bd;
+  border-radius: 3px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  margin-top: 1px;
+  &--checked {
+    background: #1073c4;
+    border-color: #1073c4;
+  }
+}
+
+.ap-lm-co__tick {
+  width: 11px;
+  height: 9px;
+  polyline {
+    stroke-dasharray: 20;
+    stroke-dashoffset: 20;
+    animation: ap-lm-tick-draw 0.3s ease forwards;
+  }
+}
+
+.ap-lm-co__check-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #1a1a2e;
+  line-height: 1.4;
+}
+
+.ap-lm-co__pay {
+  background: #1073c4;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  box-shadow: 0 2px 8px rgba(16, 115, 196, 0.4);
+  &--pressing {
+    transform: scale(0.97);
+    box-shadow: 0 1px 3px rgba(16, 115, 196, 0.25);
+  }
+}
+
+// ── Slide 4 — SVG illustration ────────────────────────────────────────────────
+
+// Slide 4
+.ap-lm-visual--s4 {
+  background: #b446c8; // xui: grape
+}
+
+.ap-lm-illustration-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px; // equal all sides — previously 20px 32px caused visual offset
+  animation: ap-lm-illustration-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ap-lm-illustration-img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%; // fill available space inside the padded wrap, not a fixed 200px cap
+  object-fit: contain;
+  margin: auto; // belt-and-braces centering as block fallback
+  filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.45));
+  border-radius: 8px;
+}
+
+// ── Slide 5 — Autopay ON → OFF crossfade ─────────────────────────────────────
+
+.ap-lm-visual--s5 {
+  background: #ff6496; // xui: pink (exact token value)
+}
+
+.ap-lm-s5__wrap {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 86%;
+  overflow: hidden;
+  border-radius: 12px 0 0 0;
+  box-shadow: -6px 6px 28px rgba(0, 0, 0, 0.28);
+}
+
+.ap-lm-s5__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &--on {
+    position: relative;
+    opacity: 1;
+    &.ap-lm-s5__img--hidden { opacity: 0; }
+  }
+
+  &--off {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    &.ap-lm-s5__img--visible { opacity: 1; }
+  }
+}
+
+.ap-lm-settings-mock {
+  width: 272px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ap-lm-stm__path {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ap-lm-stm__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  &--1 { color: rgba(255,255,255,0.55); opacity: 0; animation: ap-lm-stagger-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both; }
+  &--2 { color: rgba(255,255,255,0.55); opacity: 0; animation: ap-lm-stagger-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both; }
+  &--3 { color: #fff; font-weight: 700; font-size: 14px; opacity: 0; animation: ap-lm-stagger-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.36s both; }
+}
+
+.ap-lm-stm__icon {
+  width: 15px !important;
+  height: 15px !important;
+  opacity: 0.7;
+}
+
+.ap-lm-stm__chevron {
+  font-size: 14px;
+  color: rgba(255,255,255,0.3);
+  line-height: 1;
+  padding-left: 4px;
+}
+
+.ap-lm-stm__active {
+  background: rgba(255,255,255,0.18);
+  border-radius: 4px;
+  padding: 3px 9px;
+}
+
+.ap-lm-stm__toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 6px;
+  padding: 10px 12px;
+  opacity: 0;
+  animation: ap-lm-fade-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+}
+
+.ap-lm-stm__switch {
+  position: relative;
+  width: 30px;
+  height: 17px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.22);
+  flex-shrink: 0;
+}
+
+.ap-lm-stm__switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.8);
+}
+
+.ap-lm-stm__toggle-label {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+}
+
+.ap-lm-stm__off-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+}
+
+// ── Slide content — white text on dark ───────────────────────────────────────
+
+.ap-lm__content {
+  padding: 20px 24px 0;
+  &--enter-forward { animation: ap-lm-enter-forward 0.28s ease both; }
+  &--enter-back    { animation: ap-lm-enter-back 0.28s ease both; }
+}
+
+// Eyebrow label — replaces XUITag on dark bg
+.ap-lm__eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 6px;
+}
+
+.ap-lm__headline {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #ffffff;
+}
+
+.ap-lm__body {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+// ── Footer — dots left, buttons right ────────────────────────────────────────
+
+.ap-lm__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 20px 24px;
+}
+
+.ap-lm__footer-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  // Back button — standard variant on dark bg
+  .xui-button--standard {
+    color: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    background: transparent !important;
+    &:not(:disabled):hover {
+      background: rgba(255, 255, 255, 0.1) !important;
+      border-color: rgba(255, 255, 255, 0.55) !important;
+    }
+    &:disabled {
+      color: rgba(255, 255, 255, 0.25) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+    }
+  }
+}
+
+// ── Progress dots — pill-shaped active, Google-style ─────────────────────────
+
+.ap-lm__dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ap-lm__dot {
+  height: 7px;
+  width: 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.28);
+  transition: background 0.25s, width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  &--active {
+    width: 20px;
+    background: #fff;
+  }
+}
+
+// ── Navy tag — "New and improved" (used in promo popover + side panel info bar) ─
+
+.ap-tag--navy {
+  display: inline-flex;
+  align-items: center;
+  background-color: #081F33;
+  border: 1px solid #081F33;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  padding: 0 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+// ── Autopay promo popover content ─────────────────────────────────────────────
+
+.ap-promo-popover__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.ap-promo-popover__body {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
+  color: #000a1e;
+  margin: 0;
+}
+
+.ap-promo-popover__footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}

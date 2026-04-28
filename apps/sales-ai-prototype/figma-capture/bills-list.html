@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1728">
+<title>Xero Bills</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; width: 1728px; background: #fff; font-size: 13px; color: #333; }
+
+  /* Demo banner */
+  .demo-banner { background: #1a73e8; color: #fff; height: 48px; display: flex; align-items: center; padding: 0 24px; font-size: 13px; }
+  .demo-banner svg { margin-right: 12px; }
+  .demo-banner a { color: #fff; text-decoration: underline; }
+
+  /* Main nav */
+  .main-nav { background: #1c252c; height: 64px; display: flex; align-items: center; padding: 0 84px; }
+  .main-nav .logo { display: flex; align-items: center; gap: 8px; margin-right: 30px; }
+  .main-nav .logo svg { width: 24px; height: 24px; }
+  .main-nav .logo-text { color: #00b7e3; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+  .main-nav .company { color: #fff; font-size: 13px; display: flex; align-items: center; gap: 6px; margin-right: 20px; }
+  .main-nav .company svg { width: 12px; height: 12px; }
+  .nav-items { display: flex; gap: 0; }
+  .nav-items a { color: #ccc; text-decoration: none; padding: 20px 12px; font-size: 14px; }
+  .nav-items a.active { color: #fff; border-bottom: 3px solid #fff; }
+  .nav-items a:hover { color: #fff; }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; color: #ccc; }
+  .nav-right .icon-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #ccc; font-size: 18px; }
+  .avatar { width: 32px; height: 32px; background: #4a6fa5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 600; }
+
+  /* Sub header */
+  .sub-header { padding: 16px 84px 0; }
+  .breadcrumb { font-size: 12px; color: #0078c8; margin-bottom: 8px; }
+  .breadcrumb a { color: #0078c8; text-decoration: none; }
+  .page-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0; }
+  .page-title { font-size: 24px; font-weight: 400; color: #333; }
+  .new-bill-btn { background: #13b5ea; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; }
+  .new-bill-btn .arrow { font-size: 10px; }
+
+  /* Tabs */
+  .tabs { display: flex; border-bottom: 1px solid #e0e0e0; padding: 0 84px; margin-top: 4px; }
+  .tabs a { color: #0078c8; text-decoration: none; padding: 12px 16px; font-size: 13px; border-bottom: 2px solid transparent; }
+  .tabs a.active { color: #333; border-bottom: 2px solid #0078c8; font-weight: 500; }
+  .tabs a:first-child { padding-left: 0; }
+
+  /* Content area */
+  .content { padding: 16px 84px; }
+
+  /* Filter bar */
+  .filter-bar { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 8px; }
+  .search-box { flex: 1; position: relative; }
+  .search-box input { width: 100%; padding: 8px 12px 8px 36px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; height: 36px; }
+  .search-box .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #999; }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .filter-group label { font-size: 12px; color: #555; font-weight: 500; }
+  .filter-group input, .filter-group select { height: 36px; padding: 0 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; min-width: 120px; }
+  .filter-actions { display: flex; gap: 12px; align-items: center; padding-bottom: 2px; }
+  .filter-actions a { color: #0078c8; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 4px; }
+
+  /* Item count */
+  .item-count { text-align: right; font-size: 12px; color: #666; margin-bottom: 4px; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; }
+  thead th { text-align: left; padding: 8px 8px; font-size: 12px; font-weight: 500; color: #555; border-bottom: 1px solid #e0e0e0; white-space: nowrap; }
+  thead th.right { text-align: right; }
+  tbody td { padding: 8px 8px; font-size: 13px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+  tbody td.right { text-align: right; }
+  tbody tr:hover { background: #f8f9fa; }
+
+  .view-icon { color: #0078c8; font-size: 16px; cursor: pointer; }
+
+  .status-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+  .status-awaiting { background: #e8f5e9; color: #2e7d32; }
+  .status-paid { background: #f0f0f0; color: #666; }
+
+  .overdue { color: #d32f2f; display: flex; align-items: center; gap: 4px; justify-content: flex-start; }
+  .overdue svg { width: 14px; height: 14px; }
+
+  .from-col { min-width: 200px; }
+  .indented { padding-left: 24px; display: flex; align-items: center; gap: 6px; }
+  .indented .sub-icon { color: #0078c8; font-size: 12px; }
+
+  /* Footer */
+  .table-footer { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; font-size: 12px; color: #666; }
+  .table-footer select { height: 28px; border: 1px solid #ccc; border-radius: 4px; padding: 0 8px; font-size: 12px; }
+</style>
+</head>
+<body>
+  <!-- Demo Banner -->
+  <div class="demo-banner">
+    <svg width="20" height="20" fill="none"><circle cx="10" cy="10" r="9" stroke="#fff" stroke-width="1.5"/><path d="M10 6v4M10 13h.01" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+    You're currently using the demo company. Go back to your <a href="#">last organisation</a>.
+  </div>
+
+  <!-- Main Navigation -->
+  <div class="main-nav">
+    <div class="logo">
+      <span class="logo-text">xero</span>
+    </div>
+    <div class="company">Demo Company (NZ) <svg viewBox="0 0 12 12" fill="currentColor"><path d="M3 5l3 3 3-3"/></svg></div>
+    <div class="nav-items">
+      <a href="#">Home</a>
+      <a href="#">Sales</a>
+      <a href="#" class="active">Purchases</a>
+      <a href="#">Reporting</a>
+      <a href="#">Payroll</a>
+      <a href="#">Accounting</a>
+      <a href="#">Tax</a>
+      <a href="#">Contacts</a>
+      <a href="#">Projects</a>
+    </div>
+    <div class="nav-right">
+      <div class="icon-btn">+</div>
+      <div class="icon-btn">&#128269;</div>
+      <div class="icon-btn">&#9733;</div>
+      <div class="icon-btn">?</div>
+      <div class="icon-btn">&#128276;</div>
+      <div class="icon-btn">:::</div>
+      <div class="avatar">JB</div>
+    </div>
+  </div>
+
+  <!-- Sub Header -->
+  <div class="sub-header">
+    <div class="breadcrumb"><a href="#">Purchases overview</a> &rsaquo;</div>
+    <div class="page-title-row">
+      <div style="display:flex;align-items:baseline;gap:24px;">
+        <h1 class="page-title">Bills</h1>
+      </div>
+      <button class="new-bill-btn">New bill <span class="arrow">&#9660;</span></button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <a href="#" class="active">All</a>
+    <a href="#">Draft</a>
+    <a href="#">Awaiting approval</a>
+    <a href="#">Awaiting payment<span style="color:#666;margin-left:2px;">12</span></a>
+    <a href="#">Paid</a>
+    <a href="#">Repeating</a>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-box">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" placeholder="Enter a contact, amount, or reference">
+      </div>
+      <div class="filter-group">
+        <label>Start date</label>
+        <input type="text" placeholder="" style="width:120px;">
+      </div>
+      <div class="filter-group">
+        <label>End date</label>
+        <input type="text" placeholder="" style="width:120px;">
+      </div>
+      <div class="filter-group">
+        <label>Date type</label>
+        <select style="width:120px;"><option>Any date</option></select>
+      </div>
+      <div class="filter-actions">
+        <a href="#">&#9660; Filter</a>
+        <a href="#">&#9638; Columns</a>
+      </div>
+    </div>
+
+    <!-- Item Count -->
+    <div class="item-count">44 items | 7,429.21 NZD</div>
+
+    <!-- Table -->
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40px;">View</th>
+          <th class="from-col">From</th>
+          <th>Status</th>
+          <th>Reference</th>
+          <th>Date</th>
+          <th>Due date &darr;</th>
+          <th class="right">Paid</th>
+          <th class="right">Due</th>
+        </tr>
+      </thead>
+      <tbody id="bills-body">
+      </tbody>
+    </table>
+
+    <div class="table-footer">
+      <div style="display:flex;align-items:center;gap:8px;">
+        Items per page <select><option>100</option></select>
+      </div>
+      <div>Showing items 1-44 of 44</div>
+    </div>
+  </div>
+
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<script>
+const bills = [
+  {from:"Capital Cab Co", status:"awaiting", ref:"CS815", date:"Feb 17, 2026", due:"Mar 09, 2026", paid:"0.00", amt:"242.00"},
+  {from:"Bayside Wholesale", status:"awaiting", ref:"GB1-White", date:"Feb 15, 2026", due:"Feb 25, 2026", paid:"0.00", amt:"840.00", overdue:true},
+  {from:"Young Bros Transport", status:"awaiting", ref:"ABC", date:"Feb 14, 2026", due:"Feb 24, 2026", paid:"0.00", amt:"125.03", overdue:true},
+  {from:"Gateway Motors", status:"paid", ref:"449", date:"Feb 14, 2026", due:"Feb 24, 2026", paid:"411.35", amt:"0.00"},
+  {from:"ABC Furniture", status:"awaiting", ref:"710", date:"Feb 13, 2026", due:"Feb 23, 2026", paid:"0.00", amt:"1,150.00", overdue:true},
+  {from:"Swanston Security", status:"awaiting", ref:"RPT453-1", date:"Feb 12, 2026", due:"Feb 22, 2026", paid:"0.00", amt:"59.54", overdue:true},
+  {from:"Bayside Club", status:"awaiting", ref:"", date:"Feb 12, 2026", due:"Feb 22, 2026", paid:"0.00", amt:"130.00"},
+  {from:"PowerDirect", status:"awaiting", ref:"RPT445-1", date:"Feb 11, 2026", due:"Feb 21, 2026", paid:"0.00", amt:"108.60", overdue:true},
+  {from:"Net Connect", status:"awaiting", ref:"RPT489-1", date:"Feb 10, 2026", due:"Feb 20, 2026", paid:"0.00", amt:"54.13", overdue:true},
+  {from:"SMART Agency", status:"awaiting", ref:"SM0210", date:"Feb 02, 2026", due:"Feb 12, 2026", paid:"0.00", amt:"2,500.00", overdue:true},
+  {from:"PowerDirect", status:"paid", ref:"RPT445-1", date:"Feb 02, 2026", due:"Feb 12, 2026", paid:"108.60", amt:"0.00"},
+  {from:"Xero", status:"awaiting", ref:"RPT412-1", date:"Feb 12, 2026", due:"Feb 12, 2026", paid:"0.00", amt:"56.35", overdue:true},
+  {from:"Truxton Property Management", status:"paid", ref:"RPT469-1", date:"Feb 07, 2026", due:"Feb 07, 2026", paid:"1,181.25", amt:"0.00"},
+  {from:"Swanston Security", status:"paid", ref:"RPT453-1", date:"Jan 17, 2026", due:"Jan 24, 2026", paid:"59.54", amt:"0.00"},
+  {from:"Carlton Functions", status:"paid", ref:"Dep", date:"Jan 06, 2026", due:"Jan 16, 2026", paid:"1,500.00", amt:"0.00"},
+  {from:"Hoyt Productions", status:"paid", ref:"08-4123", date:"Jan 06, 2026", due:"Jan 16, 2026", paid:"5,953.75", amt:"0.00"},
+  {from:"SMART Agency", status:"awaiting", ref:"SM0195", date:"Jan 02, 2026", due:"Jan 12, 2026", paid:"0.00", amt:"2,000.00", overdue:true},
+  {from:"Xero", status:"paid", ref:"RPT412-1", date:"Jan 12, 2026", due:"Jan 12, 2026", paid:"56.35", amt:"0.00"},
+  {from:"Net Connect", status:"paid", ref:"RPT489-1", date:"Dec 28, 2025", due:"Jan 07, 2026", paid:"46.82", amt:"0.00"},
+  {from:"Truxton Property Management", status:"paid", ref:"RPT469-1", date:"Jan 07, 2026", due:"Jan 07, 2026", paid:"1,181.25", amt:"0.00"},
+  {from:"PowerDirect", status:"paid", ref:"RPT445-1", date:"Dec 23, 2025", due:"Jan 02, 2026", paid:"135.85", amt:"0.00"},
+  {from:"MCO Cleaning Services", status:"paid", ref:"408", date:"Dec 18, 2025", due:"Dec 28, 2025", paid:"119.08", amt:"0.00"},
+  {from:"Swanston Security", status:"paid", ref:"RPT453-1", date:"Dec 18, 2025", due:"Dec 25, 2025", paid:"34.10", amt:"0.00", indent:true},
+  {from:"PC Complete", status:"paid", ref:"720-2", date:"Dec 13, 2025", due:"Dec 23, 2025", paid:"1,463.88", amt:"0.00", indent:true},
+  {from:"Xero", status:"paid", ref:"RPT412-1", date:"Dec 13, 2025", due:"Dec 13, 2025", paid:"56.35", amt:"0.00"},
+  {from:"Net Connect", status:"paid", ref:"RPT489-1", date:"Nov 28, 2025", due:"Dec 08, 2025", paid:"44.92", amt:"0.00"},
+  {from:"Truxton Property Management", status:"paid", ref:"RPT469-1", date:"Dec 08, 2025", due:"Dec 08, 2025", paid:"1,181.25", amt:"0.00"},
+  {from:"Central Copiers", status:"awaiting", ref:"945-Ocon", date:"Nov 26, 2025", due:"Dec 06, 2025", paid:"900.00", amt:"163.56", overdue:true},
+  {from:"PC Complete", status:"paid", ref:"720-1", date:"Nov 25, 2025", due:"Dec 05, 2025", paid:"1,900.00", amt:"0.00"},
+  {from:"PowerDirect", status:"paid", ref:"RPT445-1", date:"Nov 22, 2025", due:"Dec 03, 2025", paid:"119.08", amt:"0.00"},
+  {from:"PowerDirect", status:"paid", ref:"RPT445-1", date:"Oct 22, 2025", due:"Nov 02, 2025", paid:"106.50", amt:"0.00"},
+];
+
+const tbody = document.getElementById('bills-body');
+bills.forEach(b => {
+  const tr = document.createElement('tr');
+  const statusClass = b.status === 'awaiting' ? 'status-awaiting' : 'status-paid';
+  const statusText = b.status === 'awaiting' ? 'Awaiting payment' : 'Paid';
+  const dueCell = b.overdue
+    ? `<td><span class="overdue"><svg viewBox="0 0 16 16" fill="#d32f2f"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 10.5a.75.75 0 110-1.5.75.75 0 010 1.5zM8.75 4.5v4a.75.75 0 01-1.5 0v-4a.75.75 0 011.5 0z"/></svg>${b.due}</span></td>`
+    : `<td>${b.due}</td>`;
+  const fromContent = b.indent
+    ? `<span class="indented"><span class="sub-icon">&#8627;</span> ${b.from}</span>`
+    : b.from;
+
+  tr.innerHTML = `
+    <td><span class="view-icon">&#9737;</span></td>
+    <td class="from-col">${fromContent}</td>
+    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+    <td>${b.ref}</td>
+    <td>${b.date}</td>
+    ${dueCell}
+    <td class="right">${b.paid}</td>
+    <td class="right">${b.amt}</td>
+  `;
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>

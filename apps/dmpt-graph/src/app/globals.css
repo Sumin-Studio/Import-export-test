@@ -1,0 +1,267 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+:root {
+  color-scheme: dark;
+  --bg-app: #0a0e14;
+  --bg-panel: #121922;
+  --bg-panel-2: #0f1520;
+  --border: #1f2a3a;
+  --border-strong: #2a3a52;
+  --text: #e8eef7;
+  --text-muted: #94a3b8;
+  --accent: #5b8cff;
+  --accent-soft: rgba(91, 140, 255, 0.15);
+  --danger: #f25555;
+  --success: #3dd6a4;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+html,
+body {
+  height: 100%;
+  min-height: 100dvh;
+  margin: 0;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+  font-family: var(--font-sans);
+  background: var(--bg-app);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Full-viewport shell: prevents grid/flex children from widening past the viewport */
+.app-shell {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 288px 1fr;
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.workspace--drawer {
+  grid-template-columns: 288px 1fr 360px;
+}
+
+/* Selection panel dismissed — graph + rail use full width */
+.workspace--drawer.workspace--drawer-collapsed {
+  grid-template-columns: 288px 1fr;
+}
+
+.workspace__rail,
+.workspace__graph,
+.workspace__details {
+  min-height: 0;
+  min-width: 0;
+}
+
+.workspace__graph {
+  overflow: hidden;
+}
+
+.graph-canvas-root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.workspace__rail {
+  border-right: 1px solid var(--border);
+}
+
+.workspace__details {
+  border-left: 1px solid var(--border);
+}
+
+@media (max-width: 1100px) {
+  .workspace--drawer {
+    grid-template-columns: 260px 1fr minmax(260px, 30vw);
+  }
+
+  .workspace--drawer.workspace--drawer-collapsed {
+    grid-template-columns: 260px 1fr;
+  }
+}
+
+/* Stack filters, graph, and details so nothing is squeezed off-screen */
+@media (max-width: 900px) {
+  .workspace,
+  .workspace--drawer {
+    grid-template-columns: 1fr;
+    grid-template-rows:
+      minmax(0, min(36vh, 300px))
+      minmax(200px, 1fr)
+      minmax(0, min(40vh, 360px));
+  }
+
+  .workspace__rail {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    overflow: auto;
+  }
+
+  .workspace__graph {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .workspace__details {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    box-shadow: none;
+    overflow: auto;
+  }
+
+  .workspace--drawer.workspace--drawer-collapsed {
+    grid-template-rows:
+      minmax(0, min(36vh, 300px))
+      minmax(200px, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .workspace,
+  .workspace--drawer {
+    grid-template-rows:
+      minmax(0, min(32vh, 260px))
+      minmax(180px, 1fr)
+      minmax(0, min(38vh, 320px));
+  }
+
+  .workspace--drawer.workspace--drawer-collapsed {
+    grid-template-rows:
+      minmax(0, min(32vh, 260px))
+      minmax(180px, 1fr);
+  }
+}
+
+/* App chrome */
+.app-header {
+  flex-wrap: wrap;
+  row-gap: 10px;
+  min-height: 56px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.app-header__subtitle {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.app-header__brand {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.app-header__tabs {
+  flex: 0 1 auto;
+}
+
+.app-header__search {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    align-items: stretch;
+  }
+
+  .app-header__spacer {
+    display: none;
+  }
+
+  .app-header__search {
+    flex: 1 1 100%;
+    order: 3;
+    min-width: 0;
+  }
+
+  .app-header__help {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header__tabs button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .app-header__tabs {
+    flex-basis: 100%;
+    justify-content: stretch;
+  }
+
+  .app-header__tabs button {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* Graph HUD: keep controls usable when the details panel sits below the canvas */
+@media (max-width: 900px) {
+  .graph-canvas-hint {
+    display: none;
+  }
+
+  .graph-hud-zoom {
+    right: 10px;
+    bottom: 10px;
+    width: auto;
+    min-width: 112px;
+  }
+}

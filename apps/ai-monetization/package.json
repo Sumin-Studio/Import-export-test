@@ -1,0 +1,18 @@
+{
+  "name": "ai-monetization",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --port 4321",
+    "start": "astro dev --port 4321",
+    "build": "astro build",
+    "preview": "astro preview --port 4321",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.30.3",
+    "astro": "^5.0.5",
+    "sharp": "^0.33.5"
+  }
+}

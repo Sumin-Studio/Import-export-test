@@ -1,0 +1,144 @@
+{
+  "version": "2026-02-17",
+  "generatedAt": "2026-02-17T00:00:00.000Z",
+  "lanes": [
+    {
+      "name": "Cash-Aware Bill Pay Planner",
+      "concepts": [
+        {
+          "conceptTitle": "Cash Runway Watcher",
+          "syntheticUserQuotes": [
+            { "persona": "Bill Creator", "quote": "If it actually tells me which bills to pay first and why, that's the first time I'd feel like the system is on my side.", "sentiment": "positive" },
+            { "persona": "Cautious Approver", "quote": "If the plan auto-approves anything without me seeing it, we have a problem. The plan should inform me; I still approve.", "sentiment": "negative" }
+          ]
+        },
+        {
+          "conceptTitle": "Early Pay Discount Radar",
+          "syntheticUserQuotes": [
+            { "persona": "Bill Creator", "quote": "I never remember which vendors do early-pay. If the system surfaces it when I'm about to pay, I'd actually use it.", "sentiment": "positive" },
+            { "persona": "AP Clerk", "quote": "Catching 2% discounts pays for my time. As long as it's not another list I have to maintain.", "sentiment": "neutral" }
+          ]
+        },
+        { "conceptTitle": "Bill Timing Optimizer" },
+        { "conceptTitle": "Multi-account Liquidity Splitter" },
+        { "conceptTitle": "Payroll Collision Alert" },
+        { "conceptTitle": "Tax Reserve Shield" },
+        { "conceptTitle": "Cash Shock Simulator" },
+        { "conceptTitle": "Vendor Priority Ladder" },
+        { "conceptTitle": "Due-Date Heatmap Planner" },
+        { "conceptTitle": "Payment Deferral Advisor" },
+        { "conceptTitle": "Dynamic Float Controller" },
+        { "conceptTitle": "Invoice Clustering Planner" },
+        { "conceptTitle": "Week Ahead Cash Brief" },
+        { "conceptTitle": "Emergency Hold Trigger" },
+        { "conceptTitle": "Seasonal Spend Balancer" },
+        { "conceptTitle": "Currency Exposure Planner" },
+        { "conceptTitle": "Spend Cap Enforcer" },
+        { "conceptTitle": "Scenario Compare Board" },
+        { "conceptTitle": "Loan Drawdown Recommender" },
+        { "conceptTitle": "Surplus Deployment Coach" },
+        { "conceptTitle": "Auto-partial Payment Builder" },
+        { "conceptTitle": "Subscription Renewal Smoother" },
+        { "conceptTitle": "Margin Guard Payment Plan" },
+        { "conceptTitle": "Owner Draw Protection" },
+        { "conceptTitle": "Reforecast on New Bill" },
+        { "conceptTitle": "Deadline Conflict Resolver" },
+        { "conceptTitle": "Bill Batch Sequencer" },
+        { "conceptTitle": "Confidence Based Scheduling" },
+        { "conceptTitle": "Cash Position Narrative" },
+        { "conceptTitle": "Collections-Aware Timing" },
+        { "conceptTitle": "High-Risk Bill Sentinel" },
+        { "conceptTitle": "Weekend Buffer Planner" },
+        { "conceptTitle": "Quarter Close Cash Guard" }
+      ]
+    },
+    {
+      "name": "Approval Concierge",
+      "concepts": [
+        {
+          "conceptTitle": "Policy-Aware Approval Drafts",
+          "syntheticUserQuotes": [
+            { "persona": "Cautious Approver", "quote": "If the draft already cites policy and amount, I can approve in one click instead of digging for the rule.", "sentiment": "positive" },
+            { "persona": "AP Clerk", "quote": "Fewer back-and-forths. The system does the policy lookup so I don't have to paste links into the approval request.", "sentiment": "positive" }
+          ]
+        },
+        { "conceptTitle": "Risk Tier Routing" },
+        { "conceptTitle": "Approval SLA Nudger" },
+        { "conceptTitle": "Delegation Auto-Suggest" },
+        { "conceptTitle": "Context Snapshot Composer" },
+        { "conceptTitle": "Receipt Gap Detector" },
+        { "conceptTitle": "Duplicate Bill Explainer" },
+        { "conceptTitle": "Approver Workload Balancer" },
+        { "conceptTitle": "Escalation Path Finder" },
+        { "conceptTitle": "Approval Confidence Badge" },
+        { "conceptTitle": "CFO Exception Digest" },
+        { "conceptTitle": "One-Click Policy Citation" },
+        { "conceptTitle": "Last-Minute Change Tracker" },
+        { "conceptTitle": "After-Hours Approval Queue" },
+        { "conceptTitle": "Mobile Approval Brief" },
+        { "conceptTitle": "Trust Signal Summary" },
+        { "conceptTitle": "Approval Simulation Sandbox" },
+        { "conceptTitle": "Vendor History Context Pack" },
+        { "conceptTitle": "Spend Threshold Forecaster" },
+        { "conceptTitle": "Team Absence Rerouter" },
+        { "conceptTitle": "Approval Chain Simplifier" },
+        { "conceptTitle": "Urgency Triage Queue" },
+        { "conceptTitle": "Audit-Ready Decision Log" },
+        { "conceptTitle": "Multi-Entity Approval Switch" },
+        { "conceptTitle": "Approval Delay Predictor" },
+        { "conceptTitle": "Sensitive Category Redaction" },
+        { "conceptTitle": "Approval Coaching Tips" },
+        { "conceptTitle": "Smart Reminder Cadence" },
+        { "conceptTitle": "Exception Reason Classifier" },
+        { "conceptTitle": "Procurement Link Resolver" },
+        { "conceptTitle": "Approval Variance Alert" },
+        { "conceptTitle": "Human Override Spotlight" },
+        { "conceptTitle": "Approval Outcome Learning Loop" }
+      ]
+    },
+    {
+      "name": "Just Pay (No-Bill Pay)",
+      "concepts": [
+        {
+          "conceptTitle": "Instant Pay Intent Capture",
+          "syntheticUserQuotes": [
+            { "persona": "Bill Creator", "quote": "I just want to say 'pay this' and have it happen. No bill, no form — capture intent and I'll fix details later.", "sentiment": "positive" },
+            { "persona": "Cautious Approver", "quote": "As long as I still see what we're paying and why before it goes out. Intent is fine; no approval is not.", "sentiment": "neutral" }
+          ]
+        },
+        { "conceptTitle": "One-Tap Billless Pay" },
+        { "conceptTitle": "Supplier Autofill Assistant" },
+        { "conceptTitle": "Payment Purpose Templates" },
+        { "conceptTitle": "Contactless Invoice Drop-in" },
+        { "conceptTitle": "SMS Pay Request Ingest" },
+        { "conceptTitle": "Email-to-Pay Parser" },
+        { "conceptTitle": "Voice Note Payment Draft" },
+        { "conceptTitle": "OCR Lite Quick Capture" },
+        { "conceptTitle": "Favorite Supplier Shortcuts" },
+        { "conceptTitle": "Repeat Payment Memory" },
+        { "conceptTitle": "Receipt Attach Later Flow" },
+        { "conceptTitle": "Smart Category Guess" },
+        { "conceptTitle": "Last Amount Suggestion" },
+        { "conceptTitle": "Split Payment Builder" },
+        { "conceptTitle": "Team Card Reconciliation Hook" },
+        { "conceptTitle": "Geo-tagged Expense to Pay" },
+        { "conceptTitle": "Pay Link Resolver" },
+        { "conceptTitle": "Due Date from Message" },
+        { "conceptTitle": "Confidence Flag Before Send" },
+        { "conceptTitle": "Just Pay Undo Window" },
+        { "conceptTitle": "Approval Bypass Guard" },
+        { "conceptTitle": "Payment Rail Auto Pick" },
+        { "conceptTitle": "Fees Transparency Banner" },
+        { "conceptTitle": "Payment ETA Predictor" },
+        { "conceptTitle": "Supplier Identity Check" },
+        { "conceptTitle": "Duplicate Payment Guard" },
+        { "conceptTitle": "Fraud Signal Precheck" },
+        { "conceptTitle": "Weekend Payment Planner" },
+        { "conceptTitle": "Cross-border Quick Pay" },
+        { "conceptTitle": "Recurring Billless Setup" },
+        { "conceptTitle": "Cashflow Impact Peek" },
+        { "conceptTitle": "Payment Completion Narrative" }
+      ]
+    }
+  ]
+}

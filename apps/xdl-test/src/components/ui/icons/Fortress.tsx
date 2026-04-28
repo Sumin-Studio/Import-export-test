@@ -1,0 +1,33 @@
+interface IconProps {
+  className?: string;
+  fill?: string;
+  size?: number | string;
+  width?: number | string;
+  height?: number | string;
+}
+
+export default function Fortress({
+  className,
+  fill = "fill-current",
+  size = 64,
+  width,
+  height,
+}: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={width || size}
+      height={height || size}
+      fill="none"
+      viewBox="0 0 64 64"
+      className={className}
+      focusable="false"
+      aria-hidden="true"
+    >
+      <path
+        className={fill}
+        d="M56 26H42.8286L45.4142 23.4144C45.7893 23.0393 46 22.5306 46 22.0002V14C46 12.8954 45.1045 12 44 12H34V8H36C37.1045 8 38 7.10449 38 6C38 4.89551 37.1045 4 36 4H32C30.8955 4 30 4.89551 30 6V12H20C18.8955 12 18 12.8954 18 14V22.0002C18 22.5306 18.2107 23.0393 18.5858 23.4144L21.1714 26H8C6.89551 26 6 26.8954 6 28V36.0002C6 36.5306 6.21069 37.0393 6.58582 37.4144L10 40.8286V54C10 55.1046 10.8955 56 12 56H26C27.1045 56 28 55.1046 28 54V46C28 43.7944 29.7939 42 32 42C34.2061 42 36 43.7944 36 46V54C36 55.1046 36.8955 56 38 56H52C53.1045 56 54 55.1046 54 54V40.8286L57.4142 37.4144C57.7893 37.0393 58 36.5306 58 36.0002V28C58 26.8954 57.1045 26 56 26ZM22 16H26V20H30V16H34V20H38V16H42V21.1714L38 25.1714V30H26V25.1714L22 21.1714V16ZM54 35.1714L50 39.1714V52H40V46C40 41.5889 36.4111 38 32 38C27.5889 38 24 41.5889 24 46V52H14V39.1714L10 35.1714V30H14V34H18V30H22V34H42V30H46V34H50V30H54V35.1714Z"
+      ></path>
+    </svg>
+  );
+}

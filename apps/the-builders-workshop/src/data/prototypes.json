@@ -1,0 +1,224 @@
+[
+  {
+    "title": "Get Paid Starter Template",
+    "slug": "get-paid-replica-starter",
+    "folderName": "get-paid-replica-starter",
+    "designer": "Builders Workshop",
+    "tool": "Cursor + Figma Make",
+    "summary": "THE official starter template for all Builders Workshop prototypes. High-fidelity Xero accounting interface with comprehensive shadcn/ui components, Stripe payment integration, invoice management, and working interactions. Fork this to your local machine to start building.",
+    "uniqueFeatures": [
+      "Complete shadcn/ui component library pre-configured",
+      "Xero-accurate styling and brand implementation",
+      "Working Stripe payment connection flow",
+      "Invoice management with filters and search",
+      "Multi-tab navigation patterns",
+      "Consolidated best practices from 6+ prototype iterations",
+      "Production-ready Next.js 14 architecture"
+    ],
+    "sharedFeatures": [
+      "XDL/SDL design tokens",
+      "Responsive layouts",
+      "Dark mode support",
+      "Form validation patterns"
+    ],
+    "changelogPath": "design-prototypes/get-paid-replica-starter/CHANGELOG.md",
+    "hasLocalCode": false,
+    "featured": true,
+    "tags": ["starter", "local", "featured", "official"]
+  },
+  {
+    "title": "XDL Template",
+    "slug": "michael-but-xdl-template",
+    "folderName": "XDL Template",
+    "designer": "Michael But",
+    "tool": "Figma Make",
+    "summary": "Pre-loaded XDL design theme with working global navigation, component library browser, and stats dashboard integration.",
+    "uniqueFeatures": [
+      "Pre-loaded XDL design theme",
+      "Working global navigation with header functionality",
+      "Component library browser",
+      "Stats dashboard integration"
+    ],
+    "sharedFeatures": [
+      "XDL components",
+      "Responsive navigation",
+      "Figma Make export"
+    ],
+    "changelogPath": "",
+    "hasLocalCode": false,
+    "featured": false,
+    "tags": ["base", "legacy"]
+  },
+  {
+    "title": "UI Starter Kit",
+    "slug": "jessica-nicholl-ui-starter-kit",
+    "folderName": "UI Starter Kit",
+    "designer": "Jessica Nicholl",
+    "tool": "Figma Make",
+    "summary": "Switch between low to high fidelity modes with advanced dashboard controls, admin controls interface, and design system components.",
+    "uniqueFeatures": [
+      "Switch between low to high fidelity modes",
+      "Advanced dashboard controls",
+      "Admin controls interface",
+      "Design system components",
+      "v0 integration with Figma Make export"
+    ],
+    "sharedFeatures": [
+      "Dashboard components",
+      "XDL components",
+      "Responsive design"
+    ],
+    "changelogPath": "",
+    "hasLocalCode": false,
+    "featured": false,
+    "tags": ["base", "legacy"]
+  },
+  {
+    "title": "Dashboard Template",
+    "slug": "katrina-li-dashboard-template",
+    "folderName": "Dashboard Template",
+    "designer": "Katrina Li",
+    "tool": "Figma Make",
+    "summary": "Complex dashboard renderings with high styling fidelity, refined visual appearance, and accurate XDL implementation.",
+    "uniqueFeatures": [
+      "Complex dashboard renderings",
+      "High styling fidelity",
+      "Refined visual appearance",
+      "Accurate XDL implementation",
+      "Focus on visual accuracy over functionality"
+    ],
+    "sharedFeatures": [
+      "Dashboard components",
+      "XDL components",
+      "Responsive design"
+    ],
+    "changelogPath": "",
+    "hasLocalCode": false,
+    "featured": false,
+    "tags": ["base", "legacy"]
+  },
+  {
+    "title": "SDL Global Header",
+    "slug": "angus-tait-sdl-header",
+    "folderName": "SDL Header Template",
+    "designer": "Angus Tait",
+    "tool": "Figma Make",
+    "summary": "Responsive global header with working dropdown menus, high design accuracy, and SDL (Xero Design Language) focused.",
+    "uniqueFeatures": [
+      "Responsive global header",
+      "Working dropdown menus",
+      "High design accuracy",
+      "SDL (Xero Design Language) focused",
+      "Production-ready navigation patterns"
+    ],
+    "sharedFeatures": [
+      "Navigation components",
+      "XDL components",
+      "Responsive design"
+    ],
+    "changelogPath": "",
+    "hasLocalCode": false,
+    "featured": false,
+    "tags": ["base", "legacy"]
+  },
+  {
+    "title": "Starter Kit",
+    "slug": "ben-white-starter-kit",
+    "folderName": "Starter Kit",
+    "designer": "Ben White",
+    "tool": "Figma Make",
+    "summary": "Multiple template variations (Sample, Live Demo, Base) with clean starter foundation and Xero-style interface templates.",
+    "uniqueFeatures": [
+      "Multiple template variations (Sample, Live Demo, Base)",
+      "Clean starter foundation",
+      "Xero-style interface templates"
+    ],
+    "sharedFeatures": [
+      "XDL components",
+      "Responsive navigation",
+      "Figma Make export"
+    ],
+    "changelogPath": "",
+    "hasLocalCode": false,
+    "featured": false,
+    "tags": ["base", "legacy"]
+  },
+  {
+    "title": "Accounting Dashboard",
+    "slug": "adam-huskisson-accounting-dashboard",
+    "folderName": "Accounting Dashboard",
+    "designer": "Adam Huskisson",
+    "tool": "Figma Make",
+    "summary": "Stripe payment integration with full invoice management system, online payment processing, chart visualizations, and Next.js App Router architecture.",
+    "uniqueFeatures": [
+      "Stripe payment integration",
+      "Full invoice management system",
+      "Online payment processing",
+      "Chart visualizations",
+      "Next.js App Router architecture",
+      "Theme provider with dark mode",
+      "Search panel functionality",
+      "Settings management interface"
+    ],
+    "sharedFeatures": [
+      "Dashboard components",
+      "XDL components",
+      "Responsive design"
+    ],
+    "changelogPath": "",
+    "hasLocalCode": false,
+    "featured": false,
+    "tags": ["base", "legacy"]
+  },
+  {
+    "title": "Builder Tool",
+    "slug": "james-buchanan-builder-tool-v1",
+    "folderName": "Prototype Template - James Buchanan",
+    "designer": "James Buchanan",
+    "tool": "Figma Make",
+    "summary": "Builder tool with pre-built components you can select and drag around. Reduces reliance on prompting and emphasizes Xero App Store workflows.",
+    "uniqueFeatures": [
+      "Drag and drop component builder",
+      "Component canvas with visual editing",
+      "Pre-built component library",
+      "Contextual component selector",
+      "Strong App Store workflow emphasis",
+      "Reduces need for prompting"
+    ],
+    "sharedFeatures": [
+      "XDL components",
+      "Responsive navigation",
+      "Figma Make export"
+    ],
+    "changelogPath": "design-prototypes/Prototype Template - James Buchanan/CHANGELOG.md",
+    "hasLocalCode": true,
+    "featured": false,
+    "tags": ["base", "local", "drag-and-drop"]
+  },
+  {
+    "title": "Replit Dashboard",
+    "slug": "angus-replit-v1",
+    "folderName": "angus-replit-v1",
+    "designer": "Angus Tait",
+    "tool": "Replit",
+    "summary": "Legacy Xero dashboard and nav. Admin controls, CMS, switch between low to high fidelity.",
+    "uniqueFeatures": [
+      "Admin settings panel",
+      "CMS-like system (edit org/user names across multiple places)",
+      "Switch between low to high fidelity modes",
+      "Legacy Xero dashboard styling",
+      "Full-stack functionality (client/server architecture)",
+      "Database integration with Drizzle ORM"
+    ],
+    "sharedFeatures": [
+      "Dashboard components",
+      "Navigation components",
+      "Responsive design"
+    ],
+    "changelogPath": "design-prototypes/angus-replit-v1/CHANGELOG.md",
+    "hasLocalCode": true,
+    "featured": false,
+    "tags": ["base", "local", "full-stack"]
+  }
+]
+

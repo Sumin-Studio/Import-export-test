@@ -1,0 +1,15 @@
+Snapshot date: 2025-03-26
+
+These files are full copies of WorkloadInsights chart, widget, and overflow menu
+from before removing the "Returns by month (stacked)" feature (columns split by
+return type per month, grey EOT backdrop or optional spline, dashboard widget
+returns-by-month-stacked-prior-line).
+
+Restore: copy snapshot files back over the live paths, re-add the dashboard
+widget block and widget list / order entries for id returns-by-month-stacked-prior-line,
+and restore references in taxBetaWidgetIds, dashboardTaxOnlyWidgetOrder,
+dashboardDefaultHiddenWidgets, etc.
+
+These snapshots live under src/.../charts/archived/ and are excluded from
+tsc via tsconfig.json ("**/charts/archived/**") so they stay as reference-only
+copies without fixing import paths.

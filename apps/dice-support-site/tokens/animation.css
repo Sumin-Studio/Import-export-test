@@ -1,0 +1,17 @@
+/* Animation / Motion
+ * Converted from xui-tokens source JSON — do not edit directly.
+ * Source: xui-tokens-main/tokens
+ */
+
+:root {
+  --motion-speed-fast: 0.1s;
+  --motion-speed-medium: 0.3s;
+  --motion-speed-slow: 0.5s;
+  --motion-speed-xslow: 1s;
+  --motion-curve-standard: ease;
+  --motion-curve-enter: ease-in;
+  --motion-curve-exit: ease-out;
+  --motion-delay-short: 0.1s;
+  --motion-delay-medium: 0.3s;
+  --motion-delay-long: 0.5s;
+}

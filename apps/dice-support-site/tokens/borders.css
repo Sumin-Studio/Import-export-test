@@ -1,0 +1,22 @@
+/* Borders & Shadows
+ * Converted from xui-tokens source JSON — do not edit directly.
+ * Source: xui-tokens-main/tokens
+ */
+
+:root {
+  --shadow-depth-lift: 0 0 0 1px rgba(0, 10, 30, 0.2), 0 3px 6px 0 rgba(0, 10, 30, 0.2);
+  --shadow-depth-pop: 0 0 0 1px rgba(0, 10, 30, 0.2), 0 8px 16px 0 rgba(0, 10, 30, 0.2);
+  --shadow-depth-overlap-top: 0 1px 0 0 rgba(0, 10, 30, 0.2), 0 3px 0 0 rgba(0, 10, 30, 0.05);
+  --shadow-depth-overlap-right: -1px 0 0 0 rgba(0, 10, 30, 0.2), -3px 0 0 0 rgba(0, 10, 30, 0.05);
+  --shadow-depth-overlap-bottom: 0 -1px 0 0 rgba(0, 10, 30, 0.2), 0 -3px 0 0 rgba(0, 10, 30, 0.05);
+  --shadow-depth-overlap-left: 1px 0 0 0 rgba(0, 10, 30, 0.2), 3px 0 0 0 rgba(0, 10, 30, 0.05);
+  --shadow-border-all: 0 0 0 1px rgba(0, 10, 30, 0.2);
+  --shadow-border-top: 0 -1px 0 0 rgba(0, 10, 30, 0.2);
+  --shadow-border-right: 1px 0 0 0 rgba(0, 10, 30, 0.2);
+  --shadow-border-bottom: 0 1px 0 0 rgba(0, 10, 30, 0.2);
+  --shadow-border-left: -1px 0 0 0 rgba(0, 10, 30, 0.2);
+  --shadow-border-standard: 1px solid #333b4b;
+  --shadow-border-control: 1px solid #59606d;
+  --shadow-border-increased-contrast: 1px solid #80848e;
+  --shadow-border-muted: 1px solid #1a2234;
+}

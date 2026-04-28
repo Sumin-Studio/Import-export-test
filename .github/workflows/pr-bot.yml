@@ -1,0 +1,96 @@
+name: Bot PR Handler
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  statuses: write
+
+jobs:
+  bot-pr:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect affected apps
+        id: apps
+        run: |
+          set -euo pipefail
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          APP_FOLDERS=$(echo "$CHANGED_FILES" | grep -oP '^apps/\K[^/]+' | sort -u || true)
+          if [ -n "$APP_FOLDERS" ]; then
+            # Write as JSON array for the JS step
+            echo "list<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$APP_FOLDERS" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+          else
+            echo "list=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            const actor = context.actor;
+            const sha = context.payload.pull_request.head.sha.substring(0, 7);
+            const appsRaw = `${{ steps.apps.outputs.list }}`.trim();
+            const apps = appsRaw ? appsRaw.split('\n').filter(Boolean) : [];
+            const appsSection = apps.length > 0
+              ? '\n**Affected apps:**\n' + apps.map(a => `- \`${a}\``).join('\n') + '\n'
+              : '\n_No app folders affected._\n';
+            const marker = '<!-- bot-pr-handler -->';
+            const body = [
+              marker,
+              `🤖 **Automated dependency update** by \`${actor}\``,
+              '',
+              'Preview deploy is skipped for bot PRs.',
+              'This is an automated fix, please review the changes and merge if ok.',
+              appsSection,
+              `_Last updated for commit \`${sha}\`_`,
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: Create passing status check
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state: 'success',
+              description: 'Bot PR: skipped.',
+              context: 'preview-deploy',
+            });

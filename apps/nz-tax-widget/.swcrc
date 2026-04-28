@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "jsc": {
+    "target": "es2022",
+    "parser": {
+      "syntax": "typescript",
+      "tsx": true,
+      "decorators": false,
+      "dynamicImport": true
+    },
+    "transform": {
+      "react": {
+        "pragma": "React.createElement",
+        "pragmaFrag": "React.Fragment",
+        "throwIfNamespace": true,
+        "development": false,
+        "useBuiltins": false
+      }
+    },
+    "loose": false,
+    "externalHelpers": false,
+    "keepClassNames": false,
+    "preserveAllComments": false
+  },
+  "module": {
+    "type": "es6",
+    "strict": false,
+    "strictMode": true,
+    "lazy": false,
+    "noInterop": false
+  },
+  "minify": true,
+  "sourceMaps": true,
+  "env": {
+    "targets": {
+      "chrome": "91",
+      "edge": "91",
+      "firefox": "90",
+      "safari": "15"
+    },
+    "mode": "usage",
+    "coreJs": "3.32"
+  }
+}

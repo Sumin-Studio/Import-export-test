@@ -1,0 +1,143 @@
+# The Builders Workshop - Cursor Rules
+
+## Package Manager: Bun
+
+**Always use Bun** for package management and script execution:
+- Use `bun install` instead of `npm install` or `yarn install`
+- Use `bun run <script>` instead of `npm run <script>` or `yarn <script>`
+- Use `bun add <package>` and `bun add -d <package>` for dependencies
+- The project specifies `packageManager: "bun@1.2.8"` and requires `bun >= 1.2.8`
+
+## Project Structure
+
+- **Framework**: Next.js 15 with App Router (TypeScript)
+- **Styling**: Tailwind CSS 4 with PostCSS
+- **Testing**: Vitest with @testing-library/react
+- **Authentication**: Clerk (restricted to @xero.com emails)
+- **Path Aliases**: Use `@/` prefix for imports from `src/` directory
+
+## Code Style & Conventions
+
+### TypeScript
+- Use strict mode (enabled in `tsconfig.json`)
+- Prefer explicit types over `any`
+- Use type inference where types are obvious
+- Follow Next.js 15 App Router patterns
+
+### React Components
+- Use functional components with TypeScript
+- Prefer server components by default; use `"use client"` only when needed
+- Component files should be named in kebab-case (e.g., `builder-header.tsx`)
+- Export components as named exports, not default exports
+- Place components in appropriate directories:
+  - `src/components/` for reusable UI components
+  - `src/app/_components/` for route-specific components
+
+### Styling
+- Use Tailwind CSS utility classes
+- Follow existing design patterns and spacing conventions
+- Use design tokens from `tailwind.config.ts`
+- Prefer composition over custom CSS when possible
+
+### File Organization
+- Keep components focused and single-purpose
+- Group related components in subdirectories (e.g., `components/builders/`, `components/home/`)
+- Place data files in `src/data/`
+- Place utility functions in `src/lib/`
+
+## Testing
+
+- Write tests using Vitest and @testing-library/react
+- Place test files in `src/__tests__/` directory
+- Use descriptive test names
+- Test user interactions, not implementation details
+- Run tests with `bun run test`
+
+## Git & Commits
+
+- Write clear, descriptive commit messages
+- Use conventional commit prefixes when appropriate (feat:, fix:, refactor:, etc.)
+- Keep commits focused on a single change when possible
+
+## Key Files to Reference
+
+**IMPORTANT**: Before making significant decisions or architectural choices, read:
+- `philosophy_and_taste.md` - Core philosophy and principles that guide how we build
+- `end_state.md` - Long-term vision and complete feature set (reference, not immediate goal)
+- `team_members.md` - Team member information, access permissions, responsibilities, and change history. Check this when questions arise about who has access to systems, who to contact for specific tasks, or recent changes made by team members.
+
+**Other key files:**
+- `package.json` - Dependencies and scripts
+- `tsconfig.json` - TypeScript configuration
+- `tailwind.config.ts` - Tailwind CSS configuration
+- `src/lib/builders.ts` - Builder data utilities
+- `src/data/builders.json` - Builder data structure
+- `README.md` - Project overview and setup instructions
+
+## When Adding Features
+
+1. Check existing patterns in similar components
+2. Maintain consistency with current code style
+3. Add tests for new functionality
+4. Update relevant documentation if needed
+5. Use Bun for all package management operations
+
+## Next.js Routing Gotchas
+
+### Internal Links with `target="_blank"`
+
+**Never use `<a target="_blank">` for internal Next.js routes.** The link opens a new tab but the page may not load due to Next.js service worker/prefetching interference.
+
+**Solution**: Use `window.open()` instead:
+
+```tsx
+// ❌ BAD - May not work for internal routes
+<a href="/internal-route" target="_blank">Open</a>
+
+// ✅ GOOD - Forces clean browser navigation
+<button onClick={() => window.open("/internal-route", "_blank", "noopener,noreferrer")}>
+  Open
+</button>
+```
+
+This applies to:
+- Internal routes pointing to route handlers (`route.ts`)
+- Any internal Next.js route opened in a new tab
+
+Standard `<a target="_blank">` is fine for **external URLs** (different domains).
+
+## Prototype Builds
+
+The `design-prototypes/` directory contains standalone Vite/React prototypes. Their pre-built outputs (`build/` folders) are committed to git for fast CI builds.
+
+### When Modifying Prototypes
+
+**After changing any prototype source files**, you MUST rebuild and commit the build output:
+
+```bash
+# 1. Rebuild the changed prototype(s)
+bun run build:prototypes
+
+# 2. Commit both source changes AND build output
+git add design-prototypes/*/build/
+git commit -m "feat: update prototype XYZ"
+```
+
+### Build Behavior
+
+- **Normal builds**: Skip prototypes that already have `build/index.html` (uses cached/committed builds)
+  - Prototype build phase: <1 second (5 cached + 4 skipped)
+  - Only 5 prototypes are actively built (those displayed in UI)
+  - 4 prototypes are skipped (hidden or non-functional)
+- **Force rebuild**: Set `FORCE_PROTOTYPE_BUILD=true` to rebuild all prototypes
+- **Parallel execution**: All prototype builds run simultaneously for speed
+- **Optimization**: Cached builds exit immediately without dependency checks
+
+### Why This Matters
+
+If you change prototype source files but forget to rebuild:
+- The deployed version will show the OLD build (stale)
+- CI builds won't detect the change (it just uses the committed build output)
+
+Always run `bun run build:prototypes` after modifying anything in `design-prototypes/*/src/`.
+

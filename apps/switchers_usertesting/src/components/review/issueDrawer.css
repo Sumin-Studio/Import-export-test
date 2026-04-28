@@ -1,0 +1,117 @@
+.x-issue-field {
+  margin-bottom: 16px;
+}
+
+.x-issue-field__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--x-color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.x-issue-field__hint {
+  font-size: var(--x-text-xs);
+  color: var(--x-color-text-tertiary);
+  margin-top: 4px;
+}
+
+.x-issue-radio-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.x-issue-radio-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--x-color-border-subtle);
+  border-radius: var(--x-radius-sm);
+  cursor: pointer;
+  background: var(--x-color-surface);
+}
+
+.x-issue-radio-row:has(input:focus-visible) {
+  box-shadow: var(--x-focus-ring);
+}
+
+.x-issue-radio-row[data-selected='true'] {
+  border-color: var(--x-color-action);
+  background: var(--x-color-surface-info);
+}
+
+.x-issue-radio-row input {
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.x-issue-textarea,
+.x-issue-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--x-color-border);
+  border-radius: var(--x-radius-sm);
+  font: inherit;
+  font-size: var(--x-text-sm);
+}
+
+.x-issue-textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.x-issue-applied {
+  padding: 10px 12px;
+  border-radius: var(--x-radius-sm);
+  background: var(--x-color-surface-success);
+  border: 1px solid #b8e8cf;
+  font-size: var(--x-text-sm);
+  margin-bottom: 16px;
+}
+
+.x-issue-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--x-color-text-secondary);
+  margin: 24px 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.x-issue-section-title--flush {
+  margin-top: 8px;
+}
+
+.x-issue-alt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.x-issue-alt-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.x-issue-alt-desc {
+  margin: 0;
+  font-size: var(--x-text-xs);
+  color: var(--x-color-text-tertiary);
+}
+
+.x-issue-alt-panel {
+  margin-top: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--x-color-border-subtle);
+  border-radius: var(--x-radius-sm);
+  background: var(--x-color-surface-muted);
+  font-size: var(--x-text-sm);
+  color: var(--x-color-text-secondary);
+  line-height: 1.45;
+}

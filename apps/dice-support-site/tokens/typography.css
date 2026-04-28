@@ -1,0 +1,38 @@
+/* Typography
+ * Converted from xui-tokens source JSON — do not edit directly.
+ * Source: xui-tokens-main/tokens
+ */
+
+:root {
+  --font-size-base: 16px;
+  --font-size-4xlarge: 72px;
+  --font-size-3xlarge: 48px;
+  --font-size-2xlarge: 30px;
+  --font-size-xlarge: 21px;
+  --font-size-large: 17px;
+  --font-size-medium: 15px;
+  --font-size-small: 13px;
+  --font-size-xsmall: 11px;
+  --font-size-2xsmall: 9px;
+  --font-size-icon-large: 18px;
+  --font-size-icon-xlarge: 36px;
+  --font-line-height-4xlarge: 96px;
+  --font-line-height-3xlarge: 72px;
+  --font-line-height-2xlarge: 44px;
+  --font-line-height-xlarge: 32px;
+  --font-line-height-large: 28px;
+  --font-line-height-standard: 24px;
+  --font-line-height-small: 20px;
+  --font-line-height-xsmall: 16px;
+  --font-line-height-2xsmall: 12px;
+  --font-line-height-reset: 1;
+  --font-line-height-tight: 1.15;
+  --font-line-height: 1.5;
+  --font-line-height-compact: 1.3077;
+  --font-line-height-button: 16px;
+  --font-weight-emphasis: 700;
+  --font-weight-deemphasis: 400;
+  --font-family: 'Helvetica Neue', Arial, sans-serif;
+  --letter-spacing-tight: -0.005em;
+  --letter-spacing-loose: 0.01em;
+}

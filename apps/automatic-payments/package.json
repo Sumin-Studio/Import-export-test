@@ -1,0 +1,29 @@
+{
+  "name": "automatic-payments",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@xero/xui": "file:./vendor/xero-xui-23.1.0.tgz",
+    "@xero/xui-icon": "file:./vendor/xero-xui-icon-6.9.0.tgz",
+    "@xero/xui-tokens": "file:./vendor/xero-xui-tokens-10.1.0.tgz",
+    "next": "14.2.5",
+    "react": "18.3.0",
+    "react-dom": "18.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.9",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.5",
+    "sass": "1.99.0",
+    "typescript": "5.4.5"
+  }
+}

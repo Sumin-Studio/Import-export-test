@@ -1,0 +1,8 @@
+{
+  "name": "switch-rules-prototype",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "bun run server.ts"
+  }
+}

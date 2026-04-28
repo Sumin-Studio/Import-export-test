@@ -1,0 +1,60 @@
+/* Color — Semantic
+ * Converted from xui-tokens source JSON — do not edit directly.
+ * Source: xui-tokens-main/tokens
+ */
+
+:root {
+  --color-text-primary: #000a1e;
+  --color-text-secondary: #a6a9b0;
+  --color-text-muted: rgba(0, 10, 30, 0.75);
+  --color-text-negative: #dc3246;
+  --color-text-positive: #00823c;
+  --color-text-placeholder: rgba(0, 10, 30, 0.65);
+  --color-text-validation: rgba(0, 10, 30, 0.75);
+  --color-text-control-disabled: rgba(0, 10, 30, 0.75);
+  --color-text-icon: #a6a9b0;
+  --color-text-icon-hover: #000a1e;
+  --color-text-button-icon: #000a1e;
+  --color-twitter: #1dadea;
+  --color-facebook: #3c5a96;
+  --color-linkedin: #1178b3;
+  --color-file-spreadsheet: #0f9d58;
+  --color-file-pdf: #db4437;
+  --color-divider: #1a2234;
+  --color-bg: #0d1629;
+  --color-bg-control: #fff;
+  --color-bg-control-disabled: rgba(0, 10, 30, 0.1);
+  --color-bg-surface: #fff;
+  --color-bg-tint: #333b4b;
+  --color-bg-negative: #dc3246;
+  --color-bg-negative-inverted: #ee98a2;
+  --color-active: #1a2234;
+  --color-disabled: #59606d;
+  --color-primary: #0078c8;
+  --color-positive: #00823c;
+  --color-negative: #dc3246;
+  --color-fill-primary-hover: #001026;
+  --color-fill-primary-active: #00152f;
+  --color-fill-positive-hover: #001020;
+  --color-fill-positive-active: #001621;
+  --color-fill-negative-hover: #0b0c20;
+  --color-fill-negative-active: #160e22;
+  --color-fill-icon: rgba(0, 10, 30, 0.65);
+  --color-fill-button-focus: rgba(0, 10, 30, 0.05);
+  --color-fill-button-borderless-active: rgba(0, 10, 30, 0.1);
+  --color-border-control: #59606d;
+  --color-border-control-hover: #59606d;
+  --color-border-control-disabled: rgba(0, 10, 30, 0.5);
+  --color-focus: #0d1629;
+  --color-focus-inner: #fff;
+  --color-focus-outer: rgba(0, 10, 30, 0.5);
+  --control-border-color: #59606d;
+  --control-border-increased-contrast: #80848e;
+  --action-primary-color: #0078c8;
+  --action-negative-color: #dc3246;
+  --action-positive-color: #00823c;
+  --standard-shadow-color: rgba(0, 10, 30, 0.2);
+  --standard-border-color: #333b4b;
+  --overlap-shadow-color: rgba(0, 10, 30, 0.05);
+  --muted-border-color: #1a2234;
+}

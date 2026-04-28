@@ -1,0 +1,17 @@
+/**
+ * XUI Tokens — Entry Point
+ *
+ * Converted from xui-tokens-main/tokens source JSON.
+ * Import this file to get all design tokens.
+ *
+ * Previous tokens are preserved in /tokens-v1/
+ */
+
+@import 'colors-primitives.css';
+@import 'colors.css';
+@import 'typography.css';
+@import 'animation.css';
+@import 'layout.css';
+@import 'borders.css';
+@import 'breakpoints.css';
+@import 'custom.css';

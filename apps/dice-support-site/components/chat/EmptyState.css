@@ -1,0 +1,67 @@
+/**
+ * Empty State Component
+ *
+ * Welcome/greeting state for new or resumed conversations.
+ * Includes greeting, heading, and optional suggestions.
+ */
+
+/* ===== Empty State Container ===== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-standard);
+  padding: var(--s-large) 0;
+}
+
+/* ===== Greeting Text ===== */
+.empty-state__greeting {
+  font-size: var(--font-size-xlarge);
+  font-weight: var(--font-weight-deemphasis);
+  color: var(--color-text-secondary);
+  line-height: var(--font-line-height-tight);
+}
+
+/* ===== Main Heading ===== */
+.empty-state__heading {
+  font-size: var(--font-size-xlarge);
+  font-weight: var(--font-weight-deemphasis);
+  color: var(--color-text-primary);
+  line-height: var(--font-line-height-tight);
+}
+
+/* ===== Combined Greeting Block ===== */
+.empty-state__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2xsmall);
+}
+
+/* ===== Suggestions ===== */
+.empty-state__suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-xsmall);
+  width: 100%;
+  margin-top: var(--s-small);
+}
+
+/* Suggestion pills - outlined style */
+.empty-state__suggestion {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: var(--s-xsmall) var(--s-standard);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-max);
+  background: var(--color-bg-surface);
+  color: var(--color-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-medium);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.empty-state__suggestion:hover {
+  background: var(--color-blue-light);
+}

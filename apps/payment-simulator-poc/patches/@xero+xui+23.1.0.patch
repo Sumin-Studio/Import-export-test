@@ -1,0 +1,26 @@
+diff --git a/node_modules/@xero/xui/react-es6/components/helpers/versionCheck.js b/node_modules/@xero/xui/react-es6/components/helpers/versionCheck.js
+index 0000000..1111111 100644
+--- a/node_modules/@xero/xui/react-es6/components/helpers/versionCheck.js
++++ b/node_modules/@xero/xui/react-es6/components/helpers/versionCheck.js
+@@ -13,7 +13,7 @@ export function checkReactVersion(actualVersion, requiredVersion, logError) {
+     var actualReactMajorVersion = parseInt(actualReactVersionSegments[0], 10);
+     var actualReactMinorVersion = parseInt(actualReactVersionSegments[1], 10);
+     var actualReactPatchVersion = parseInt(actualReactVersionSegments[2], 10);
+-    if (actualReactMajorVersion !== supportedReactMajorVersion || actualReactMinorVersion < minimumSupportedReactMinorVersion || actualReactMinorVersion === minimumSupportedReactMinorVersion && actualReactPatchVersion < minimumSupportedReactPatchVersion) {
++    if (actualReactMajorVersion < supportedReactMajorVersion || actualReactMinorVersion < minimumSupportedReactMinorVersion || actualReactMinorVersion === minimumSupportedReactMinorVersion && actualReactPatchVersion < minimumSupportedReactPatchVersion) {
+       logError("XUI error: The version of React used (".concat(actualVersion, ") is incompatible with this version of XUI which requires ").concat(requiredVersion));
+     }
+   }
+diff --git a/node_modules/@xero/xui/react/components/helpers/versionCheck.js b/node_modules/@xero/xui/react/components/helpers/versionCheck.js
+index 0000000..2222222 100644
+--- a/node_modules/@xero/xui/react/components/helpers/versionCheck.js
++++ b/node_modules/@xero/xui/react/components/helpers/versionCheck.js
+@@ -19,7 +19,7 @@ function checkReactVersion(actualVersion, requiredVersion, logError) {
+     const actualReactMajorVersion = parseInt(actualReactVersionSegments[0], 10);
+     const actualReactMinorVersion = parseInt(actualReactVersionSegments[1], 10);
+     const actualReactPatchVersion = parseInt(actualReactVersionSegments[2], 10);
+-    if (actualReactMajorVersion !== supportedReactMajorVersion || actualReactMinorVersion < minimumSupportedReactMinorVersion || actualReactMinorVersion === minimumSupportedReactMinorVersion && actualReactPatchVersion < minimumSupportedReactPatchVersion) {
++    if (actualReactMajorVersion < supportedReactMajorVersion || actualReactMinorVersion < minimumSupportedReactMinorVersion || actualReactMinorVersion === minimumSupportedReactMinorVersion && actualReactPatchVersion < minimumSupportedReactPatchVersion) {
+       logError(`XUI error: The version of React used (${actualVersion}) is incompatible with this version of XUI which requires ${requiredVersion}`);
+     }
+   }

@@ -1,0 +1,28 @@
+{
+  "name": "design-internal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "react-router dev",
+    "prebuild": "cp ../../apps.json public/apps.json 2>/dev/null || cp apps.json public/apps.json 2>/dev/null || true",
+    "build": "react-router build",
+    "start": "react-router-serve ./build/server/index.js"
+  },
+  "dependencies": {
+    "@react-router/node": "^7.2.0",
+    "isbot": "^5.1.22",
+    "lottie-react": "^2.4.1",
+    "lucide-react": "^0.474.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.2.0"
+  },
+  "devDependencies": {
+    "@react-router/dev": "^7.2.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vercel/node": "^5.6.6",
+    "typescript": "^5.7.0",
+    "vite": "^6.4.2"
+  }
+}

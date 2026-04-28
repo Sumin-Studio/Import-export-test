@@ -1,0 +1,369 @@
+name: Preview Deploy
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - 'apps.json'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  detect-changes:
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.detect.outputs.apps }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed apps
+        id: detect
+        run: |
+          set -euo pipefail
+
+          CHANGED_APPS=$(git diff --name-only origin/main...HEAD -- 'apps/' | \
+            grep -oP '^apps/\K[^/]+' | sort -u || true)
+
+          DEPLOY_APPS="[]"
+
+          for app in $CHANGED_APPS; do
+            # Must exist in apps.json
+            if ! jq -e --arg a "$app" '.[$a]' apps.json > /dev/null 2>&1; then
+              continue
+            fi
+
+            # Skip deleted apps
+            if jq -e --arg a "$app" '.[$a].tags // [] | index("deleted")' apps.json > /dev/null 2>&1; then
+              continue
+            fi
+
+            # Must have folder
+            if [ ! -d "apps/$app" ]; then
+              continue
+            fi
+
+            DEPLOY_APPS=$(echo "$DEPLOY_APPS" | jq --arg a "$app" '. + [$a]')
+          done
+
+          echo "apps=$(echo "$DEPLOY_APPS" | jq -c '.')" >> "$GITHUB_OUTPUT"
+          echo "Apps to preview: $DEPLOY_APPS"
+
+  preview-deploy:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.apps != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: ${{ fromJson(needs.detect-changes.outputs.apps) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check if app needs project creation
+        id: check-project
+        run: |
+          VERCEL_PROJECT_ID=$(jq -r --arg a "${{ matrix.app }}" '.[$a].vercelProjectId // "null"' apps.json)
+          echo "project_id=$VERCEL_PROJECT_ID" >> "$GITHUB_OUTPUT"
+
+          if [ "$VERCEL_PROJECT_ID" = "null" ]; then
+            echo "is_new=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_new=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Vercel project
+        id: create-project
+        if: steps.check-project.outputs.is_new == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+        run: |
+          set -euo pipefail
+
+          PROJECT_NAME="${{ matrix.app }}-xro"
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "https://api.vercel.com/v11/projects?teamId=$VERCEL_TEAM_ID" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"name\": \"$PROJECT_NAME\",
+              \"framework\": null
+            }")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" -lt 400 ]; then
+            PROJECT_ID=$(echo "$BODY" | jq -r '.id')
+            echo "project_id=$PROJECT_ID" >> "$GITHUB_OUTPUT"
+            echo "project_name=$PROJECT_NAME" >> "$GITHUB_OUTPUT"
+            echo "Created Vercel project: $PROJECT_NAME ($PROJECT_ID)"
+          else
+            # Project may already exist (e.g., created by a previous preview run)
+            echo "Project creation returned HTTP $HTTP_CODE, checking if project already exists..."
+
+            FETCH_RESPONSE=$(curl -s -w "\n%{http_code}" \
+              "https://api.vercel.com/v9/projects/$PROJECT_NAME?teamId=$VERCEL_TEAM_ID" \
+              -H "Authorization: Bearer $VERCEL_TOKEN")
+
+            FETCH_HTTP_CODE=$(echo "$FETCH_RESPONSE" | tail -1)
+            FETCH_BODY=$(echo "$FETCH_RESPONSE" | sed '$d')
+
+            if [ "$FETCH_HTTP_CODE" -lt 400 ]; then
+              PROJECT_ID=$(echo "$FETCH_BODY" | jq -r '.id')
+              echo "project_id=$PROJECT_ID" >> "$GITHUB_OUTPUT"
+              echo "project_name=$PROJECT_NAME" >> "$GITHUB_OUTPUT"
+              echo "Found existing Vercel project: $PROJECT_NAME ($PROJECT_ID)"
+            else
+              echo "::error::Failed to create or find Vercel project: $BODY"
+              exit 1
+            fi
+          fi
+
+      - name: Set project ID
+        id: project
+        run: |
+          if [ "${{ steps.check-project.outputs.is_new }}" = "true" ]; then
+            echo "id=${{ steps.create-project.outputs.project_id }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "id=${{ steps.check-project.outputs.project_id }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Ensure Access Group membership
+        id: access-group
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_ACCESS_GROUP_ID: ${{ secrets.VERCEL_ACCESS_GROUP_ID }}
+          VERCEL_PROJECT_ID: ${{ steps.project.outputs.id }}
+        run: |
+          set -uo pipefail
+
+          # --- Access Group Configuration ---
+          ACCESS_GROUP_ROLE="PROJECT_VIEWER"   # Role assigned to projects in the Access Group
+
+          echo "Checking Access Group membership for ${{ matrix.app }}..."
+
+          # Check if project is already in the Access Group
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            "https://api.vercel.com/v1/access-groups/$VERCEL_ACCESS_GROUP_ID/projects?teamId=$VERCEL_TEAM_ID&projectId=$VERCEL_PROJECT_ID" \
+            -H "Authorization: Bearer $VERCEL_TOKEN")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          # If already in group, nothing to do
+          if [ "$HTTP_CODE" -lt 400 ]; then
+            MEMBER_COUNT=$(echo "$BODY" | jq -r '.members | length // 0' 2>/dev/null || echo "0")
+            if [ "$MEMBER_COUNT" -gt 0 ]; then
+              echo "✅ ${{ matrix.app }} is already in the Access Group"
+              echo "failed=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+
+          # Not in group — add it
+          echo "Adding ${{ matrix.app }} to Access Group with role $ACCESS_GROUP_ROLE..."
+
+          ADD_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "https://api.vercel.com/v1/access-groups/$VERCEL_ACCESS_GROUP_ID/projects?teamId=$VERCEL_TEAM_ID" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"projectId\": \"$VERCEL_PROJECT_ID\", \"role\": \"$ACCESS_GROUP_ROLE\"}")
+
+          ADD_HTTP_CODE=$(echo "$ADD_RESPONSE" | tail -1)
+          ADD_BODY=$(echo "$ADD_RESPONSE" | sed '$d')
+
+          # Success: added to group
+          if [ "$ADD_HTTP_CODE" -lt 400 ]; then
+            echo "✅ ${{ matrix.app }} added to Access Group successfully"
+            echo "failed=false" >> "$GITHUB_OUTPUT"
+          # Already in group (409 conflict or 400 with "duplicated" message)
+          elif [ "$ADD_HTTP_CODE" -eq 409 ] || echo "$ADD_BODY" | grep -qi "duplicated"; then
+            echo "✅ ${{ matrix.app }} is already in the Access Group"
+            echo "failed=false" >> "$GITHUB_OUTPUT"
+          else
+            ERROR_MSG=$(echo "$ADD_BODY" | jq -r '.error.message // .message // "Unknown error"' 2>/dev/null || echo "HTTP $ADD_HTTP_CODE")
+            echo "::warning::Failed to add ${{ matrix.app }} to Access Group: $ERROR_MSG"
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Link Vercel project
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_PROJECT_ID: ${{ steps.project.outputs.id }}
+        run: |
+          vercel link --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --cwd "apps/${{ matrix.app }}"
+
+      - name: Clear Root Directory setting
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_PROJECT_ID: ${{ steps.project.outputs.id }}
+        run: |
+          # Clear rootDirectory to avoid path doubling when deploying from app folder
+          curl -s -X PATCH \
+            "https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID?teamId=$VERCEL_TEAM_ID" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"rootDirectory": null}'
+
+      - name: Copy apps.json for repository-app tagged apps
+        run: |
+          if jq -e --arg a "${{ matrix.app }}" '.[$a].tags // [] | index("repository-app")' apps.json > /dev/null 2>&1; then
+            cp apps.json "apps/${{ matrix.app }}/apps.json"
+            echo "Copied apps.json into ${{ matrix.app }} for build"
+          else
+            echo "Skipping: ${{ matrix.app }} does not have repository-app tag"
+          fi
+
+      - name: Deploy preview to Vercel
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_PROJECT_ID: ${{ steps.project.outputs.id }}
+        run: |
+          set -euo pipefail
+
+          START_EPOCH=$(date +%s)
+
+          OUTPUT=$(vercel deploy \
+            --token "$VERCEL_TOKEN" \
+            --yes \
+            --cwd "apps/${{ matrix.app }}" 2>&1) || {
+            echo "::error::Vercel deploy failed with output:"
+            echo "$OUTPUT"
+            exit 1
+          }
+
+          END_EPOCH=$(date +%s)
+          ELAPSED=$((END_EPOCH - START_EPOCH))
+          MINS=$((ELAPSED / 60))
+          SECS=$((ELAPSED % 60))
+          if [ "$MINS" -gt 0 ]; then
+            BUILD_TIME="${MINS}m ${SECS}s"
+          else
+            BUILD_TIME="${SECS}s"
+          fi
+          echo "build_time=$BUILD_TIME" >> "$GITHUB_OUTPUT"
+
+          echo "Full output:"
+          echo "$OUTPUT"
+
+          DEPLOYMENT_URL=$(echo "$OUTPUT" | grep -oE 'https://[^ ]+\.vercel\.app[^ ]*' | head -1)
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "::error::Could not extract deployment URL from output"
+            exit 1
+          fi
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+          echo "Preview URL: $DEPLOYMENT_URL"
+
+      - name: Comment preview URL on PR
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            const app = '${{ matrix.app }}';
+            const url = '${{ steps.deploy.outputs.url }}';
+            const buildTime = '${{ steps.deploy.outputs.build_time }}';
+            const headSha = context.payload.pull_request.head.sha;
+            const commit = headSha.substring(0, 7);
+
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const fmt = (d) => `${d.getUTCFullYear()} ${months[d.getUTCMonth()]} ${d.getUTCDate()} at ${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}:${String(d.getUTCSeconds()).padStart(2,'0')} UTC`;
+
+            const { data: commitData } = await github.rest.git.getCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: headSha,
+            });
+            const commitTimestamp = fmt(new Date(commitData.committer.date));
+
+            const marker = `<!-- preview-deploy:${app} -->`;
+            const body = [
+              marker,
+              '',
+              '🔍',
+              `**Preview for \`${app}\`**`,
+              url,
+              '',
+              `Commit — ${commit}`,
+              `Commit timestamp — ${commitTimestamp}`,
+              `Total build time — ${buildTime}`,
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: Warn if Access Group assignment failed
+        if: steps.access-group.outputs.failed == 'true'
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            const app = '${{ matrix.app }}';
+            const marker = `<!-- access-group-warning:${app} -->`;
+            const body = `${marker}\n⚠️ **Access Group warning for \`${app}\`**: Failed to automatically add this project to the Vercel Access Group. Please ask an admin to manually add it in the Vercel dashboard → Access Groups.`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

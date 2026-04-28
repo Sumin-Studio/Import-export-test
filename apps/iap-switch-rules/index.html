@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statement of Financial Position</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      color: #1a1a1a;
+      background: #f5f5f5;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+      padding: 24px 0 24px 24px;
+      gap: 24px;
+      max-width: 100%;
+    }
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      align-self: flex-start;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #e5e5e5;
+      padding: 16px 0;
+    }
+    .sidebar-item {
+      padding: 10px 20px;
+      color: #666;
+    }
+    .sidebar-item.active {
+      background: #e8f4fc;
+      color: #1274a8;
+      font-weight: 500;
+    }
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      transition: flex 0.25s ease;
+    }
+    .panel {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #e5e5e5;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .panel-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .panel-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-left: auto;
+    }
+    .panel-actions button {
+      background: #fff;
+      border: 1px solid #ccc;
+      color: #444;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: inherit;
+    }
+    .panel-actions button:hover {
+      background: #f5f5f5;
+      border-color: #999;
+    }
+    .table-wrap {
+      overflow-x: auto;
+    }
+    .statement-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .statement-table th {
+      text-align: right;
+      font-weight: 500;
+      color: #666;
+      padding: 12px 24px;
+      border-bottom: 1px solid #e5e5e5;
+      font-size: 13px;
+    }
+    .statement-table th:first-child {
+      text-align: left;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .statement-table td {
+      padding: 10px 24px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+    .statement-table td:first-child {
+      width: 1%;
+      white-space: nowrap;
+    }
+    .statement-table td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      overflow: visible;
+    }
+    .statement-table td.num a {
+      color: #1274a8;
+      text-decoration: underline;
+    }
+    .row-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1.4;
+    }
+    .row-label-text {
+      flex: 0 1 auto;
+    }
+    .expand-icon {
+      width: 18px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+      transform-origin: center;
+    }
+    .expand-icon.expanded {
+      transform: rotate(90deg);
+    }
+    .expand-spacer {
+      width: 18px;
+      flex-shrink: 0;
+    }
+    .statement-table tbody tr.row-collapsed {
+      display: none;
+    }
+    .statement-table tr[data-level="0"] .row-label { padding-left: 0; }
+    .statement-table tr[data-level="1"] .row-label { padding-left: 24px; }
+    .statement-table tr[data-level="2"] .row-label { padding-left: 48px; }
+    .statement-table tr[data-level="3"] .row-label { padding-left: 72px; }
+    .statement-table tr.statement-row-highlight-source { background: #e8f4fc; }
+    .statement-table tr.statement-row-highlight-destination { background: #e8f5e9; }
+    .num-with-shift {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+    }
+    .shift-indicator {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .shift-indicator img,
+    .shift-indicator svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0.8;
+      display: block;
+    }
+    .shift-popover {
+      position: fixed;
+      background: #1a1a1a;
+      color: #fff;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 12px;
+      white-space: normal;
+      max-width: 260px;
+      min-width: 120px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+      z-index: 99999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .shift-indicator.is-open .shift-popover {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .drawer-container {
+      flex: 0 0 0;
+      width: 0;
+      overflow: hidden;
+      background: #fff;
+      border-left: 1px solid #e5e5e5;
+      display: flex;
+      flex-direction: column;
+      transition: flex-basis 0.25s ease, width 0.25s ease;
+      margin: -24px 0 -24px 0;
+    }
+    .drawer-container.is-open {
+      flex: 0 0 420px;
+      width: 420px;
+      overflow: visible;
+    }
+    .drawer-panel {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .drawer-panel.is-active {
+      display: flex;
+    }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.is-open {
+      display: flex;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer-panel .modal {
+      max-width: none;
+      max-height: none;
+      border-radius: 0;
+      box-shadow: none;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .drawer-panel .modal-body {
+      overflow-y: auto;
+      flex: 1;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      line-height: 1;
+      color: #666;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    .modal-close-btn:hover {
+      background: #f0f0f0;
+      color: #1a1a1a;
+    }
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .modal-body p {
+      margin: 0 0 20px 0;
+      color: #444;
+    }
+    .modal-form-group {
+      margin-bottom: 16px;
+    }
+    .modal-form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      font-size: 13px;
+    }
+    .modal-form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+    }
+    .modal-form-group select:focus {
+      outline: none;
+      border-color: #1274a8;
+    }
+    .modal-form-group.child-select {
+      display: none;
+    }
+    .modal-form-group.child-select.is-visible {
+      display: block;
+    }
+    .modal-section-label {
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .modal-selected-group {
+      margin: 4px 0 0 0;
+      font-weight: 500;
+    }
+    .modal-condition-label {
+      margin: 0;
+      font-size: 14px;
+      color: #444;
+      font-weight: 500;
+    }
+    .modal-form-group.modal-rule-sentence {
+      margin-bottom: 0;
+    }
+    .modal-rule-sentence {
+      margin-bottom: 16px;
+    }
+    .modal-rule-sentence p {
+      margin: 0;
+      margin-bottom: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #444;
+      line-height: 1.6;
+    }
+    .modal-rule-connector {
+      margin: 0 0 16px 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: #444;
+      line-height: 1.6;
+    }
+    .modal-rule-sentence select {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin: 4px 0 0 0;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #444;
+    }
+    .modal-helper-text {
+      margin: 0 0 16px 0;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .modal-info-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 0 0 16px 0;
+      padding: 12px 16px;
+      background: #f0f0f0;
+      border-radius: 8px;
+    }
+    .modal-info-banner .modal-info-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      color: #666;
+    }
+    .modal-info-banner .modal-info-content { flex: 1; min-width: 0; }
+    .modal-info-banner .modal-info-text {
+      margin: 0;
+      font-size: 13px;
+      color: #444;
+      line-height: 1.5;
+    }
+    .modal-info-banner .modal-info-example {
+      margin: 8px 0 0 0;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .modal-info-banner .modal-info-example em { font-style: italic; }
+    .modal-rule-inline {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .modal-rule-inline .modal-field {
+      flex: 1;
+      min-width: 140px;
+    }
+    .modal-rule-inline .modal-field label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      font-size: 13px;
+    }
+    .modal-move-to-text {
+      padding-bottom: 10px;
+      font-weight: 500;
+      color: #444;
+    }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #e5e5e5;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .modal-footer button {
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .modal-footer .btn-cancel {
+      background: #fff;
+      border: 1px solid #ccc;
+      color: #444;
+    }
+    .modal-footer .btn-cancel:hover {
+      background: #f5f5f5;
+    }
+    .modal-footer .btn-apply {
+      background: #1274a8;
+      border: none;
+      color: #fff;
+    }
+    .modal-footer .btn-apply:hover {
+      background: #0d5a85;
+    }
+    .modal-footer .btn-delete {
+      background: #fff;
+      border: 1px solid #c53030;
+      color: #c53030;
+      margin-right: auto;
+    }
+    .modal-footer .btn-delete:hover {
+      background: #fef2f2;
+      border-color: #9b2c2c;
+      color: #9b2c2c;
+    }
+    #delete-rule-confirm-modal .btn-apply {
+      background: #c53030;
+    }
+    #delete-rule-confirm-modal .btn-apply:hover {
+      background: #9b2c2c;
+    }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      padding: 12px 20px;
+      background: #1a1a1a;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 2000;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .toast.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .settings-panel-wrapper .accordion-trigger {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      flex: 1;
+      min-width: 0;
+    }
+    .settings-panel-wrapper .accordion-arrow {
+      width: 18px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      font-size: 14px;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+      transform-origin: center;
+    }
+    .settings-panel-wrapper .accordion-arrow.expanded {
+      transform: rotate(90deg);
+    }
+    .settings-panel {
+      display: none;
+      border-top: 1px solid #e5e5e5;
+      background: #fff;
+      flex-direction: column;
+    }
+    .settings-panel.is-open {
+      display: flex;
+    }
+    .settings-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      height: 83px;
+    }
+    .settings-panel-intro {
+      margin: 0 0 16px 0;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+    #switch-rules-empty {
+      margin-bottom: 0;
+    }
+    .switch-rules-filters { display: flex; gap: 12px; margin-bottom: 16px; }
+    .switch-rules-status-filter { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; background: #fff; }
+    .switch-rules-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .switch-rules-table th, .switch-rules-table td { text-align: left; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+    .switch-rules-table th { font-weight: 500; color: #666; }
+    .rule-status-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; padding: 2px 8px; border-radius: 4px; }
+    .rule-status-badge.valid { background: #e8f5e9; color: #2e7d32; }
+    .rule-status-badge.needs_review { background: #fff3e0; color: #e65100; }
+    .rule-scope-badge { font-size: 11px; color: #666; margin-left: 6px; }
+    .rule-editor-subtitle { margin: 0 0 24px 0; font-size: 14px; color: #666; line-height: 1.5; }
+    .rule-editor-section { margin-bottom: 24px; }
+    .rule-editor-section-title { margin: 0 0 12px 0; font-size: 11px; font-weight: 600; color: #666; letter-spacing: 0.05em; }
+    .rule-editor-row { margin-bottom: 16px; }
+    .rule-editor-row:last-child { margin-bottom: 0; }
+    .rule-editor-row label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #444; }
+    .rule-editor-row select { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; background: #fff; }
+    .rule-condition-extra { display: none; }
+    .rule-condition-extra.is-visible { display: block; }
+    .rule-editor-row input[type="number"] { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
+    .rule-editor-actions-inline { display: flex; justify-content: flex-end; margin-bottom: 24px; }
+    select[disabled].report-code-readonly,
+    select.report-code-readonly:disabled { background: #f9f9f9; color: #444; cursor: default; }
+    .report-code-error { margin: 4px 0 0 0; font-size: 13px; color: #c53030; }
+    .hidden { display: none !important; }
+    .switch-rules-table .switch-rules-edit-btn {
+      background: none;
+      border: none;
+      color: #1274a8;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      text-decoration: underline;
+    }
+    .switch-rules-table .switch-rules-edit-btn:hover {
+      color: #0d5a85;
+    }
+    .drawer-rounding-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .drawer-rounding-table th, .drawer-rounding-table td { text-align: left; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+    .drawer-rounding-table th { font-weight: 500; color: #666; }
+    .drawer-rounding-move { margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e5e5; }
+    .drawer-rounding-move h3 { margin: 0 0 8px 0; font-size: 16px; font-weight: 600; }
+    .drawer-rounding-move p { margin: 0 0 16px 0; font-size: 14px; color: #666; line-height: 1.5; }
+    .drawer-account-input-wrap { position: relative; display: flex; align-items: center; }
+    .drawer-account-input {
+      width: 100%; padding: 10px 36px 10px 12px; border: 1px solid #ccc; border-radius: 6px;
+      font-size: 14px; font-family: inherit; background: #fff;
+    }
+    .drawer-account-input:focus { outline: none; border-color: #1274a8; background: #fff; }
+    .drawer-account-clear {
+      position: absolute; right: 10px; background: none; border: none; padding: 4px;
+      color: #666; cursor: pointer; font-size: 16px; line-height: 1;
+    }
+    .drawer-account-clear:hover { color: #1a1a1a; }
+    .drawer-account-clear[hidden] { display: none; }
+    .drawer-account-dropdown {
+      position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px;
+      background: #fff; border: 1px solid #e5e5e5; border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 10; max-height: 200px; overflow-y: auto;
+    }
+    .drawer-account-dropdown[hidden] { display: none; }
+    .drawer-account-option {
+      display: block; width: 100%; padding: 10px 12px; background: none; border: none;
+      font-size: 14px; text-align: left; cursor: pointer; font-family: inherit;
+    }
+    .drawer-account-option:hover, .drawer-account-option.is-highlighted { background: #f0f0f0; }
+    #drawer-footer-rounding { display: flex; gap: 12px; justify-content: flex-end; }
+    .drawer-form-group { margin-bottom: 16px; }
+    .drawer-form-group label { display: block; margin-bottom: 6px; font-size: 13px; color: #444; }
+    .settings-panel-footer {
+      padding: 20px 24px;
+      border-top: 1px solid #e5e5e5;
+      margin-top: auto;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      background: #fff;
+    }
+    .settings-panel-footer button {
+      padding: 8px 16px;
+      font-size: 13px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-cancel-drawer-form {
+      background: #fff;
+      border: 1px solid #ccc;
+      color: #444;
+    }
+    .btn-apply-drawer-form {
+      background: #1274a8;
+      color: #fff;
+      border: none;
+    }
+    .btn-apply-drawer-form:hover { background: #0d5a85; }
+    .cell-period-hidden { display: none !important; }
+    .manage-modal .modal { max-width: 560px; }
+    .manage-modal .modal-description {
+      margin: 0 0 20px 0;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .manage-modal .config-section {
+      box-sizing: content-box;
+      margin-bottom: 0px;
+      padding-bottom: 24px;
+    }
+    .manage-modal .config-section h3 {
+      margin: 0 0 16px 0;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .manage-modal .config-actions-cancel {
+      background: none;
+      border: none;
+      color: #1274a8;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0;
+      margin-right: 12px;
+      text-decoration: underline;
+      font-family: inherit;
+    }
+    .manage-modal .config-actions-cancel:hover {
+      color: #0d5a85;
+    }
+    .manage-modal .btn-add-rule {
+      background: #1274a8;
+      border: none;
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .manage-modal .btn-add-rule:hover {
+      background: #0d5a85;
+    }
+    .manage-modal .config-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+    .manage-modal .manage-child-select {
+      display: none;
+    }
+    .manage-modal .manage-child-select.is-visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-item">Accounts preview</div>
+      <div class="sidebar-item">Company information</div>
+      <div class="sidebar-item">Income Statement</div>
+      <div class="sidebar-item active">Statement of Financial Position</div>
+    </aside>
+    <main class="main">
+      <div class="panel">
+        <div class="panel-header">
+          <h1 class="panel-title">Statement of Financial Position</h1>
+          <div class="panel-actions">
+            <button type="button">Manage report codes</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="statement-table" id="financial-statement">
+            <thead>
+              <tr>
+                <th></th>
+                <th class="num">2024</th>
+                <th class="num">2023</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-level="0" data-expandable data-expanded="false" data-id="fixed-assets">
+                <td>
+                  <div class="row-label"><span class="expand-icon">›</span><span class="row-label-text">Fixed assets</span></div>
+                </td>
+                <td class="num">408,661</td>
+                <td class="num">513,379</td>
+              </tr>
+              <tr data-level="0" data-expandable data-expanded="true" data-id="current-assets">
+                <td>
+                  <div class="row-label"><span class="expand-icon expanded">›</span><span class="row-label-text">Current assets</span></div>
+                </td>
+                <td class="num">596,174</td>
+                <td class="num">1,519,690</td>
+              </tr>
+              <tr data-level="1" data-parent="current-assets" data-group="stocks" class="switch-rule-eligible">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">Stocks</span></div>
+                </td>
+                <td class="num"><a href="#">72,030</a></td>
+                <td class="num"><a href="#">144,060</a></td>
+              </tr>
+              <tr data-level="1" data-parent="current-assets" data-group="debtors" class="switch-rule-eligible">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">Debtors</span></div>
+                </td>
+                <td class="num"><a href="#">232,195</a></td>
+                <td class="num"><a href="#">464,393</a></td>
+              </tr>
+              <tr data-level="1" data-parent="current-assets" data-group="investments" class="switch-rule-eligible">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">Investments</span></div>
+                </td>
+                <td class="num"><a href="#">291,500</a></td>
+                <td class="num"><a href="#">583,000</a></td>
+              </tr>
+              <tr data-level="1" data-expandable data-expanded="true" data-parent="current-assets" data-id="cash-at-bank" data-group="cash-at-bank" data-row-label="Cash at bank and in hand" class="switch-rule-eligible">
+                <td>
+                  <div class="row-label"><span class="expand-icon expanded">›</span><span class="row-label-text">Cash at bank and in hand</span></div>
+                </td>
+                <td class="num"><a href="#">449</a></td>
+                <td class="num"><a href="#">328,237</a></td>
+              </tr>
+              <tr data-level="2" data-parent="cash-at-bank" data-account="602">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">602 - ASS.CUR.BAN Cash at bank</span></div>
+                </td>
+                <td class="num"><a href="#">—</a></td>
+                <td class="num"><a href="#">315,739</a></td>
+              </tr>
+              <tr data-level="2" data-parent="cash-at-bank" data-account="603">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">603 - ASS.CUR.BAN.CAS Cash in hand</span></div>
+                </td>
+                <td class="num"><a href="#">449</a></td>
+                <td class="num"><a href="#">898</a></td>
+              </tr>
+              <tr data-level="2" data-parent="cash-at-bank" data-account="812">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">812 - LIA.CUR.LOA.SEC Bank loans and overdraft (secured)</span></div>
+                </td>
+                <td class="num"><a href="#">—</a></td>
+                <td class="num"><a href="#">-11,600</a></td>
+              </tr>
+              <tr data-level="0" data-expandable data-expanded="true" data-id="creditors">
+                <td>
+                  <div class="row-label"><span class="expand-icon expanded">›</span><span class="row-label-text">Creditors: amounts falling due within one year</span></div>
+                </td>
+                <td class="num">465,538</td>
+                <td class="num">918,477</td>
+              </tr>
+              <tr data-level="1" data-parent="creditors" data-group="convertible-loans" class="switch-rule-eligible">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">Convertible loans</span></div>
+                </td>
+                <td class="num"><a href="#">9,587</a></td>
+                <td class="num"><a href="#">19,174</a></td>
+              </tr>
+              <tr data-level="1" data-parent="creditors" data-group="debentures" class="switch-rule-eligible">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">Debentures in issue</span></div>
+                </td>
+                <td class="num"><a href="#">36,890</a></td>
+                <td class="num"><a href="#">73,780</a></td>
+              </tr>
+              <tr data-level="1" data-expandable data-expanded="true" data-parent="creditors" data-id="bank-loans" data-group="bank-loans" class="switch-rule-eligible">
+                <td>
+                  <div class="row-label"><span class="expand-icon expanded">›</span><span class="row-label-text">Bank loans and overdrafts</span></div>
+                </td>
+                <td class="num"><a href="#">40,456</a></td>
+                <td class="num"><a href="#">73,780</a></td>
+              </tr>
+              <tr data-level="2" data-parent="bank-loans" data-account="602">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">602 - ASS.CUR.BAN Cash at bank</span></div>
+                </td>
+                <td class="num"><a href="#">500</a></td>
+                <td class="num"><a href="#">—</a></td>
+              </tr>
+              <tr data-level="2" data-parent="bank-loans" data-account="603">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">603 - ASS.CUR.BAN.CAS Cash in hand</span></div>
+                </td>
+                <td class="num"><a href="#">34,000</a></td>
+                <td class="num"><a href="#">68,000</a></td>
+              </tr>
+              <tr data-level="2" data-parent="bank-loans" data-account="812">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">812 - LIA.CUR.LOA.SEC Bank loans and overdraft (secured)</span></div>
+                </td>
+                <td class="num"><a href="#">5,800</a></td>
+                <td class="num"><a href="#">—</a></td>
+              </tr>
+              <tr data-level="2" data-parent="bank-loans" data-account="813">
+                <td>
+                  <div class="row-label"><span class="expand-spacer"></span><span class="row-label-text">813 - LIA.CUR.LOA.UNS Bank loans and overdraft (unsecured)</span></div>
+                </td>
+                <td class="num"><a href="#">156</a></td>
+                <td class="num"><a href="#">313</a></td>
+              </tr>
+              <tr data-level="1" data-parent="creditors" data-group="trade-creditors" class="switch-rule-eligible">
+                <td>
+                  <div class="row-label"><span class="expand-icon">›</span><span class="row-label-text">Trade creditors</span></div>
+                </td>
+                <td class="num"><a href="#">3,357</a></td>
+                <td class="num"><a href="#">6,714</a></td>
+              </tr>
+              <tr data-level="1" data-parent="creditors" data-group="bills-payable" class="switch-rule-eligible">
+                <td>
+                  <div class="row-label"><span class="expand-icon">›</span><span class="row-label-text">Bills of exchange payable</span></div>
+                </td>
+                <td class="num"><a href="#">51,549</a></td>
+                <td class="num"><a href="#">103,098</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel settings-panel-wrapper">
+        <div class="panel-header">
+          <div class="accordion-trigger" id="switch-rules-accordion-trigger" aria-expanded="false" aria-controls="switch-rules-panel">
+            <span class="accordion-arrow" aria-hidden="true">›</span>
+            <h2 class="panel-title">Switch rules</h2>
+          </div>
+          <div class="panel-actions">
+            <button type="button" id="configure-switch-rules-btn">Add rule</button>
+          </div>
+        </div>
+        <div class="settings-panel" id="switch-rules-panel" aria-hidden="true">
+          <div class="settings-panel-body">
+            <div class="switch-rules-filters" id="switch-rules-filters">
+              <select class="switch-rules-status-filter" id="switch-rules-status-filter" aria-label="Filter by status">
+                <option value="">All</option>
+                <option value="valid">Active</option>
+                <option value="needs_review">Inactive</option>
+              </select>
+            </div>
+            <p class="settings-panel-intro" id="switch-rules-empty">No switch rules applied</p>
+            <table class="switch-rules-table" id="switch-rules-table" hidden>
+              <thead>
+                <tr>
+                  <th>Source group</th>
+                  <th>Destination group</th>
+                  <th>Report code</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="switch-rules-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="panel settings-panel-wrapper">
+        <div class="panel-header">
+          <div class="accordion-trigger" id="rounding-accordion-trigger" aria-expanded="false" aria-controls="settings-panel">
+            <span class="accordion-arrow" aria-hidden="true">›</span>
+            <h2 class="panel-title">Rounding adjustments</h2>
+          </div>
+          <div class="panel-actions">
+            <button type="button" id="rounding-settings-btn">Configure</button>
+          </div>
+        </div>
+        <div class="settings-panel" id="settings-panel" aria-hidden="true">
+          <div class="settings-panel-body">
+            <p class="settings-panel-intro">Rounding adjustments map periods to adjustment accounts.</p>
+            <div id="drawer-panel-rounding">
+              <table class="drawer-rounding-table" id="drawer-rounding-table">
+                <thead>
+                  <tr>
+                    <th>Period</th>
+                    <th>Adjustment account</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>6 Apr 2023 - 5 Apr 2024</td>
+                    <td>100 - Account code currently selected</td>
+                  </tr>
+                  <tr>
+                    <td>6 Apr 2022 - 5 Apr 2023</td>
+                    <td>200 - Sales</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <div class="drawer-container" id="drawer-container" aria-hidden="true">
+    <div class="drawer-panel" id="switch-rule-drawer" data-drawer="switch-rule">
+    <div class="modal" role="dialog" aria-labelledby="rule-editor-title">
+      <div class="modal-header">
+        <h2 id="rule-editor-title">Create new rule</h2>
+        <button type="button" class="modal-close-btn" id="modal-close" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="rule-editor-subtitle">Add rules to move account balances between groups based on conditions you define</p>
+        <div class="rule-editor-section">
+          <h3 class="rule-editor-section-title">WHEN</h3>
+          <div class="modal-form-group rule-editor-row">
+            <label for="modal-source-select">accounts in this group</label>
+            <select id="modal-source-select">
+              <option value="">Select group</option>
+            </select>
+          </div>
+          <div class="modal-form-group rule-editor-row">
+            <label for="modal-condition-type">condition</label>
+            <select id="modal-condition-type">
+              <option value="">Select condition</option>
+              <option value="negative">become negative</option>
+              <option value="above_threshold">exceed</option>
+              <option value="below_threshold">are below</option>
+              <option value="of_type">are of type</option>
+            </select>
+          </div>
+          <div class="modal-form-group rule-editor-row rule-condition-extra" id="modal-condition-threshold-row">
+            <label for="modal-condition-threshold">threshold</label>
+            <input type="number" id="modal-condition-threshold" placeholder="0" min="0" step="any" />
+          </div>
+          <div class="modal-form-group rule-editor-row rule-condition-extra" id="modal-condition-type-row">
+            <label for="modal-condition-account-type">account type</label>
+            <select id="modal-condition-account-type">
+              <option value="">Select type</option>
+            </select>
+          </div>
+        </div>
+        <div class="rule-editor-section">
+          <h3 class="rule-editor-section-title">THEN</h3>
+          <div class="modal-form-group rule-editor-row">
+            <label for="modal-group-select">move to group</label>
+            <select id="modal-group-select">
+              <option value="">Select group</option>
+            </select>
+          </div>
+          <div class="modal-form-group rule-editor-row" id="modal-report-code-row">
+            <label>and change to report code</label>
+            <div id="modal-report-code-wrap">
+              <select id="modal-report-code-select" class="hidden">
+                <option value="">Select report code</option>
+              </select>
+              <select id="modal-report-code-readonly" class="report-code-readonly hidden" disabled tabindex="-1" aria-readonly="true"></select>
+              <p id="modal-report-code-error" class="report-code-error hidden" role="alert">No valid report codes for this group.</p>
+            </div>
+          </div>
+        </div>
+        <div class="rule-editor-actions-inline">
+          <button type="button" class="btn-apply" id="modal-apply" disabled>Create rule</button>
+        </div>
+        <div class="modal-info-banner" id="rule-editor-info-banner">
+          <svg class="modal-info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+          <div class="modal-info-content" id="rule-editor-info-content">
+            <p class="modal-info-text" id="rule-editor-info-text"></p>
+            <p class="modal-info-example" id="rule-editor-info-example"></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-delete" id="modal-delete">Delete rule</button>
+        <button type="button" class="btn-cancel" id="modal-cancel">Close</button>
+      </div>
+    </div>
+    </div>
+    <div class="drawer-panel" id="rounding-drawer" data-drawer="rounding">
+    <div class="modal" role="dialog" aria-labelledby="rounding-modal-title">
+      <div class="modal-header">
+        <h2 id="rounding-modal-title">Move rounding adjustment</h2>
+        <button type="button" class="modal-close-btn" id="rounding-modal-close" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Apply the rounding adjustment to the following account for the current period.</p>
+        <div class="modal-form-group">
+          <label for="drawer-account-code">Account code</label>
+          <div class="drawer-account-input-wrap">
+            <input type="text" id="drawer-account-code" class="drawer-account-input" placeholder="Search or select account" value="100 - Account code currently selected" autocomplete="off" />
+            <button type="button" class="drawer-account-clear" id="drawer-account-clear" aria-label="Clear">×</button>
+            <div class="drawer-account-dropdown" id="drawer-account-dropdown" hidden></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" id="drawer-rounding-cancel">Cancel</button>
+        <button type="button" class="btn-apply" id="drawer-rounding-move-btn">Move adjustment</button>
+      </div>
+    </div>
+    </div>
+  </div>
+  </div>
+  <div class="modal-overlay" id="delete-rule-confirm-modal" aria-hidden="true" style="z-index: 1100;">
+    <div class="modal" role="alertdialog" aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-desc">
+      <div class="modal-header">
+        <h2 id="delete-confirm-title">Delete switch rule?</h2>
+        <button type="button" class="modal-close-btn" id="delete-confirm-close" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p id="delete-confirm-desc">This will stop moving negative balances from [Source Group] to [Target Group]. Already moved balances won't change.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" id="delete-confirm-cancel">Cancel</button>
+        <button type="button" class="btn-apply" id="delete-confirm-btn">Delete rule</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="switch-rules-data.js"></script>
+  <script>
+    (function () {
+      var tbody = document.querySelector('#financial-statement tbody');
+      if (!tbody) return;
+      var rows = Array.from(tbody.querySelectorAll('tr'));
+      var expandableById = {};
+      rows.forEach(function (r) {
+        var id = r.getAttribute('data-id');
+        if (id) expandableById[id] = r;
+      });
+      function isAncestorExpanded(row) {
+        var parentId = row.getAttribute('data-parent');
+        if (!parentId) return true;
+        var parent = expandableById[parentId];
+        if (!parent) return true;
+        if (parent.getAttribute('data-expanded') !== 'true') return false;
+        return isAncestorExpanded(parent);
+      }
+      function updateVisibility() {
+        rows.forEach(function (r) {
+          if (r.hasAttribute('data-expandable')) return;
+          var visible = isAncestorExpanded(r);
+          r.classList.toggle('row-collapsed', !visible);
+        });
+      }
+      function toggleExpanded(row) {
+        var expanded = row.getAttribute('data-expanded') === 'true';
+        row.setAttribute('data-expanded', expanded ? 'false' : 'true');
+        var icon = row.querySelector('.expand-icon');
+        if (icon) icon.classList.toggle('expanded', !expanded);
+        updateVisibility();
+      }
+      tbody.addEventListener('click', function (e) {
+        var icon = e.target.closest('.expand-icon');
+        if (!icon) return;
+        var row = icon.closest('tr[data-expandable]');
+        if (row) toggleExpanded(row);
+      });
+      updateVisibility();
+    })();
+    (function () {
+      var drawerContainer = document.getElementById('drawer-container');
+      var layoutEl = document.querySelector('.layout');
+      function openDrawer(panelId) {
+        if (!drawerContainer || !layoutEl) return;
+        document.querySelectorAll('.drawer-panel').forEach(function (p) {
+          p.classList.remove('is-active');
+        });
+        var panel = document.querySelector('[data-drawer="' + panelId + '"]');
+        if (panel) panel.classList.add('is-active');
+        drawerContainer.classList.add('is-open');
+        drawerContainer.setAttribute('aria-hidden', 'false');
+      }
+      function closeDrawer() {
+        if (!drawerContainer || !layoutEl) return;
+        drawerContainer.classList.remove('is-open');
+        drawerContainer.setAttribute('aria-hidden', 'true');
+        document.querySelectorAll('.drawer-panel').forEach(function (p) {
+          p.classList.remove('is-active');
+        });
+      }
+      window.openDrawer = openDrawer;
+      window.closeDrawer = closeDrawer;
+      function showToast(msg) {
+        var toast = document.getElementById('toast');
+        if (!toast) return;
+        toast.textContent = msg || '';
+        toast.classList.add('is-visible');
+        clearTimeout(showToast._timer);
+        showToast._timer = setTimeout(function () {
+          toast.classList.remove('is-visible');
+        }, 3000);
+      }
+      var settingsPanel = document.getElementById('settings-panel');
+      var roundingSettingsBtn = document.getElementById('rounding-settings-btn');
+      var roundingModalClose = document.getElementById('rounding-modal-close');
+      function openRoundingModal() {
+        if (accountCodeInput) accountCodeInput.value = currentPeriodAccount;
+        updateAccountClearVisibility();
+        openDrawer('rounding');
+      }
+      function closeRoundingModal() {
+        if (accountCodeDropdown) accountCodeDropdown.hidden = true;
+        closeDrawer();
+      }
+      if (roundingSettingsBtn) roundingSettingsBtn.addEventListener('click', openRoundingModal);
+      if (roundingModalClose) roundingModalClose.addEventListener('click', closeRoundingModal);
+      function setupAccordion(triggerId, panelId) {
+        var trigger = document.getElementById(triggerId);
+        var panel = document.getElementById(panelId);
+        if (!trigger || !panel) return;
+        trigger.addEventListener('click', function () {
+          var isOpen = panel.classList.contains('is-open');
+          if (isOpen) {
+            panel.classList.remove('is-open');
+            panel.setAttribute('aria-hidden', 'true');
+            trigger.setAttribute('aria-expanded', 'false');
+            var arrow = trigger.querySelector('.accordion-arrow');
+            if (arrow) arrow.classList.remove('expanded');
+          } else {
+            panel.classList.add('is-open');
+            panel.setAttribute('aria-hidden', 'false');
+            trigger.setAttribute('aria-expanded', 'true');
+            var arrow = trigger.querySelector('.accordion-arrow');
+            if (arrow) arrow.classList.add('expanded');
+          }
+        });
+      }
+      setupAccordion('switch-rules-accordion-trigger', 'switch-rules-panel');
+      setupAccordion('rounding-accordion-trigger', 'settings-panel');
+      var accountCodes = [
+        '100 - Account code currently selected',
+        '200 - Sales',
+        '201 - Lorem',
+        '202 - Ipsum',
+        '300 - Purchases',
+        '400 - Other income'
+      ];
+      var accountCodeInput = document.getElementById('drawer-account-code');
+      var accountCodeClear = document.getElementById('drawer-account-clear');
+      var accountCodeDropdown = document.getElementById('drawer-account-dropdown');
+      var currentPeriodAccount = '100 - Account code currently selected';
+      function updateAccountClearVisibility() {
+        if (accountCodeClear && accountCodeInput) {
+          accountCodeClear.hidden = !accountCodeInput.value.trim();
+        }
+      }
+      function filterAccountCodes(query) {
+        var q = (query || '').toLowerCase().trim();
+        if (!q) return accountCodes.slice(0, 6);
+        return accountCodes.filter(function (c) { return c.toLowerCase().indexOf(q) >= 0; }).slice(0, 6);
+      }
+      function renderAccountDropdown(options) {
+        if (!accountCodeDropdown) return;
+        accountCodeDropdown.innerHTML = '';
+        if (options.length === 0) {
+          accountCodeDropdown.hidden = true;
+          return;
+        }
+        options.forEach(function (opt) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'drawer-account-option';
+          btn.textContent = opt;
+          btn.addEventListener('click', function () {
+            if (accountCodeInput) accountCodeInput.value = opt;
+            accountCodeDropdown.hidden = true;
+            updateAccountClearVisibility();
+          });
+          accountCodeDropdown.appendChild(btn);
+        });
+        accountCodeDropdown.hidden = false;
+      }
+      if (accountCodeInput) {
+        accountCodeInput.addEventListener('input', function () {
+          updateAccountClearVisibility();
+          renderAccountDropdown(filterAccountCodes(accountCodeInput.value));
+        });
+        accountCodeInput.addEventListener('focus', function () {
+          if (accountCodeInput.value.trim()) renderAccountDropdown(filterAccountCodes(accountCodeInput.value));
+        });
+      }
+      if (accountCodeClear) {
+        accountCodeClear.addEventListener('click', function () {
+          if (accountCodeInput) {
+            accountCodeInput.value = '';
+            accountCodeInput.focus();
+            accountCodeClear.hidden = true;
+            if (accountCodeDropdown) accountCodeDropdown.hidden = true;
+          }
+        });
+      }
+      document.addEventListener('click', function (e) {
+        if (accountCodeDropdown && !e.target.closest('.drawer-account-input-wrap')) {
+          accountCodeDropdown.hidden = true;
+        }
+      });
+      updateAccountClearVisibility();
+      var roundingCancelBtn = document.getElementById('drawer-rounding-cancel');
+      var roundingMoveBtn = document.getElementById('drawer-rounding-move-btn');
+      if (roundingCancelBtn) {
+        roundingCancelBtn.addEventListener('click', function () {
+          if (accountCodeInput) accountCodeInput.value = currentPeriodAccount;
+          updateAccountClearVisibility();
+          closeRoundingModal();
+        });
+      }
+      if (roundingMoveBtn) {
+        roundingMoveBtn.addEventListener('click', function () {
+          var val = accountCodeInput ? accountCodeInput.value.trim() : '';
+          if (val) {
+            showToast('Rounding adjustment moved to ' + val);
+            currentPeriodAccount = val;
+          }
+          closeRoundingModal();
+        });
+      }
+      document.addEventListener('click', function (e) {
+        if (!e.target.closest('.shift-indicator')) {
+          document.querySelectorAll('.shift-indicator.is-open').forEach(function (el) {
+            el.classList.remove('is-open');
+            el.setAttribute('aria-expanded', 'false');
+          });
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        var openIndicators = document.querySelectorAll('.shift-indicator.is-open');
+        if (openIndicators.length) {
+          openIndicators.forEach(function (el) {
+            el.classList.remove('is-open');
+            el.setAttribute('aria-expanded', 'false');
+          });
+          return;
+        }
+        if (drawerContainer && drawerContainer.classList.contains('is-open')) {
+          var activePanel = document.querySelector('.drawer-panel.is-active');
+          if (activePanel) {
+            if (activePanel.id === 'rounding-drawer') closeRoundingModal();
+            else if (activePanel.id === 'switch-rule-drawer' && window.closeModal) window.closeModal();
+            return;
+          }
+        }
+        if (settingsPanel && settingsPanel.classList.contains('is-open')) {
+          var roundingTrigger = document.getElementById('rounding-accordion-trigger');
+          if (roundingTrigger) {
+            roundingTrigger.setAttribute('aria-expanded', 'false');
+            var arrow = roundingTrigger.querySelector('.accordion-arrow');
+            if (arrow) arrow.classList.remove('expanded');
+          }
+          settingsPanel.classList.remove('is-open');
+          settingsPanel.setAttribute('aria-hidden', 'true');
+        }
+      });
+    })();
+    (function () {
+      var Data = window.SwitchRulesData;
+      if (!Data) return;
+      var sourceSelect = document.getElementById('modal-source-select');
+      var groupSelect = document.getElementById('modal-group-select');
+      var reportCodeSelect = document.getElementById('modal-report-code-select');
+      var reportCodeReadonly = document.getElementById('modal-report-code-readonly');
+      var reportCodeError = document.getElementById('modal-report-code-error');
+      var reportCodeRow = document.getElementById('modal-report-code-row');
+      var saveBtn = document.getElementById('modal-apply');
+      var conditionTypeSelect = document.getElementById('modal-condition-type');
+      var conditionThresholdInput = document.getElementById('modal-condition-threshold');
+      var conditionThresholdRow = document.getElementById('modal-condition-threshold-row');
+      var conditionAccountTypeSelect = document.getElementById('modal-condition-account-type');
+      var conditionAccountTypeRow = document.getElementById('modal-condition-type-row');
+      var assetGroups = ['stocks', 'debtors', 'investments', 'cash-at-bank'];
+      var liabilityGroups = ['convertible-loans', 'debentures', 'bank-loans', 'trade-creditors', 'bills-payable'];
+      function groupLabels(id) { return id ? Data.getGroupLabel(id) : ''; }
+      function groupChildren(id) { return Data.getReportCodes(id) || []; }
+      function isAssetGroup(id) { return assetGroups.indexOf(id) >= 0; }
+      function isLiabilityGroup(id) { return liabilityGroups.indexOf(id) >= 0; }
+      function needsSignFlip(sourceId, targetId) {
+        return (isAssetGroup(sourceId) && isLiabilityGroup(targetId)) ||
+               (isLiabilityGroup(sourceId) && isAssetGroup(targetId));
+      }
+      var appliedRules = {};
+      var modalTitle = document.getElementById('rule-editor-title');
+      var modalDeleteBtn = document.getElementById('modal-delete');
+      var editingSourceId = null;
+      var modalTitle = document.getElementById('rule-editor-title');
+      function clearStatementHighlights() {
+        var table = document.getElementById('financial-statement');
+        if (!table) return;
+        table.querySelectorAll('.statement-row-highlight-source, .statement-row-highlight-destination').forEach(function (tr) {
+          tr.classList.remove('statement-row-highlight-source', 'statement-row-highlight-destination');
+        });
+      }
+      function updateStatementHighlights() {
+        clearStatementHighlights();
+        var table = document.getElementById('financial-statement');
+        if (!table) return;
+        var sourceId = sourceSelect ? sourceSelect.value : '';
+        var destGroup = groupSelect ? groupSelect.value : '';
+        var reportCodeId = getSelectedReportCodeId();
+        var codes = destGroup ? groupChildren(destGroup) : [];
+        var hasSpecificReportCode = codes.length > 1 && reportCodeId;
+        var rows = Array.from(table.querySelectorAll('tbody tr'));
+        if (sourceId) {
+          rows.forEach(function (r) {
+            var id = r.getAttribute('data-id');
+            var parent = r.getAttribute('data-parent');
+            var group = r.getAttribute('data-group');
+            if (id === sourceId || parent === sourceId || group === sourceId) {
+              r.classList.add('statement-row-highlight-source');
+            }
+          });
+        }
+        if (destGroup) {
+          rows.forEach(function (r) {
+            var id = r.getAttribute('data-id');
+            var group = r.getAttribute('data-group');
+            var parent = r.getAttribute('data-parent');
+            var account = r.getAttribute('data-account');
+            var isMatch = false;
+            if (hasSpecificReportCode) {
+              isMatch = parent === destGroup && account === reportCodeId;
+            } else {
+              isMatch = id === destGroup || group === destGroup;
+            }
+            if (isMatch) r.classList.add('statement-row-highlight-destination');
+          });
+        }
+      }
+      function updateConditionExtraVisibility() {
+        var ct = conditionTypeSelect ? conditionTypeSelect.value : '';
+        if (conditionThresholdRow) conditionThresholdRow.classList.toggle('is-visible', ct === 'above_threshold' || ct === 'below_threshold');
+        if (conditionAccountTypeRow) conditionAccountTypeRow.classList.toggle('is-visible', ct === 'of_type');
+      }
+      function updateInfoBanner() {
+        var banner = document.getElementById('rule-editor-info-banner');
+        var textEl = document.getElementById('rule-editor-info-text');
+        var exampleEl = document.getElementById('rule-editor-info-example');
+        if (!banner || !textEl || !exampleEl) return;
+        var ct = conditionTypeSelect ? conditionTypeSelect.value : '';
+        var threshold = conditionThresholdInput ? conditionThresholdInput.value : '';
+        var accountType = conditionAccountTypeSelect ? conditionAccountTypeSelect.value : '';
+        var examples = {
+          negative: {
+            text: 'Negative balances will move to the selected report code and appear as positive.',
+            example: 'e.g. -2,783 in <em>Cash at bank and in hand</em> becomes 2,783 under <em>LIA.CUR.LOA.SEC (Bank loans and overdrafts)</em>'
+          },
+          above_threshold: {
+            text: 'Amounts exceeding the threshold will move to the destination group.',
+            example: 'e.g. Amounts over ' + (threshold || '10,000') + ' in <em>Stocks</em> move to <em>Bank loans and overdrafts</em>'
+          },
+          below_threshold: {
+            text: 'Amounts below the threshold will move to the destination group.',
+            example: 'e.g. Amounts under ' + (threshold || '1,000') + ' in <em>Debtors</em> move to <em>Trade creditors</em>'
+          },
+          of_type: {
+            text: 'Accounts of the selected type will move to the destination report code.',
+            example: 'e.g. <em>Asset</em>-type accounts in <em>Cash at bank and in hand</em> move to <em>LIA.CUR.LOA.SEC (Bank loans and overdrafts)</em>'
+          }
+        };
+        var content = examples[ct] || { text: '', example: '' };
+        textEl.innerHTML = content.text;
+        exampleEl.innerHTML = content.example;
+        banner.classList.toggle('hidden', !ct);
+      }
+      function populateAccountTypeDropdown() {
+        if (!conditionAccountTypeSelect) return;
+        conditionAccountTypeSelect.innerHTML = '<option value="">Select type</option>';
+        (Data.ACCOUNT_TYPES || []).forEach(function (t) {
+          var opt = document.createElement('option');
+          opt.value = t.id;
+          opt.textContent = t.label;
+          conditionAccountTypeSelect.appendChild(opt);
+        });
+      }
+      function openModal(preselectedSourceId) {
+        editingSourceId = preselectedSourceId || null;
+        if (sourceSelect) sourceSelect.value = preselectedSourceId || '';
+        var rule = preselectedSourceId ? appliedRules[preselectedSourceId] : null;
+        if (groupSelect) groupSelect.value = rule ? rule.targetGroup : '';
+        updateReportCodeControl();
+        if (reportCodeSelect && reportCodeSelect.value !== undefined) reportCodeSelect.value = rule && rule.targetChild ? rule.targetChild : '';
+        if (reportCodeReadonly && rule && rule.targetChild) {
+          var codes = groupChildren(rule.targetGroup);
+          var c = codes.find(function (x) { return x.id === rule.targetChild; });
+          if (c) reportCodeReadonly.innerHTML = '<option value="' + escapeHtml(c.id) + '" selected>' + escapeHtml(c.label) + '</option>';
+        }
+        var cond = rule && rule.condition ? rule.condition : null;
+        if (conditionTypeSelect) conditionTypeSelect.value = cond && cond.type ? cond.type : '';
+        if (conditionThresholdInput) conditionThresholdInput.value = cond && cond.threshold != null ? cond.threshold : '';
+        if (conditionAccountTypeSelect) conditionAccountTypeSelect.value = cond && cond.accountType ? cond.accountType : '';
+        updateConditionExtraVisibility();
+        updateInfoBanner();
+        if (modalTitle) modalTitle.textContent = rule ? 'Edit rule' : 'Create new rule';
+        if (modalDeleteBtn) modalDeleteBtn.hidden = !rule;
+        if (saveBtn) saveBtn.textContent = rule ? 'Save changes' : 'Create rule';
+        updateSaveButtonState();
+        updateStatementHighlights();
+        if (window.openDrawer) window.openDrawer('switch-rule');
+      }
+      function closeModal() {
+        clearStatementHighlights();
+        if (window.closeDrawer) window.closeDrawer();
+        editingSourceId = null;
+      }
+      window.closeModal = closeModal;
+      function openDeleteConfirm() {
+        var confirmModal = document.getElementById('delete-rule-confirm-modal');
+        var descEl = document.getElementById('delete-confirm-desc');
+        if (descEl && editingSourceId) {
+          var rule = appliedRules[editingSourceId];
+          var sourceLabel = rule ? (groupLabels(editingSourceId) || editingSourceId) : '[Source Group]';
+          var targetLabel = rule ? (groupLabels(rule.targetGroup) || rule.targetGroup) : '[Target Group]';
+          descEl.textContent = 'This will stop moving negative balances from ' + sourceLabel + ' to ' + targetLabel + '. Already moved balances won\'t change.';
+        }
+        if (confirmModal) {
+          confirmModal.classList.add('is-open');
+          confirmModal.setAttribute('aria-hidden', 'false');
+        }
+      }
+      function closeDeleteConfirm() {
+        var confirmModal = document.getElementById('delete-rule-confirm-modal');
+        if (confirmModal) {
+          confirmModal.classList.remove('is-open');
+          confirmModal.setAttribute('aria-hidden', 'true');
+        }
+      }
+      function deleteRule(sourceIdParam, opts) {
+        var silent = opts && opts.silent;
+        var idToDelete = sourceIdParam != null ? sourceIdParam : editingSourceId;
+        if (!idToDelete) return;
+        var rule = appliedRules[idToDelete];
+        if (rule && rule.revertData) {
+          var rd = rule.revertData;
+          [rd.period0, rd.period1].forEach(function (r) {
+            if (!r) return;
+            if (r.sourceAmounts) {
+              r.sourceAmounts.forEach(function (item) {
+                setCellValue(item.cell, item.originalValue);
+                removeShiftIndicator(item.cell);
+              });
+            }
+            if (r.targetCell && r.amountAdded) {
+              var current = getCellValue(r.targetCell);
+              setCellValue(r.targetCell, current - r.amountAdded);
+              removeShiftIndicator(r.targetCell);
+            }
+            if (r.rowsWithHidden) {
+              var periodIdx = r === rd.period0 ? 0 : 1;
+              r.rowsWithHidden.forEach(function (row) {
+                var cells = row.querySelectorAll('td.num');
+                var cell = cells[periodIdx];
+                if (cell) cell.classList.remove('cell-period-hidden');
+              });
+            }
+          });
+          var table = document.getElementById('financial-statement');
+          if (table) {
+            var sourceRows = Array.from(table.querySelectorAll('tr')).filter(function (r) {
+              return r.getAttribute('data-id') === idToDelete || r.getAttribute('data-parent') === idToDelete || r.getAttribute('data-group') === idToDelete;
+            });
+            sourceRows.forEach(function (row) {
+              var cells = row.querySelectorAll('td.num');
+              cells.forEach(function (c) { removeShiftIndicator(c); });
+            });
+            recalculateParentTotal(sourceRows, idToDelete, 0);
+            recalculateParentTotal(sourceRows, idToDelete, 1);
+            recalculateSourceParentTotal(idToDelete, 0);
+            recalculateSourceParentTotal(idToDelete, 1);
+          }
+        }
+        delete appliedRules[idToDelete];
+        renderSwitchRulesPanel();
+        closeDeleteConfirm();
+        if (sourceIdParam == null) closeModal();
+        var tableEl = document.getElementById('financial-statement');
+        var sourceRowEl = tableEl ? Array.from(tableEl.querySelectorAll('tr')).find(function (r) {
+          return r.getAttribute('data-id') === idToDelete || r.getAttribute('data-group') === idToDelete;
+        }) : null;
+        if (sourceRowEl) sourceRowEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (tableEl) requestAnimationFrame(function () { tableEl.offsetHeight; });
+        if (!silent) {
+          var toast = document.getElementById('toast');
+          if (toast) {
+            toast.textContent = 'Switch rule removed';
+            toast.classList.add('is-visible');
+            setTimeout(function () { toast.classList.remove('is-visible'); }, 3000);
+          }
+        }
+      }
+      function parseNum(str) {
+        if (!str || str.trim() === '' || str === '—') return 0;
+        var cleaned = str.replace(/,/g, '').replace(/[()]/g, function (m) { return m === '(' ? '-' : ''; }).trim();
+        var n = parseFloat(cleaned);
+        return isNaN(n) ? 0 : n;
+      }
+      function formatNum(n) {
+        if (n === 0) return '—';
+        var s = Math.abs(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return n < 0 ? '-' + s : s;
+      }
+      function setCellValue(cell, value) {
+        var formatted = formatNum(value);
+        var link = cell.querySelector('a');
+        if (link) link.textContent = formatted;
+        else cell.textContent = formatted;
+      }
+      function getCellValue(cell) {
+        var link = cell.querySelector('a');
+        var text = link ? link.textContent : (cell.textContent || '');
+        return parseNum(text);
+      }
+      function getTargetLabel(targetGroup, targetChild) {
+        var codes = groupChildren(targetGroup);
+        if (targetChild && codes.length) {
+          var c = codes.find(function (x) { return x.id === targetChild; });
+          return c ? c.label : groupLabels(targetGroup);
+        }
+        return groupLabels(targetGroup) || targetGroup;
+      }
+      function getTargetDestinationFormat(targetGroup, targetChild) {
+        var targetGroupName = groupLabels(targetGroup) || targetGroup;
+        var codes = groupChildren(targetGroup);
+        if (targetChild && codes.length) {
+          var c = codes.find(function (x) { return x.id === targetChild; });
+          if (c) return targetGroupName + ' › ' + c.label;
+        }
+        return targetGroupName;
+      }
+      function addShiftIndicator(cell, tooltipText) {
+        var existing = cell.querySelector('.shift-indicator');
+        if (existing) {
+          var popover = existing.querySelector('.shift-popover');
+          if (popover) popover.textContent = (popover.textContent ? popover.textContent + '; ' : '') + tooltipText;
+          return;
+        }
+        var wrapper = cell.querySelector('.num-with-shift');
+        if (!wrapper) {
+          wrapper = document.createElement('span');
+          wrapper.className = 'num-with-shift';
+          var frag = document.createDocumentFragment();
+          while (cell.firstChild) frag.appendChild(cell.firstChild);
+          wrapper.appendChild(frag);
+          cell.appendChild(wrapper);
+        }
+        var indicator = document.createElement('span');
+        indicator.className = 'shift-indicator';
+        indicator.setAttribute('tabindex', '0');
+        indicator.setAttribute('role', 'button');
+        indicator.setAttribute('aria-label', 'Includes transferred amount. ' + tooltipText);
+        indicator.setAttribute('aria-expanded', 'false');
+        var img = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        img.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        img.setAttribute('width', '12');
+        img.setAttribute('height', '12');
+        img.setAttribute('viewBox', '0 0 12 12');
+        img.setAttribute('fill', 'none');
+        img.setAttribute('aria-hidden', 'true');
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', 'M10.75 9.25L12 8V12H8L9.25 10.75L7 8.5L8.5 7L10.75 9.25ZM12 4L10.75 2.75L6.5 7H0V5H5.5L9.25 1.25L8 0H12V4Z');
+        path.setAttribute('fill', '#59606D');
+        img.appendChild(path);
+        indicator.appendChild(img);
+        var popover = document.createElement('span');
+        popover.className = 'shift-popover';
+        popover.textContent = tooltipText;
+        popover.setAttribute('role', 'tooltip');
+        indicator.appendChild(popover);
+        function positionPopover() {
+          var rect = indicator.getBoundingClientRect();
+          var gap = 8;
+          var popoverHeight = 80;
+          var spaceBelow = window.innerHeight - rect.bottom;
+          var spaceAbove = rect.top;
+          var left = rect.left;
+          var top;
+          if (spaceBelow >= popoverHeight + gap) {
+            top = rect.bottom + gap;
+          } else if (spaceAbove >= popoverHeight + gap) {
+            top = rect.top - popoverHeight - gap;
+          } else {
+            top = Math.max(gap, Math.min(rect.top, window.innerHeight - popoverHeight - gap));
+          }
+          left = Math.max(gap, Math.min(left, window.innerWidth - 260 - gap));
+          popover.style.left = left + 'px';
+          popover.style.top = top + 'px';
+        }
+        indicator.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (indicator.classList.contains('is-open')) {
+            indicator.classList.remove('is-open');
+            indicator.setAttribute('aria-expanded', 'false');
+            return;
+          }
+          document.querySelectorAll('.shift-indicator.is-open').forEach(function (el) {
+            el.classList.remove('is-open');
+            el.setAttribute('aria-expanded', 'false');
+          });
+          positionPopover();
+          indicator.classList.add('is-open');
+          indicator.setAttribute('aria-expanded', 'true');
+        });
+        indicator.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            indicator.click();
+          }
+        });
+        wrapper.insertBefore(indicator, wrapper.firstChild);
+      }
+      function updateReportCodeControl() {
+        var group = groupSelect ? groupSelect.value : '';
+        var codes = group ? groupChildren(group) : [];
+        if (reportCodeRow) reportCodeRow.classList.toggle('hidden', !group);
+        if (reportCodeSelect) reportCodeSelect.classList.add('hidden');
+        if (reportCodeReadonly) reportCodeReadonly.classList.add('hidden');
+        if (reportCodeError) reportCodeError.classList.add('hidden');
+        if (!group) return;
+        if (codes.length === 0) {
+          if (reportCodeError) { reportCodeError.classList.remove('hidden'); reportCodeError.textContent = 'No valid report codes for this group.'; }
+          return;
+        }
+        if (codes.length === 1) {
+          if (reportCodeReadonly) {
+            reportCodeReadonly.innerHTML = '<option value="' + escapeHtml(codes[0].id) + '" selected>' + escapeHtml(codes[0].label) + '</option>';
+            reportCodeReadonly.classList.remove('hidden');
+          }
+          return;
+        }
+        if (reportCodeSelect) {
+          reportCodeSelect.innerHTML = '<option value="">Select report code</option>';
+          codes.forEach(function (c) {
+            var opt = document.createElement('option');
+            opt.value = c.id;
+            opt.textContent = c.label;
+            reportCodeSelect.appendChild(opt);
+          });
+          reportCodeSelect.classList.remove('hidden');
+        }
+      }
+      function getSelectedReportCodeId() {
+        var group = groupSelect ? groupSelect.value : '';
+        var codes = group ? groupChildren(group) : [];
+        if (codes.length === 1) return codes[0].id;
+        return reportCodeSelect ? reportCodeSelect.value : '';
+      }
+      function isReportCodeValid() {
+        var group = groupSelect ? groupSelect.value : '';
+        var codes = group ? groupChildren(group) : [];
+        if (codes.length === 0) return false;
+        if (codes.length === 1) return true;
+        return reportCodeSelect && reportCodeSelect.value !== '';
+      }
+      function isConditionExtraValid() {
+        var ct = conditionTypeSelect ? conditionTypeSelect.value : '';
+        if (!ct) return false;
+        if (ct === 'above_threshold' || ct === 'below_threshold') {
+          var v = conditionThresholdInput ? conditionThresholdInput.value : '';
+          return v !== '' && !isNaN(parseFloat(v));
+        }
+        if (ct === 'of_type') {
+          return conditionAccountTypeSelect && conditionAccountTypeSelect.value !== '';
+        }
+        return true;
+      }
+      function isFormValid() {
+        var src = sourceSelect ? sourceSelect.value : '';
+        var dest = groupSelect ? groupSelect.value : '';
+        if (!src || !dest) return false;
+        if (!isConditionExtraValid()) return false;
+        return isReportCodeValid();
+      }
+      function updateSaveButtonState() {
+        if (saveBtn) saveBtn.disabled = !isFormValid();
+      }
+      function recalculateParentTotal(sourceRows, sourceId, periodIdx) {
+        var parentRow = sourceRows.find(function (r) { return r.getAttribute('data-id') === sourceId; });
+        if (!parentRow) return;
+        var hasChildren = sourceRows.some(function (r) { return r.getAttribute('data-parent') === sourceId; });
+        if (!hasChildren) return;
+        var sum = 0;
+        sourceRows.forEach(function (row) {
+          if (row.getAttribute('data-parent') !== sourceId) return;
+          var cells = row.querySelectorAll('td.num');
+          var cell = cells[periodIdx];
+          if (cell) sum += getCellValue(cell);
+        });
+        var parentCells = parentRow.querySelectorAll('td.num');
+        var parentCell = parentCells[periodIdx];
+        if (parentCell) setCellValue(parentCell, sum);
+      }
+      function recalculateSourceParentTotal(sourceId, periodIdx) {
+        var table = document.getElementById('financial-statement');
+        if (!table) return;
+        var sourceRow = Array.from(table.querySelectorAll('tr')).find(function (r) {
+          return r.getAttribute('data-id') === sourceId || r.getAttribute('data-group') === sourceId;
+        });
+        if (!sourceRow) return;
+        var sourceParentId = sourceRow.getAttribute('data-parent');
+        if (!sourceParentId) return;
+        var parentRow = Array.from(table.querySelectorAll('tr')).find(function (r) {
+          return r.getAttribute('data-id') === sourceParentId;
+        });
+        if (!parentRow) return;
+        var childRows = Array.from(table.querySelectorAll('tr')).filter(function (r) {
+          return r.getAttribute('data-parent') === sourceParentId;
+        });
+        var sum = 0;
+        childRows.forEach(function (row) {
+          var cells = row.querySelectorAll('td.num');
+          var cell = cells[periodIdx];
+          if (cell) sum += getCellValue(cell);
+        });
+        var parentCells = parentRow.querySelectorAll('td.num');
+        var parentCell = parentCells[periodIdx];
+        if (parentCell) setCellValue(parentCell, sum);
+      }
+      function removeShiftIndicator(cell) {
+        var wrapper = cell.querySelector('.num-with-shift');
+        if (!wrapper) return;
+        var indicator = wrapper.querySelector('.shift-indicator');
+        if (indicator) indicator.remove();
+        var parent = cell;
+        var frag = document.createDocumentFragment();
+        while (wrapper.firstChild) frag.appendChild(wrapper.firstChild);
+        if (parent.contains(wrapper)) parent.replaceChild(frag, wrapper);
+      }
+      function applyForPeriod(sourceRows, targetRow, periodIdx, sourceId, targetGroup, targetChild, sourceLabel) {
+        var targetCells = targetRow.querySelectorAll('td.num');
+        var targetCell = targetCells[periodIdx];
+        if (!targetCell) return null;
+        var flipSign = needsSignFlip(sourceId, targetGroup);
+        var totalMoved = 0;
+        var allNegative = true;
+        var sourceAmounts = [];
+        var rowsWithHidden = [];
+        sourceRows.forEach(function (row) {
+          var cells = row.querySelectorAll('td.num');
+          var cell = cells[periodIdx];
+          if (!cell) return;
+          var val = getCellValue(cell);
+          if (val < 0) {
+            var absVal = Math.abs(val);
+            totalMoved += absVal;
+            sourceAmounts.push({ cell: cell, originalValue: val });
+            setCellValue(cell, 0);
+          } else if (val !== 0) {
+            allNegative = false;
+          }
+        });
+        var amountToAdd = flipSign ? totalMoved : totalMoved;
+        var targetTooltipText = amountToAdd > 0 ? '£' + amountToAdd.toLocaleString() + ' transferred from ' + (sourceLabel || groupLabels(sourceId)) : null;
+        var sourceTooltipText = amountToAdd > 0 ? '£' + amountToAdd.toLocaleString() + ' transferred to ' + getTargetLabel(targetGroup, targetChild) : null;
+        if (amountToAdd > 0) {
+          var current = getCellValue(targetCell);
+          setCellValue(targetCell, current + amountToAdd);
+          addShiftIndicator(targetCell, targetTooltipText);
+          if (!allNegative) {
+            sourceAmounts.forEach(function (item) {
+              addShiftIndicator(item.cell, sourceTooltipText);
+            });
+          }
+        }
+        recalculateParentTotal(sourceRows, sourceId, periodIdx);
+        if (totalMoved > 0 && allNegative) {
+          sourceRows.forEach(function (row) {
+            var cells = row.querySelectorAll('td.num');
+            var cell = cells[periodIdx];
+            if (cell) {
+              cell.classList.add('cell-period-hidden');
+              rowsWithHidden.push(row);
+            }
+          });
+        }
+        return { sourceAmounts: sourceAmounts, targetCell: targetCell, amountAdded: amountToAdd, rowsWithHidden: rowsWithHidden };
+      }
+      function applySwitchRule(opts) {
+        var table = document.getElementById('financial-statement');
+        if (!table) { if (window.closeDrawer) window.closeDrawer(); return; }
+        var sourceId = (opts && opts.sourceId) || (sourceSelect ? sourceSelect.value : '');
+        var targetGroup = (opts && opts.targetGroup) || (groupSelect ? groupSelect.value : '');
+        var targetChild = (opts && opts.targetChild) || getSelectedReportCodeId();
+        if (!sourceId || !targetGroup) {
+          var toast = document.getElementById('toast');
+          if (toast) { toast.textContent = 'Please select source and target group.'; toast.classList.add('is-visible'); setTimeout(function () { toast.classList.remove('is-visible'); }, 3000); }
+          return;
+        }
+        var codes = groupChildren(targetGroup);
+        if (codes.length > 1 && !targetChild) {
+          var t = document.getElementById('toast');
+          if (t) { t.textContent = 'Please select a target report code.'; t.classList.add('is-visible'); setTimeout(function () { t.classList.remove('is-visible'); }, 3000); }
+          return;
+        }
+        if (codes.length === 0) {
+          var t0 = document.getElementById('toast');
+          if (t0) { t0.textContent = 'No valid report codes for the selected destination group.'; t0.classList.add('is-visible'); setTimeout(function () { t0.classList.remove('is-visible'); }, 3000); }
+          return;
+        }
+        var sourceRows = Array.from(table.querySelectorAll('tr')).filter(function (r) {
+          return r.getAttribute('data-id') === sourceId || r.getAttribute('data-parent') === sourceId || r.getAttribute('data-group') === sourceId;
+        });
+        var targetRow = null;
+        if (targetChild && groupChildren(targetGroup)) {
+          targetRow = Array.from(table.querySelectorAll('tr')).find(function (r) {
+            return r.getAttribute('data-parent') === targetGroup && r.getAttribute('data-account') === targetChild;
+          });
+        }
+        if (!targetRow) {
+          targetRow = Array.from(table.querySelectorAll('tr')).find(function (r) {
+            return r.getAttribute('data-id') === targetGroup || r.getAttribute('data-group') === targetGroup;
+          });
+        }
+        if (!targetRow) { closeModal(); return; }
+        var conditionType = conditionTypeSelect ? conditionTypeSelect.value : '';
+        var sourceLabel = groupLabels(sourceId);
+        var revert0 = null;
+        var revert1 = null;
+        if (conditionType === 'negative') {
+          revert0 = applyForPeriod(sourceRows, targetRow, 0, sourceId, targetGroup, targetChild, sourceLabel);
+          revert1 = applyForPeriod(sourceRows, targetRow, 1, sourceId, targetGroup, targetChild, sourceLabel);
+        }
+        var reportCodeId = codes.length === 1 ? codes[0].id : targetChild;
+        var threshold = (conditionType === 'above_threshold' || conditionType === 'below_threshold') && conditionThresholdInput
+          ? parseFloat(conditionThresholdInput.value) : null;
+        var accountType = conditionType === 'of_type' && conditionAccountTypeSelect ? conditionAccountTypeSelect.value : null;
+        var rule = Data.createSwitchRule({
+          id: 'rule-' + Date.now(),
+          sourceGroupId: sourceId,
+          destinationGroupId: targetGroup,
+          reportCodeId: reportCodeId,
+          scope: 'client',
+          status: 'valid',
+          conditionType: conditionType,
+          threshold: threshold,
+          accountType: accountType
+        });
+        rule.targetGroup = targetGroup;
+        rule.targetChild = reportCodeId || null;
+        rule.revertData = conditionType === 'negative' ? { period0: revert0, period1: revert1 } : null;
+        appliedRules[sourceId] = rule;
+        editingSourceId = null;
+        clearStatementHighlights();
+        if (window.closeDrawer) window.closeDrawer();
+        renderSwitchRulesPanel();
+        var toast = document.getElementById('toast');
+        if (toast) {
+          toast.textContent = 'Switch rule applied: ' + groupLabels(sourceId) + ' → ' + getTargetLabel(targetGroup, targetChild);
+          toast.classList.add('is-visible');
+          clearTimeout(applySwitchRule._toastTimer);
+          applySwitchRule._toastTimer = setTimeout(function () { toast.classList.remove('is-visible'); }, 3000);
+        }
+      }
+      function populateGroupDropdowns() {
+        Data.GROUPS.forEach(function (g) {
+          var label = g.section + ' › ' + g.label;
+          if (sourceSelect) {
+            var o = document.createElement('option');
+            o.value = g.id;
+            o.textContent = label;
+            sourceSelect.appendChild(o);
+          }
+          if (groupSelect) {
+            var o2 = document.createElement('option');
+            o2.value = g.id;
+            o2.textContent = label;
+            groupSelect.appendChild(o2);
+          }
+        });
+      }
+      populateGroupDropdowns();
+      populateAccountTypeDropdown();
+      if (groupSelect) groupSelect.addEventListener('change', function () { updateReportCodeControl(); updateSaveButtonState(); updateStatementHighlights(); });
+      if (sourceSelect) sourceSelect.addEventListener('change', function () { updateSaveButtonState(); updateStatementHighlights(); });
+      if (reportCodeSelect) reportCodeSelect.addEventListener('change', function () { updateSaveButtonState(); updateStatementHighlights(); });
+      if (conditionTypeSelect) conditionTypeSelect.addEventListener('change', function () { updateConditionExtraVisibility(); updateSaveButtonState(); updateInfoBanner(); });
+      if (conditionThresholdInput) conditionThresholdInput.addEventListener('input', function () { updateSaveButtonState(); updateInfoBanner(); });
+      if (conditionAccountTypeSelect) conditionAccountTypeSelect.addEventListener('change', updateSaveButtonState);
+      var modalClose = document.getElementById('modal-close');
+      if (modalClose) modalClose.addEventListener('click', closeModal);
+      var modalCancel = document.getElementById('modal-cancel');
+      if (modalCancel) modalCancel.addEventListener('click', closeModal);
+      var modalApply = document.getElementById('modal-apply');
+      if (modalApply) modalApply.addEventListener('click', function () { applySwitchRule(); });
+      if (modalDeleteBtn) modalDeleteBtn.addEventListener('click', openDeleteConfirm);
+      var deleteConfirmModal = document.getElementById('delete-rule-confirm-modal');
+      var deleteConfirmBtn = document.getElementById('delete-confirm-btn');
+      var deleteConfirmCancel = document.getElementById('delete-confirm-cancel');
+      var deleteConfirmClose = document.getElementById('delete-confirm-close');
+      if (deleteConfirmBtn) deleteConfirmBtn.addEventListener('click', deleteRule);
+      if (deleteConfirmCancel) deleteConfirmCancel.addEventListener('click', closeDeleteConfirm);
+      if (deleteConfirmClose) deleteConfirmClose.addEventListener('click', closeDeleteConfirm);
+      if (deleteConfirmModal) deleteConfirmModal.addEventListener('click', function (e) {
+        if (e.target === deleteConfirmModal) closeDeleteConfirm();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        if (deleteConfirmModal && deleteConfirmModal.classList.contains('is-open')) {
+          closeDeleteConfirm();
+          return;
+        }
+      });
+      function escapeHtml(str) {
+        if (!str) return '';
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+      function renderSwitchRulesPanel() {
+        var emptyEl = document.getElementById('switch-rules-empty');
+        var tableEl = document.getElementById('switch-rules-table');
+        var tbodyEl = document.getElementById('switch-rules-tbody');
+        var statusFilter = document.getElementById('switch-rules-status-filter');
+        if (!emptyEl || !tableEl || !tbodyEl) return;
+        var statusQ = statusFilter ? statusFilter.value : '';
+        var rules = Object.keys(appliedRules).map(function (sid) {
+          var r = appliedRules[sid];
+          var sourceLabel = Data.getGroupLabelShort(sid) || sid;
+          var targetLabel = Data.getGroupLabelShort(r.targetGroup) || r.targetGroup;
+          var targetReportCode = '—';
+          var codes = groupChildren(r.targetGroup);
+          if (r.targetChild && codes.length) {
+            var c = codes.find(function (x) { return x.id === r.targetChild; });
+            targetReportCode = c ? c.label : '—';
+          }
+          return { sourceId: sid, sourceLabel: sourceLabel, targetLabel: targetLabel, targetReportCode: targetReportCode, status: r.status || 'valid', scope: r.scope || 'client' };
+        });
+        rules = rules.filter(function (r) {
+          if (statusQ && r.status !== statusQ) return false;
+          return true;
+        });
+        if (rules.length === 0) {
+          emptyEl.hidden = false;
+          tableEl.hidden = true;
+          tbodyEl.innerHTML = '';
+          return;
+        }
+        emptyEl.hidden = true;
+        tableEl.hidden = false;
+        tbodyEl.innerHTML = '';
+        rules.forEach(function (rule) {
+          var tr = document.createElement('tr');
+          var statusBadge = document.createElement('span');
+          statusBadge.className = 'rule-status-badge ' + rule.status;
+          statusBadge.textContent = rule.status === 'needs_review' ? 'Inactive' : 'Active';
+          statusBadge.title = rule.status === 'needs_review' ? 'This rule refers to a group that doesn\'t exist under the current accounting standard. Click to simulate Active.' : 'Click to simulate Inactive';
+          statusBadge.style.cursor = 'pointer';
+          statusBadge.addEventListener('click', function () {
+            var r = appliedRules[rule.sourceId];
+            if (r) {
+              r.status = r.status === 'needs_review' ? 'valid' : 'needs_review';
+              renderSwitchRulesPanel();
+            }
+          });
+          var scopeBadge = rule.scope === 'practice' ? '<span class="rule-scope-badge">Practice default</span>' : '';
+          tr.innerHTML = '<td>' + escapeHtml(rule.sourceLabel) + '</td><td>' + escapeHtml(rule.targetLabel) + '</td><td>' + escapeHtml(rule.targetReportCode) + '</td><td></td><td></td>';
+          tr.querySelector('td:nth-child(4)').appendChild(statusBadge);
+          if (rule.scope === 'practice') tr.querySelector('td:nth-child(4)').insertAdjacentHTML('beforeend', scopeBadge);
+          var editBtn = document.createElement('button');
+          editBtn.type = 'button';
+          editBtn.className = 'switch-rules-edit-btn';
+          editBtn.textContent = 'Edit';
+          editBtn.addEventListener('click', function () { openModal(rule.sourceId); });
+          tr.querySelector('td:last-child').appendChild(editBtn);
+          tbodyEl.appendChild(tr);
+        });
+      }
+      document.addEventListener('click', function (e) {
+        if (e.target.closest('#configure-switch-rules-btn')) {
+          e.preventDefault();
+          openModal(null);
+        }
+      });
+      var statusFilter = document.getElementById('switch-rules-status-filter');
+      if (statusFilter) statusFilter.addEventListener('change', renderSwitchRulesPanel);
+      renderSwitchRulesPanel();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+/**
+ * Topic Component (Tags)
+ *
+ * Clickable topic pills for filtering/navigation.
+ * Used for linking to tag collection pages.
+ */
+
+/* ===== Topic List Container ===== */
+.topic-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-xsmall);
+  align-items: center;
+}
+
+/* ===== Topic Pill ===== */
+.topic {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 var(--s-standard);
+  background: var(--color-bg-surface);
+  border: var(--border-light);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: 15px;
+  font-weight: var(--font-weight-deemphasis);
+  line-height: 145%;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+/* Small variant */
+.topic--sm {
+  height: 32px;
+  padding: 0 var(--s-small);
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+}
+
+.topic:hover {
+  background: var(--color-neutral-grey-7);
+  border-color: var(--color-border-standard);
+}
+
+.topic:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-blue-light);
+}
+
+/* ===== Active/Selected Topic ===== */
+.topic.is-active,
+.topic--active {
+  background: var(--color-blue);
+  color: var(--color-white);
+}
+
+.topic.is-active:hover,
+.topic--active:hover {
+  background: var(--color-blue-bright);
+}
+
+/* ===== Topic with Icon ===== */
+.topic__icon {
+  width: 14px;
+  height: 14px;
+  margin-right: var(--s-2xsmall);
+}
+
+/* ===== "All Topics" Link Variant ===== */
+.topic--link {
+  background: transparent;
+  color: var(--color-text-primary);
+  padding-right: var(--s-xsmall);
+}
+
+.topic--link:hover {
+  background: transparent;
+}
+
+.topic--link .topic__arrow {
+  width: 12px;
+  height: 12px;
+  margin-left: var(--s-2xsmall);
+}
+
+/* ===== Muted/Secondary Variant ===== */
+.topic--muted {
+  color: var(--color-text-muted);
+}
+
+.topic--muted:hover {
+  background: var(--color-neutral-grey-6);
+}

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rishi | Xero Personas</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --xero: #14b5ea;
+      --xero-dark: #0c4a6e;
+      --text: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --surface: #ffffff;
+      --surface-subtle: #f8fafc;
+      --border: #e2e8f0;
+      --radius-lg: 1rem;
+      --radius-md: 0.75rem;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 20px rgba(15, 23, 42, 0.08);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: var(--text);
+      line-height: 1.5;
+      background: var(--surface-subtle);
+      background-image: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 30%, #ffffff 60%, #f8fafc 100%);
+      background-attachment: fixed;
+    }
+
+    .header {
+      width: 100%;
+      margin: 0;
+      padding: 0.9rem 0;
+      background: #14b5ea;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 4px 20px rgba(20, 181, 234, 0.25);
+    }
+
+    .header-inner {
+      max-width: 58rem;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-brand {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 0.25rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 0.9rem;
+    }
+
+    .header-nav a {
+      text-decoration: none;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.5rem;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .header-nav a.is-active {
+      color: var(--xero-dark);
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .header-nav a:not(.is-active) {
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .header-nav a:not(.is-active):hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .content {
+      max-width: 58rem;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 3.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.8125rem;
+      margin: 0 0 1.35rem;
+      list-style: none;
+      padding: 0.45rem 0.65rem 0.45rem 0.7rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.2rem 0.35rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .breadcrumbs a {
+      color: var(--xero);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .breadcrumbs a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumbs li {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .breadcrumbs li::after {
+      content: "/";
+      color: #cbd5e1;
+      font-weight: 400;
+    }
+
+    .breadcrumbs li:last-child::after {
+      content: none;
+    }
+
+    .breadcrumbs [aria-current="page"] {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .profile-hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 1.4rem 1.35rem 1.3rem 1.45rem;
+      margin-bottom: 1.75rem;
+    }
+
+    @media (min-width: 48rem) {
+      .profile-hero {
+        padding: 1.5rem 1.5rem 1.4rem 1.6rem;
+      }
+    }
+
+    .profile-layout {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 0.4rem 0.35rem;
+    }
+
+    .profile-layout__main {
+      flex: 1 1 15rem;
+      min-width: 0;
+      max-width: 28rem;
+    }
+
+    .profile-layout__main h1 {
+      font-size: clamp(1.85rem, 4vw, 2.45rem);
+      font-weight: 700;
+      line-height: 1.12;
+      margin: 0 0 0.4rem;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .profile-sub {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    .profile-size {
+      margin: 0.6rem 0 0;
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--xero-dark);
+      background: rgba(20, 181, 234, 0.12);
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      letter-spacing: 0.01em;
+    }
+
+    .profile-layout__portrait {
+      flex: 0 1 auto;
+      order: 2;
+      align-self: center;
+      position: relative;
+      z-index: 1;
+      margin: 0 0 0 auto;
+    }
+
+    .profile-layout__portrait img {
+      display: block;
+      width: min(120px, 32vw);
+      height: auto;
+      max-height: 160px;
+      object-fit: contain;
+    }
+
+    @media (max-width: 52rem) {
+      .profile-layout__portrait {
+        order: 3;
+        transform: none;
+        align-self: flex-end;
+        margin: 0.4rem 0 0 auto;
+      }
+
+      .profile-layout__portrait img {
+        width: min(120px, 50vw);
+        max-height: 150px;
+      }
+    }
+
+    .profile-layout__actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+      flex: 0 0 auto;
+      order: 3;
+      margin: 0;
+      align-self: flex-start;
+    }
+
+    @media (max-width: 52rem) {
+      .profile-layout {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .profile-layout__main {
+        max-width: none;
+      }
+
+      .profile-layout__actions {
+        order: 2;
+        align-items: stretch;
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.5rem;
+      padding: 0.5rem 1.1rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .btn--primary {
+      background: #14b5ea;
+      color: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1);
+    }
+
+    .btn--primary:hover {
+      background: #12a8db;
+      box-shadow: 0 2px 8px rgba(20, 181, 234, 0.3);
+    }
+
+    .btn--primary:focus {
+      outline: 2px solid #14b5ea;
+      outline-offset: 2px;
+    }
+
+    .btn--secondary {
+      background: var(--surface);
+      color: #14b5ea;
+      border: 1px solid #14b5ea;
+    }
+
+    .btn--secondary:hover {
+      background: rgba(20, 181, 234, 0.08);
+    }
+
+    .btn--secondary:focus {
+      outline: 2px solid #14b5ea;
+      outline-offset: 2px;
+    }
+
+    .persona-quote {
+      margin: 1.1rem 0 0;
+      padding: 1.05rem 1rem 1.05rem 1.1rem;
+      border-left: 3px solid var(--xero);
+      background: var(--surface-subtle);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-size: 1.04rem;
+      line-height: 1.7;
+      font-style: normal;
+      font-weight: 500;
+      color: #334155;
+    }
+
+    .persona-detail {
+      margin: 0 0 1.5rem;
+    }
+
+    .persona-detail h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem;
+      line-height: 1.3;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .persona-detail__note {
+      margin: 0 0 1.1rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .persona-card-surface {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.3rem 1.35rem 1.4rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .persona-detail__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 40rem) {
+      .persona-detail__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .persona-detail__col {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.95rem 1.05rem 0.9rem;
+    }
+
+    .persona-detail h3 {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 0 0 0.5rem;
+    }
+
+    .persona-detail ul {
+      margin: 0;
+      padding: 0 0 0 1.1rem;
+      color: #334155;
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
+    .persona-detail li {
+      margin: 0 0 0.4rem;
+    }
+
+    .persona-detail li:last-child {
+      margin-bottom: 0;
+    }
+
+    .value-section {
+      margin: 0;
+    }
+
+    .value-section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin: 0 0 1.05rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .value-surface {
+      background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 25%, #ffffff 100%);
+      border: 1px solid #bae6fd;
+      border-radius: var(--radius-lg);
+      padding: 1.35rem 1.2rem 1.45rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .value-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.7rem 0.75rem;
+    }
+
+    @media (min-width: 50rem) {
+      .value-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 30rem) {
+      .value-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .value-item {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 0.8rem 0.85rem 0.9rem;
+    }
+
+    .value-item label {
+      display: block;
+      font-size: 0.7rem;
+      line-height: 1.4;
+      color: var(--text-muted);
+      margin: 0 0 0.3rem;
+      text-transform: none;
+    }
+
+    .value-item .value {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--text);
+    }
+
+    .value-jtbd {
+      grid-column: 1 / -1;
+      padding-top: 0.75rem;
+      margin-top: 0.15rem;
+      border-top: 1px solid #cbd5e1;
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+    }
+
+    .value-item.value-jtbd {
+      background: var(--surface-subtle);
+      border-style: solid;
+      border-color: #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="header-inner">
+      <a class="header-brand" href="index.html">Xero Personas</a>
+      <nav aria-label="Primary">
+        <ul class="header-nav">
+          <li><a href="index.html">Home</a></li>
+          <li><a class="is-active" href="index.html#explore-heading">SB Personas</a></li>
+          <li><a href="#">AB Personas</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="content" id="main">
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumbs">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#explore-heading">SB Personas</a></li>
+        <li><span aria-current="page">Rishi</span></li>
+      </ol>
+    </nav>
+
+    <div class="profile-hero">
+      <div class="profile-layout">
+        <div class="profile-layout__main">
+          <h1>Rishi</h1>
+          <p class="profile-sub">Owner of Recend Group</p>
+          <p class="profile-size">Medium (20-49 employees)</p>
+        </div>
+        <div class="profile-layout__portrait">
+          <img src="images/rishi.png" width="252" height="306" alt="Portrait of Rishi" />
+        </div>
+        <div class="profile-layout__actions">
+          <a class="btn btn--primary" href="#">Chat with me</a>
+          <a class="btn btn--secondary" href="#">Visit my Xero</a>
+        </div>
+      </div>
+      <blockquote class="persona-quote">
+        “When cash flow is tight, it can be really stressful. When cash flow becomes healthy, it's relief and definitely satisfaction.”
+      </blockquote>
+    </div>
+
+    <section class="persona-detail" aria-labelledby="recend-heading">
+      <div class="persona-card-surface">
+        <h2 id="recend-heading">Recend Group — segment snapshot (Medium 20–49)</h2>
+        <p class="persona-detail__note">From <em>2026 Segment Personas</em> (Xero, Jan 2026).</p>
+        <div class="persona-detail__grid">
+          <div class="persona-detail__col">
+            <h3>About the business</h3>
+            <ul>
+              <li>~13 years in business and ~397 customers or clients in the past 12 months (avg., segment org)</li>
+            </ul>
+          </div>
+          <div class="persona-detail__col">
+            <h3>About the Recend team</h3>
+            <ul>
+              <li>~20 Xero users on average, ~9 Accounting &amp; Bookkeeping users (avg.)</li>
+              <li>Owner oversight; external bookkeepers and accountants in high-compliance areas; key work split across sales, sales ops, HR, ops, specialists, and in-house accounting (e.g. compliance, record keeping, tax, reporting, cash, payroll prep)</li>
+              <li>How advisors and tax help are used varies; payment options follow common Medium-segment patterns</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="value-section" aria-labelledby="value-heading">
+      <h2 id="value-heading">Representation &amp; value</h2>
+      <div class="value-surface">
+        <div class="value-grid">
+          <div class="value-item">
+            <label>Xero SBs (BE orgs)*</label>
+            <span class="value">3%</span>
+          </div>
+          <div class="value-item">
+            <label>Share of Xero Rev*</label>
+            <span class="value">4%</span>
+          </div>
+          <div class="value-item">
+            <label>ARPU dist (NZ$)</label>
+            <span class="value">NZ$111</span>
+          </div>
+          <div class="value-item">
+            <label>TAM</label>
+            <span class="value">1% of SBs ~NZ$10-15b*</span>
+          </div>
+          <div class="value-item value-jtbd">
+            <label>Orgs that complete all five core jobs (billing, get paid, reporting, tax, record keeping)*</label>
+            <span class="value">53.5%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

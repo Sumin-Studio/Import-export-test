@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XPF Navigator</title>
+  <link rel="preconnect" href="https://www.xero.com">
+  <style>
+    @font-face {
+      font-family: "National2";
+      font-weight: 400;
+      src: url("https://www.xero.com/fonts/national2-web-regular.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-regular.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 400;
+      font-style: italic;
+      src: url("https://www.xero.com/fonts/national2-web-regular-italic.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-regular-italic.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 500;
+      src: url("https://www.xero.com/fonts/national2-web-medium.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-medium.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 500;
+      font-style: italic;
+      src: url("https://www.xero.com/fonts/national2-web-medium-italic.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-medium-italic.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 700;
+      src: url("https://www.xero.com/fonts/national2-web-bold.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-bold.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 700;
+      font-style: italic;
+      src: url("https://www.xero.com/fonts/national2-web-bold-italic.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-bold-italic.woff") format("woff");
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #000040;
+      --text: #ffffff;
+      --font: "National2", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --dot-cluster: min(30.6rem, calc(75vw * 1.5 * 0.85));
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: var(--text);
+      background-color: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1.25rem, 4vw, 2.5rem);
+      box-sizing: border-box;
+    }
+
+    /* Dots + copy stacked: text stays below the circle, gap scales with viewport */
+    .hero-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: min(40rem, 100%);
+      gap: clamp(1.5rem, 5vmin, 3rem);
+    }
+
+    .dot-stage {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .dot-cluster {
+      position: relative;
+      width: min(var(--dot-cluster), 100%);
+      aspect-ratio: 1;
+      max-width: 100%;
+      perspective: clamp(520px, 85vw, 900px);
+      perspective-origin: 50% 50%;
+    }
+
+    /* 3D sphere: dots sit on surface; whole assembly rotates */
+    .sphere {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transform-origin: 50% 50%;
+      animation: sphere-spin 36s linear infinite;
+      will-change: transform;
+    }
+
+    .sphere-dot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 3px;
+      height: 3px;
+      margin: -1.5px 0 0 -1.5px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+      transform-style: preserve-3d;
+      animation: dot-twinkle 3s ease-in-out infinite;
+    }
+
+    @keyframes sphere-spin {
+      from {
+        transform: rotateX(-16deg) rotateY(0deg);
+      }
+      to {
+        transform: rotateX(-16deg) rotateY(360deg);
+      }
+    }
+
+    @keyframes dot-twinkle {
+      0%,
+      100% {
+        opacity: 0.35;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 1.25rem, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.85s ease-out both;
+    }
+
+    .fade-in-up.delay-1 {
+      animation-delay: 0.2s;
+    }
+
+    /* Starts when the h1 fadeInUp (0.85s) has finished */
+    .fade-in-up.delay-after-title {
+      animation-delay: 0.85s;
+    }
+
+    .lower {
+      flex-shrink: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .lower h1 {
+      margin: 0;
+      color: #FFF;
+      text-align: center;
+      font-family: "National2", sans-serif;
+      font-size: 40px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+
+    .sub {
+      margin: 0.65rem 0 0;
+      color: #FFF;
+      font-family: "National2", sans-serif;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    .btn-pill {
+      display: flex;
+      width: 117px;
+      height: 41px;
+      min-height: var(--size-dimensions-40, 40px);
+      padding: var(--size-spacing-8, 8px) var(--size-spacing-12, 12px);
+      justify-content: center;
+      align-items: center;
+      gap: var(--size-spacing-4, 4px);
+      border: none;
+      cursor: pointer;
+      border-radius: var(--border-radius-large, 8px);
+      background: #3ECCFF;
+      color: #000856;
+      font-family: "National2", sans-serif;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+
+    .btn-pill--explore:hover {
+      background: #6AEAAA;
+    }
+
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="hero-stack">
+      <div class="dot-stage" id="dot-stage" aria-hidden="true">
+        <div class="dot-cluster" id="dot-cluster">
+          <div class="sphere" id="sphere" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="lower">
+        <h1 class="fade-in-up">Welcome to XPF Navigator</h1>
+        <p class="sub fade-in-up delay-1">Your co-pilot for building product at Xero</p>
+
+        <div class="actions fade-in-up delay-after-title" role="group" aria-label="Primary actions">
+          <button type="button" class="btn-pill btn-pill--explore" id="btn-explore">Explore</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var cluster = document.getElementById("dot-cluster");
+      var sphere = document.getElementById("sphere");
+      if (!cluster || !sphere) return;
+
+      var N = 200;
+      var golden = (1 + Math.sqrt(5)) / 2;
+
+      function placeDots() {
+        var w = cluster.offsetWidth;
+        if (!w) return;
+
+        var R = w * 0.44;
+        sphere.textContent = "";
+        var frag = document.createDocumentFragment();
+
+        for (var i = 0; i < N; i++) {
+          var theta = (2 * Math.PI * i) / golden;
+          var phi = Math.acos(1 - (2 * (i + 0.5)) / N);
+          var x = Math.sin(phi) * Math.cos(theta);
+          var y = Math.sin(phi) * Math.sin(theta);
+          var z = Math.cos(phi);
+
+          var dot = document.createElement("span");
+          dot.className = "sphere-dot";
+          dot.style.transform =
+            "translate3d(" + x * R + "px," + y * R + "px," + z * R + "px)";
+          dot.style.animationDelay = ((i % 19) * 0.07).toFixed(2) + "s";
+          frag.appendChild(dot);
+        }
+
+        sphere.appendChild(frag);
+      }
+
+      placeDots();
+
+      if (typeof ResizeObserver !== "undefined") {
+        var ro = new ResizeObserver(function () {
+          placeDots();
+        });
+        ro.observe(cluster);
+      } else {
+        window.addEventListener("resize", placeDots);
+      }
+
+      var exploreBtn = document.getElementById("btn-explore");
+      if (exploreBtn) {
+        exploreBtn.addEventListener("click", function () {
+          window.location.href = "xpf-navigator.html";
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="robots"
+      content="noindex, nofollow, noarchive, nosnippet, noimageindex"
+    />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <meta name="bingbot" content="noindex, nofollow" />
+    <title>Builders Kit MCP</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #0b0d10;
+        --fg: #f5f7fa;
+        --muted: #9aa4b2;
+        --accent: #7c9cff;
+        --border: rgba(255, 255, 255, 0.08);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background: var(--bg);
+        color: var(--fg);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 4rem 1.5rem;
+      }
+      .kicker {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.75rem;
+        color: var(--accent);
+        margin-bottom: 1rem;
+      }
+      h1 {
+        font-size: clamp(2rem, 4vw, 2.75rem);
+        margin: 0 0 0.75rem;
+        letter-spacing: -0.02em;
+      }
+      p.lead {
+        color: var(--muted);
+        line-height: 1.6;
+        margin: 0 0 2rem;
+        font-size: 1.05rem;
+      }
+      h2 {
+        font-size: 1rem;
+        margin: 2rem 0 0.5rem;
+        letter-spacing: -0.01em;
+      }
+      pre {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      a {
+        color: var(--accent);
+      }
+      .endpoints {
+        display: grid;
+        gap: 0.5rem;
+        margin: 1rem 0 0;
+      }
+      .endpoints code {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="kicker">Builders Kit</div>
+      <h1>builders-kit-mcp</h1>
+      <p class="lead">
+        A minimal Model Context Protocol server, deployed as Vercel serverless
+        functions. Point an MCP client at
+        <code>/mcp</code> and start calling tools.
+      </p>
+
+      <h2>Endpoints</h2>
+      <div class="endpoints">
+        <div><code>POST /mcp</code> — MCP Streamable HTTP transport</div>
+        <div><code>GET /health</code> — liveness check</div>
+      </div>
+
+      <h2>Connect from Cursor (bring your own tokens)</h2>
+      <p class="lead" style="margin: 0 0 0.75rem">
+        The server stores no credentials. Every caller passes their own tokens
+        as HTTP headers. Edit
+        <code>~/.cursor/mcp.json</code> and add the headers for the tools you
+        want to use — omit the ones you don't.
+      </p>
+      <pre><code>{
+  "mcpServers": {
+    "builders-kit-mcp": {
+      "type": "http",
+      "url": "https://builders-kit-mcp-xro.vercel.app/mcp",
+      "headers": {
+        "X-Figma-Token": "figd_...",
+        "X-OpenAI-Api-Key": "sk-...",
+        "X-Confluence-Base-Url": "https://yoursite.atlassian.net",
+        "X-Confluence-Email": "you@xero.com",
+        "X-Confluence-Token": "ATATT..."
+      }
+    }
+  }
+}</code></pre>
+      <p class="lead" style="margin: 0.75rem 0 0">
+        After editing, toggle the <code>builders-kit-mcp</code> server off/on in
+        Cursor Settings → MCP so it re-reads the config.
+      </p>
+
+      <h2>Where to get each token</h2>
+      <ul>
+        <li>
+          <strong>Figma</strong> —
+          <a
+            href="https://www.figma.com/settings"
+            target="_blank"
+            rel="noopener"
+            >figma.com/settings</a
+          >
+          → Security → Personal access tokens → <em>Generate new token</em>.
+          Read-only scopes are enough. The token inherits all your Figma
+          permissions, so treat it like a password.
+        </li>
+        <li>
+          <strong>OpenAI</strong> —
+          <a
+            href="https://platform.openai.com/api-keys"
+            target="_blank"
+            rel="noopener"
+            >platform.openai.com/api-keys</a
+          >.
+        </li>
+        <li>
+          <strong>Confluence</strong> —
+          <a
+            href="https://id.atlassian.com/manage-profile/security/api-tokens"
+            target="_blank"
+            rel="noopener"
+            >id.atlassian.com/manage-profile/security/api-tokens</a
+          >. Base URL is your Atlassian site root (e.g.
+          <code>https://xero.atlassian.net</code>).
+        </li>
+      </ul>
+
+      <h2>Tools</h2>
+      <ul>
+        <li>
+          <code>hello_world</code> — friendly greeting. Verifies the server is
+          reachable. No token needed.
+        </li>
+        <li>
+          <code>figma_get_tokens</code>, <code>figma_get_components</code>,
+          <code>figma_get_file_structure</code>,
+          <code>figma_export_images</code>, <code>figma_setup_guide</code> —
+          read-only Figma queries + signed image export URLs. Needs
+          <code>X-Figma-Token</code>.
+        </li>
+        <li>
+          <code>confluence_search</code>, <code>confluence_get_page</code>,
+          <code>confluence_list_spaces</code> — needs the three
+          <code>X-Confluence-*</code> headers.
+        </li>
+        <li>
+          <code>transcribe_url</code> — Whisper transcription from a public URL.
+          Needs <code>X-OpenAI-Api-Key</code>.
+        </li>
+        <li>
+          <code>userdata_query</code>, <code>userdata_get_insights</code> —
+          stubbed; return example shapes until wired to a real source.
+        </li>
+      </ul>
+
+      <h2>Why headers, not server-side env vars?</h2>
+      <p class="lead" style="margin-top: 0.5rem">
+        This endpoint is reachable on the public internet, so baking a token
+        into the server would effectively publish it. Per-user headers keep
+        credentials on each person's laptop and make every Figma / Confluence /
+        OpenAI call traceable back to the user who made it. Env vars still work
+        as a fall-back for local dev.
+      </p>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,127 @@
+/**
+ * Canvas Layout System
+ *
+ * Three states:
+ * 1. Base state - content only
+ * 2. Side assist - content + fluid UI panel (~75/25 split)
+ * 3. Fullscreen - fluid UI overlays content
+ *
+ * Usage:
+ *   <div class="canvas" data-state="base|side-assist|fullscreen">
+ *     <header class="canvas__header">...</header>
+ *     <main class="canvas__body">
+ *       <div class="canvas__content">...</div>
+ *       <aside class="canvas__fluid-panel">...</aside>
+ *     </main>
+ *   </div>
+ */
+
+/* ===== Canvas Container ===== */
+.canvas {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--color-bg-surface);
+  position: relative;
+}
+
+/* ===== Canvas Body (Content + Panel) ===== */
+.canvas__body {
+  display: flex;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== Content Area ===== */
+.canvas__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-large);
+  transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== Fluid UI Panel ===== */
+.canvas__fluid-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-depth-pop);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+}
+
+/* Hidden: delay visibility until after the width collapses */
+.canvas__fluid-panel[aria-hidden="true"] {
+  visibility: hidden;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.35s;
+}
+
+/* Visible: show immediately so content is visible during open animation */
+.canvas__fluid-panel[aria-hidden="false"] {
+  visibility: visible;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== STATE: Base ===== */
+.canvas[data-state="base"] .canvas__content {
+  margin-right: 0;
+}
+
+.canvas[data-state="base"] .canvas__fluid-panel {
+  width: 0;
+}
+
+/* ===== STATE: Side Assist ===== */
+/* clamp() bakes min/max into the width value so the transition interpolates smoothly */
+.canvas[data-state="side-assist"] .canvas__content {
+  margin-right: clamp(320px, 25vw, 480px);
+}
+
+.canvas[data-state="side-assist"] .canvas__fluid-panel {
+  width: clamp(320px, 25vw, 480px);
+  border-left: var(--border-light);
+}
+
+/* ===== STATE: Fullscreen ===== */
+.canvas[data-state="fullscreen"] .canvas__content {
+  /* Content sits beneath - still accessible when panel closes */
+  margin-right: 0;
+}
+
+.canvas[data-state="fullscreen"] .canvas__fluid-panel {
+  /* top/bottom: 0 already covers full height - no need for height: 100vh */
+  width: 100vw;
+  border-left: none;
+}
+
+/* ===== Responsive Adjustments ===== */
+
+/* Tablet and below: side assist becomes larger */
+@media (max-width: 1024px) {
+  .canvas[data-state="side-assist"] .canvas__content {
+    margin-right: clamp(300px, 40vw, 480px);
+  }
+
+  .canvas[data-state="side-assist"] .canvas__fluid-panel {
+    width: clamp(300px, 40vw, 480px);
+  }
+}
+
+/* Mobile: side assist becomes fullscreen */
+@media (max-width: 768px) {
+  .canvas[data-state="side-assist"] .canvas__content {
+    margin-right: 0;
+    /* Content hidden on mobile when panel open */
+  }
+
+  .canvas[data-state="side-assist"] .canvas__fluid-panel {
+    width: 100vw;
+  }
+}

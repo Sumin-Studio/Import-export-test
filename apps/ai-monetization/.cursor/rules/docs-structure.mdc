@@ -1,0 +1,28 @@
+---
+description: Guide for navigating and contributing to the docs/ directory structure
+globs: docs/**
+alwaysApply: false
+---
+
+# Docs Structure Guide
+
+## Folder Layout
+
+| Folder | Purpose | File format |
+|--------|---------|-------------|
+| `docs/status/` | Single source of truth — read first | Living docs (no date prefix) |
+| `docs/ai-daily-journal/` | Daily summary of discussions | `yyyy-mm-dd.md` |
+| `docs/meeting-notes/` | Meeting and Slack captures | `yyyy-mm-dd-topic.md` |
+| `docs/workshop/` | Run sheets, prep, scored items | `yyyy-mm-dd-description.md` |
+| `docs/strategy/` | Strategic context, briefs, analysis | `yyyy-mm-dd-description.md` |
+| `docs/reference/` | Research, people briefs, how-tos | `yyyy-mm-dd-description.md` |
+
+## Key Files
+- **Start here**: `docs/status/PROJECT-STATUS.md` — latest state, this week, open actions
+- **Full inventory**: `docs/status/INDEX-whats-stored-and-next-steps.md`
+- **Research links**: `docs/reference/2026-02-10-research-links.md`
+- **Strategic context**: `docs/strategy/2026-02-10-strategic-context.md`
+
+## After Adding a New Doc
+1. Add a row to `docs/status/INDEX-whats-stored-and-next-steps.md`
+2. Update `docs/status/PROJECT-STATUS.md` if the change is material

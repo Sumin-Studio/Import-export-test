@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Bill — Xero</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      color: #1F2D3D;
+      background: #F5F4F1;
+      min-height: 100vh;
+    }
+
+    /* ── PROTOTYPE BANNER ── */
+    .proto-bar {
+      background: #2D3A4A;
+      color: rgba(255,255,255,0.75);
+      font-size: 11.5px;
+      padding: 7px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .proto-bar strong { color: #fff; font-weight: 600; letter-spacing: 0.02em; }
+    .proto-toggle { display: flex; border: 1px solid rgba(255,255,255,0.25); border-radius: 5px; overflow: hidden; }
+    .proto-btn {
+      padding: 4px 14px; font-size: 11.5px; cursor: pointer;
+      background: transparent; color: rgba(255,255,255,0.6);
+      border: none; font-weight: 400; transition: all 0.12s;
+    }
+    .proto-btn.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: 500; }
+
+    /* ── XERO NAV ── */
+    .xnav {
+      background: #1B2B4B;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .xnav-logo {
+      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: #13B5EA; margin-right: 14px; flex-shrink: 0;
+      font-size: 18px; font-weight: 900; color: #fff; letter-spacing: -1px;
+      font-style: italic;
+    }
+    .xnav-org {
+      color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; gap: 5px; margin-right: 24px;
+      white-space: nowrap; cursor: pointer;
+    }
+    .xnav-org svg { opacity: 0.6; }
+    .xnav-links { display: flex; align-items: stretch; height: 100%; }
+    .xnav-link {
+      color: rgba(255,255,255,0.75); font-size: 13px;
+      padding: 0 13px; display: flex; align-items: center;
+      white-space: nowrap; cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.12s;
+    }
+    .xnav-link:hover { color: #fff; }
+    .xnav-link.active { color: #fff; border-bottom-color: #13B5EA; font-weight: 500; }
+    .xnav-right { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+    .xnav-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.7); cursor: pointer;
+      transition: background 0.12s;
+    }
+    .xnav-icon:hover { background: rgba(255,255,255,0.1); }
+    .xnav-icon.avatar { background: #4B5FC0; color: #fff; font-size: 12px; font-weight: 700; }
+
+    /* ── PAGE SHELL ── */
+    .page-shell { max-width: 1140px; margin: 0 auto; padding: 0 24px 60px; }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb {
+      font-size: 12px; color: #6B7A8D;
+      padding: 14px 0 0;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .breadcrumb a { color: #0078C8; text-decoration: none; cursor: pointer; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: #B0BAC5; }
+
+    .page-title-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0 0;
+    }
+    .page-title { font-size: 22px; font-weight: 700; color: #1B2B4B; }
+    .page-actions { display: flex; gap: 8px; align-items: center; }
+    .btn-einvoice {
+      font-size: 12px; color: #0078C8; background: none; border: none;
+      cursor: pointer; font-weight: 500; text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .btn-newbill {
+      display: flex; align-items: center;
+      background: #1C7C5A; border: none; border-radius: 4px; overflow: hidden;
+    }
+    .btn-newbill .main { padding: 7px 14px; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; background: transparent; border: none; }
+    .btn-newbill .caret {
+      padding: 7px 9px; font-size: 11px; color: rgba(255,255,255,0.8);
+      cursor: pointer; background: transparent; border: none;
+      border-left: 1px solid rgba(255,255,255,0.25);
+    }
+
+    /* ── TABS ── */
+    .page-tabs {
+      display: flex; align-items: flex-end;
+      border-bottom: 1px solid #D9DDE3;
+      margin-top: 12px;
+    }
+    .ptab {
+      padding: 10px 16px 9px; font-size: 13px; cursor: pointer;
+      color: #4A5568; border-bottom: 2px solid transparent;
+      white-space: nowrap; transition: color 0.12s;
+      user-select: none; margin-bottom: -1px;
+    }
+    .ptab:hover { color: #1B2B4B; }
+    .ptab.active { color: #0078C8; border-bottom-color: #0078C8; font-weight: 600; }
+    .ptab .count { font-size: 11px; color: #888; margin-left: 4px; }
+    .ptab.active .count { color: #0078C8; }
+
+    /* ── BILL CARD ── */
+    .bill-card {
+      background: #fff;
+      border: 1px solid #D9DDE3;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    /* ── BILL TOPBAR ── */
+    .bill-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px; border-bottom: 1px solid #E5E9EE;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .bill-topbar-left { display: flex; align-items: center; gap: 10px; }
+    .bill-heading { font-size: 17px; font-weight: 700; color: #1B2B4B; }
+    .status-pill {
+      font-size: 11px; padding: 3px 10px; border-radius: 20px;
+      border: 1.5px solid; font-weight: 600; white-space: nowrap;
+    }
+    .pill-draft { border-color: #8898A4; color: #4A5568; background: #F0F3F5; }
+    .pill-paid  { border-color: #0052CC; color: #0052CC; background: #EBF2FF; }
+    .bill-topbar-right { display: flex; gap: 7px; align-items: center; }
+    .tbtn {
+      padding: 6px 13px; font-size: 12px; border-radius: 5px; cursor: pointer;
+      font-weight: 500; border: 1px solid; white-space: nowrap;
+    }
+    .tbtn-g { border-color: #C5CDD5; background: #fff; color: #2D3A4A; }
+    .tbtn-g:hover { background: #F5F7F9; }
+    .tbtn-split {
+      display: flex; overflow: hidden; border-radius: 5px;
+    }
+    .tbtn-split .main { background: #1C7C5A; color: #fff; border: none; padding: 6px 13px; font-size: 12px; font-weight: 500; cursor: pointer; }
+    .tbtn-split .caret { background: #1C7C5A; color: rgba(255,255,255,0.8); border: none; border-left: 1px solid rgba(255,255,255,0.25); padding: 6px 8px; font-size: 10px; cursor: pointer; }
+    .tbtn-split .main:hover, .tbtn-split .caret:hover { background: #166648; }
+    .tbtn-save-blue { border-color: transparent; background: #0078C8; color: #fff; }
+    .tbtn-save-blue:hover { background: #0066AA; }
+
+    /* ── PAID BANNER ── */
+    .paid-banner {
+      padding: 10px 20px; font-size: 12.5px; line-height: 1.6;
+      background: #EBF2FF; color: #0052CC; border-bottom: 1px solid #B3CEFF;
+      display: none;
+    }
+    .paid-banner a { color: #0052CC; font-weight: 600; }
+
+    /* ── FORM FIELDS ── */
+    .form-area { padding: 18px 20px 0; }
+    .form-row { display: grid; gap: 12px; margin-bottom: 14px; }
+    .fr-4 { grid-template-columns: 2fr 1.4fr 1.4fr 1.4fr; }
+    .fr-3 { grid-template-columns: 2fr 1.5fr 1.5fr; }
+    .fg label { display: block; font-size: 11px; color: #6B7A8D; margin-bottom: 3px; font-weight: 500; letter-spacing: 0.01em; }
+    .fi {
+      width: 100%; padding: 6px 9px; font-size: 13px;
+      border: 1px solid #C5CDD5; border-radius: 4px;
+      color: #1F2D3D; background: #fff;
+      transition: border-color 0.12s;
+    }
+    .fi:focus { outline: none; border-color: #0078C8; box-shadow: 0 0 0 2px rgba(0,120,200,0.12); }
+    .fi:disabled { background: #F5F7F9; color: #8898A4; cursor: default; }
+    .contact-field {
+      display: flex; align-items: center; gap: 7px;
+      padding: 5px 9px; border: 1px solid #C5CDD5; border-radius: 4px; background: #fff;
+    }
+    .contact-field.locked { background: #F5F7F9; }
+    .cav {
+      width: 22px; height: 22px; border-radius: 50%;
+      font-size: 10px; font-weight: 700; color: #fff;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .cav-afp { background: #4B5FC0; }
+    .cname { font-size: 13px; color: #1F2D3D; }
+    .cx { color: #8898A4; font-size: 15px; cursor: pointer; margin-left: auto; line-height: 1; }
+    .cx:hover { color: #4A5568; }
+
+    /* ── LINE ITEMS TABLE ── */
+    .table-wrap { padding: 0 20px; }
+    table.items { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    table.items th {
+      text-align: left; font-size: 11px; color: #6B7A8D; font-weight: 600;
+      padding: 6px 7px; border-bottom: 1px solid #D9DDE3;
+      background: #F8F9FB; white-space: nowrap; letter-spacing: 0.01em;
+    }
+    table.items th.r { text-align: right; }
+    table.items td {
+      padding: 8px 7px; border-bottom: 1px solid #EEF0F3;
+      color: #1F2D3D; vertical-align: middle;
+    }
+    table.items td.muted { color: #6B7A8D; font-size: 12px; }
+    table.items td.r { text-align: right; }
+    .icode {
+      font-size: 10px; color: #8898A4; background: #EEF0F3;
+      padding: 1px 5px; border-radius: 3px; display: inline-block;
+      margin-bottom: 2px; font-family: 'SF Mono', Menlo, monospace;
+    }
+    .iname { font-size: 12.5px; color: #1F2D3D; }
+    .drag-h { color: #CBD2DA; user-select: none; font-size: 13px; }
+    .del-btn {
+      color: #CBD2DA; cursor: pointer; font-size: 14px; line-height: 1;
+      padding: 2px 4px; border-radius: 3px; display: inline-block;
+      transition: color 0.1s;
+    }
+    .del-btn:hover { color: #E24B4A; }
+
+    /* Editable qty/price inputs */
+    .cell-num {
+      background: transparent; border: 1px solid transparent;
+      text-align: right; font-size: 12.5px; font-family: inherit;
+      color: #1F2D3D; width: 100%; padding: 3px 4px;
+      border-radius: 3px; transition: border-color 0.12s, background 0.12s;
+      -moz-appearance: textfield;
+    }
+    .cell-num::-webkit-inner-spin-button,
+    .cell-num::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .cell-num:hover { border-color: #C5CDD5; background: #F8F9FB; }
+    .cell-num:focus {
+      outline: none; border-color: #0078C8; background: #fff;
+      box-shadow: 0 0 0 2px rgba(0,120,200,0.12);
+    }
+    td.editable { cursor: text; }
+
+    /* Paid state — strip all interactive affordances from qty/price cells */
+    table.items.is-paid td.editable { cursor: default; }
+    table.items.is-paid .cell-num {
+      pointer-events: none;
+      border-color: transparent !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: #6B7A8D;
+    }
+
+    /* ── ADD ROW ── */
+    .addrow-bar { padding: 8px 20px 2px; display: flex; gap: 7px; align-items: center; }
+    .btn-add-row { display: flex; overflow: hidden; border-radius: 4px; }
+    .btn-add-row .main { padding: 5px 11px; font-size: 12px; border: 1px solid #C5CDD5; border-right: none; background: #fff; color: #2D3A4A; cursor: pointer; border-radius: 4px 0 0 4px; }
+    .btn-add-row .main:hover { background: #F5F7F9; }
+    .btn-add-row .caret { padding: 5px 7px; font-size: 10px; border: 1px solid #C5CDD5; background: #fff; color: #8898A4; cursor: pointer; border-radius: 0 4px 4px 0; }
+    .btn-add-row .caret:hover { background: #F5F7F9; }
+    .btn-cols { padding: 5px 11px; font-size: 12px; border: 1px dashed #C5CDD5; border-radius: 4px; background: #fff; color: #8898A4; cursor: pointer; }
+    .btn-cols:hover { background: #F5F7F9; }
+
+    /* ── AMOUNT SUMMARY ── */
+    .summary-outer { display: flex; justify-content: flex-end; padding: 20px 20px 0; }
+    .summary { width: 350px; }
+    .srow { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; font-size: 13px; }
+    .srow.sm { color: #4A5568; }
+    .srow.rounding-row { color: #8898A4; font-size: 12px; display: none; }
+    .srow.payment-row { color: #4A5568; font-size: 12px; display: none; }
+    .srow.payment-row a { color: #0078C8; text-decoration: none; }
+    .srow.payment-row a:hover { text-decoration: underline; }
+    .srow.total-line {
+      font-size: 16px; font-weight: 700; color: #1B2B4B;
+      border-top: 2px solid #1B2B4B; padding-top: 8px; margin-top: 5px;
+    }
+    .srow.amtdue-line {
+      font-size: 15px; font-weight: 700; color: #1B2B4B;
+      border-top: 1px solid #D9DDE3; padding-top: 8px; margin-top: 3px;
+      display: none;
+    }
+    .info-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 13px; height: 13px; border-radius: 50%;
+      border: 1.5px solid #8898A4; font-size: 8px; color: #8898A4;
+      margin-left: 4px; cursor: help; vertical-align: middle; font-weight: 700;
+    }
+
+    /* ── BILL TOTAL (one-liner) ── */
+    .bt-section { border-top: 1px solid #E5E9EE; margin-top: 10px; padding-top: 10px; }
+    .bt-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .bt-label { display: flex; align-items: center; gap: 5px; font-size: 13px; color: #1F2D3D; }
+    .bt-label .opt { color: #8898A4; font-weight: 400; }
+    .help-ico {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 1.5px solid #8898A4; font-size: 8px; color: #8898A4;
+      cursor: help; font-weight: 700; flex-shrink: 0;
+    }
+    .bt-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+    .bt-input {
+      width: 120px; padding: 5px 9px;
+      font-size: 13px; font-weight: 600; text-align: right;
+      border: 1.5px solid #C5CDD5; border-radius: 4px; background: #fff; color: #1F2D3D;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .bt-input:focus { outline: none; }
+    .bt-input.s-match { border-color: #006644; background: #F0FAF4; }
+    .bt-input.s-error { border-color: #DE350B; background: #FFF4F2; }
+    .bt-input.s-warn  { border-color: #E07B00; background: #FFFBF0; }
+    .bt-status { font-size: 11.5px; font-weight: 600; display: flex; align-items: center; gap: 4px; min-height: 17px; }
+    .bt-status.ok   { color: #006644; }
+    .bt-status.err  { color: #DE350B; }
+    .bt-status.warn { color: #E07B00; }
+    .stat-ico {
+      width: 14px; height: 14px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .stat-ico.ok  { background: #006644; }
+    .stat-ico.err { background: #DE350B; }
+    .stat-ico.warn { background: #E07B00; border-radius: 2px; }
+
+    /* ── TOASTS ── */
+    #toast-container {
+      position: fixed; top: 70px; right: 24px;
+      z-index: 9999; display: flex; flex-direction: column; gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      display: flex; align-items: flex-start; gap: 11px;
+      padding: 13px 14px 13px 16px;
+      border-radius: 6px; min-width: 300px; max-width: 400px;
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.13), 0 1px 4px rgba(0,0,0,0.07);
+      border: 1px solid #E5E9EE;
+      pointer-events: all;
+      animation: toast-in 0.24s cubic-bezier(0.34,1.4,0.64,1) forwards;
+    }
+    .toast.is-leaving { animation: toast-out 0.2s ease forwards; }
+    .toast-success { border-left: 4px solid #006644; }
+    .toast-error   { border-left: 4px solid #DE350B; }
+    .toast-icon-wrap {
+      width: 20px; height: 20px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px; font-size: 10px; font-weight: 700; color: #fff;
+    }
+    .ti-ok  { background: #006644; }
+    .ti-err { background: #DE350B; }
+    .toast-body { flex: 1; }
+    .toast-title { font-weight: 600; font-size: 13px; color: #1F2D3D; line-height: 1.3; }
+    .toast-msg { font-size: 12px; color: #6B7A8D; margin-top: 3px; line-height: 1.5; }
+    .toast-close {
+      background: none; border: none; color: #B0BAC5; cursor: pointer;
+      font-size: 18px; padding: 0; line-height: 1; flex-shrink: 0;
+      margin-top: -1px;
+    }
+    .toast-close:hover { color: #4A5568; }
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes toast-out {
+      from { opacity: 1; transform: translateX(0); max-height: 120px; }
+      to   { opacity: 0; transform: translateX(20px); max-height: 0; padding: 0; margin: 0; overflow: hidden; }
+    }
+
+    /* ── HISTORY ── */
+    .history-section { border-top: 1px solid #E5E9EE; padding: 14px 20px; margin-top: 18px; }
+    .hist-header { display: flex; justify-content: space-between; align-items: center; }
+    .hist-title { font-size: 14px; font-weight: 700; color: #1B2B4B; }
+    .btn-note { padding: 5px 12px; font-size: 12px; border: 1px solid #C5CDD5; border-radius: 4px; background: #fff; cursor: pointer; color: #2D3A4A; }
+    .btn-note:hover { background: #F5F7F9; }
+    .hist-body { margin-top: 10px; font-size: 12px; color: #6B7A8D; line-height: 1.8; }
+    .hist-body strong { color: #1F2D3D; font-weight: 600; }
+
+    /* ── CUSTOM TOOLTIP ── */
+    .xtooltip {
+      position: fixed; z-index: 99999;
+      background: #1F2D3D; color: #fff;
+      font-size: 12px; line-height: 1.6;
+      padding: 9px 11px; border-radius: 5px;
+      max-width: 270px; pointer-events: none;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.22);
+      opacity: 0; transition: opacity 0.12s;
+    }
+    .xtooltip.show { opacity: 1; }
+
+    /* ── FOOTER ── */
+    .bill-footer {
+      text-align: center; padding: 13px 20px;
+      border-top: 1px solid #E5E9EE; font-size: 12px; color: #8898A4;
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+    .bill-footer a { color: #0078C8; text-decoration: none; }
+    .bill-footer a:hover { text-decoration: underline; }
+    .bill-footer .sep { color: #CBD2DA; }
+  </style>
+</head>
+<body>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- CUSTOM TOOLTIP -->
+  <div id="xtooltip" class="xtooltip"></div>
+
+  <!-- PROTOTYPE SWITCHER -->
+  <div class="proto-bar">
+    <strong>Prototype</strong>
+    <span style="opacity:0.5">·</span>
+    <span>Bill total verification — NR design</span>
+    <span style="opacity:0.5;margin-left:4px">·</span>
+    <span style="opacity:0.7">View state:</span>
+    <div class="proto-toggle">
+      <button class="proto-btn active" onclick="setView('draft')">Draft bill</button>
+      <button class="proto-btn" onclick="setView('paid')">Paid bill</button>
+    </div>
+  </div>
+
+  <!-- XERO NAV -->
+  <nav class="xnav">
+    <div class="xnav-logo">x</div>
+    <div class="xnav-org">
+      (NZ) Kedgeree Do
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="xnav-links">
+      <span class="xnav-link">Home</span>
+      <span class="xnav-link">Sales</span>
+      <span class="xnav-link active">Purchases</span>
+      <span class="xnav-link">Reporting</span>
+      <span class="xnav-link">Payroll</span>
+      <span class="xnav-link">Accounting</span>
+      <span class="xnav-link">Tax</span>
+      <span class="xnav-link">Contacts</span>
+    </div>
+    <div class="xnav-right">
+      <div class="xnav-icon" title="New">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="xnav-icon" title="Search">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="xnav-icon" title="Help">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 5.5a2 2 0 113 1.7c-.5.3-.8.8-.8 1.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7.5" cy="11" r="0.75" fill="currentColor"/></svg>
+      </div>
+      <div class="xnav-icon" title="Notifications">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2a4 4 0 014 4v2.5l1 2H3l1-2V6a4 4 0 014-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 12.5a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="xnav-icon avatar" title="Vivian Ngai">VN</div>
+    </div>
+  </nav>
+
+  <!-- PAGE SHELL -->
+  <div class="page-shell">
+
+    <div class="breadcrumb">
+      <a href="#">Purchases overview</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="#">Bills to pay</a>
+      <span class="breadcrumb-sep">›</span>
+    </div>
+
+    <div class="page-title-row">
+      <div class="page-title">Bills</div>
+      <div class="page-actions">
+        <button class="btn-einvoice">Set up eInvoicing</button>
+        <div class="btn-newbill">
+          <button class="main">New bill</button>
+          <button class="caret">▾</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-tabs">
+      <div class="ptab">All</div>
+      <div class="ptab active">Draft <span class="count">24</span></div>
+      <div class="ptab">Awaiting approval <span class="count">5</span></div>
+      <div class="ptab">Awaiting payment <span class="count">44</span></div>
+      <div class="ptab" id="tab-paid">Paid</div>
+      <div class="ptab">Repeating</div>
+    </div>
+
+    <!-- BILL CARD -->
+    <div class="bill-card">
+
+      <div class="bill-topbar">
+        <div class="bill-topbar-left">
+          <span class="bill-heading">Edit bill</span>
+          <span class="status-pill pill-draft" id="v-pill">Draft</span>
+        </div>
+        <div class="bill-topbar-right" id="v-actions"></div>
+      </div>
+
+      <div class="paid-banner" id="v-banner">
+        Some fields can't be edited because there are applied payments. Remove any payments and credit note allocations to make changes.
+        <a href="#">Learn more about how to edit bills</a>.
+      </div>
+
+      <div class="form-area">
+        <div class="form-row fr-4">
+          <div class="fg">
+            <label>Contact</label>
+            <div class="contact-field" id="v-ct">
+              <div class="cav cav-afp">AFP</div>
+              <span class="cname">(NZ) Fanning's Punches</span>
+              <span class="cx" id="v-cx">×</span>
+            </div>
+          </div>
+          <div class="fg"><label>Issue date</label><input class="fi" id="v-f1" type="text" value="Feb 25, 2026" /></div>
+          <div class="fg"><label>Planned date</label><input class="fi" id="v-f2" type="text" placeholder="—" /></div>
+          <div class="fg"><label>Due date</label><input class="fi" id="v-f3" type="text" value="Mar 17, 2026" /></div>
+        </div>
+        <div class="form-row fr-3">
+          <div class="fg"><label>Reference</label><input class="fi" id="v-f4" type="text" value="PO-0001" /></div>
+          <div class="fg"><label>Currency</label><input class="fi" id="v-f5" type="text" value="New Zealand Dollar" /></div>
+          <div class="fg"><label>Tax</label><input class="fi" id="v-f6" type="text" value="Tax exclusive" /></div>
+        </div>
+      </div>
+
+      <!-- LINE ITEMS -->
+      <div class="table-wrap">
+        <table class="items" id="v-table">
+          <thead>
+            <tr>
+              <th style="width:14px;"></th>
+              <th style="min-width:130px;">Item</th>
+              <th style="min-width:160px;">Description</th>
+              <th class="r" style="width:70px;">Qty.</th>
+              <th class="r" style="width:90px;">Price</th>
+              <th style="min-width:150px;">Account</th>
+              <th style="min-width:140px;">Tax rate</th>
+              <th style="min-width:110px;">Assign expense</th>
+              <th class="r" style="width:90px;">Amount</th>
+              <th style="width:22px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="drag-h">⋮⋮</span></td>
+              <td><div class="icode">12392</div><div class="iname">Bagel</div></td>
+              <td class="muted">Bagel</td>
+              <td class="editable r"><input class="cell-num" id="qty-0" type="number" value="1"      min="0" step="1"    oninput="calcTotals()" /></td>
+              <td class="editable r"><input class="cell-num" id="prc-0" type="number" value="2.95"  min="0" step="0.01" oninput="calcTotals()" /></td>
+              <td class="muted">408 — Cleaning</td>
+              <td class="muted">15% GST on Expenses</td>
+              <td class="muted">—</td>
+              <td class="r" id="amt-0">2.95</td>
+              <td><span class="del-btn" id="v-d0">×</span></td>
+            </tr>
+            <tr>
+              <td><span class="drag-h">⋮⋮</span></td>
+              <td><div class="icode">CONSULT-02</div><div class="iname">Professional services</div></td>
+              <td class="muted">Professional services</td>
+              <td class="editable r"><input class="cell-num" id="qty-1" type="number" value="1"      min="0" step="1"    oninput="calcTotals()" /></td>
+              <td class="editable r"><input class="cell-num" id="prc-1" type="number" value="200.00" min="0" step="0.01" oninput="calcTotals()" /></td>
+              <td class="muted">310 — Cost of Goods Sold</td>
+              <td class="muted">15% GST on Expenses</td>
+              <td class="muted">—</td>
+              <td class="r" id="amt-1">200.00</td>
+              <td><span class="del-btn" id="v-d1">×</span></td>
+            </tr>
+            <tr>
+              <td><span class="drag-h">⋮⋮</span></td>
+              <td><div class="icode">151215</div><div class="iname">Paintbrushes</div></td>
+              <td class="muted">Paintbrushes</td>
+              <td class="editable r"><input class="cell-num" id="qty-2" type="number" value="1"      min="0" step="1"    oninput="calcTotals()" /></td>
+              <td class="editable r"><input class="cell-num" id="prc-2" type="number" value="72.25"  min="0" step="0.01" oninput="calcTotals()" /></td>
+              <td class="muted">310 — Cost of Goods Sold</td>
+              <td class="muted">15% GST on Expenses</td>
+              <td class="muted">—</td>
+              <td class="r" id="amt-2">72.25</td>
+              <td><span class="del-btn" id="v-d2">×</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="addrow-bar" id="v-addrow">
+        <div class="btn-add-row">
+          <button class="main">Add row</button>
+          <button class="caret">▾</button>
+        </div>
+        <button class="btn-cols">Columns (3 hidden) ▾</button>
+      </div>
+
+      <!-- SUMMARY -->
+      <div class="summary-outer">
+        <div class="summary">
+          <div class="srow sm"><span>Subtotal</span><span id="v-subtotal">275.20</span></div>
+          <div class="srow sm"><span>Total GST 15%</span><span id="v-gst">41.28</span></div>
+          <div class="srow rounding-row" id="v-rndrow">
+            <span>Rounding</span><span id="v-rndamt">+0.02</span>
+          </div>
+          <div class="srow total-line">
+            <span>Total <span class="info-icon" data-tooltip="This total is the calculated total based on what Xero has calculated from the line item grid">i</span></span>
+            <span id="v-total">316.48</span>
+          </div>
+
+          <div class="srow payment-row" id="v-payrow">
+            <span>Less: <a href="#">Payment (15 Mar 2026)</a><br><span style="font-size:11px;color:#AAA;">via PayPal</span></span>
+            <span id="v-payamt">316.48</span>
+          </div>
+          <div class="srow amtdue-line" id="v-amtdue">
+            <span>Amount due</span><span>0.00</span>
+          </div>
+
+          <!-- BILL TOTAL -->
+          <div class="bt-section" id="v-btsection">
+            <div class="bt-row">
+              <div class="bt-label">
+                <span>Bill total</span>
+                <span class="opt">(optional)</span>
+                <span class="help-ico" data-tooltip="The bill total is the actual total from your bill. It was either filled in through extraction from the attached file, or it is manually entered to assist with verifying that the calculated total and actual bill totals match. If the difference is +/- 0.10, it is added as an additional &quot;Rounding&quot; line so that both totals match.">?</span>
+              </div>
+              <input class="bt-input" id="v-btinput" type="text" placeholder="" autocomplete="off" onblur="onBtInput(this.value)" />
+            </div>
+            <div class="bt-status" id="v-btstat" style="text-align:right;margin-top:4px;justify-content:flex-end;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="history-section">
+        <div class="hist-header">
+          <span class="hist-title">History and notes</span>
+          <button class="btn-note">Add note</button>
+        </div>
+        <div class="hist-body" id="v-hist">
+          Created by System Generated on 25 Feb 2026 at 09:11AM
+        </div>
+      </div>
+
+      <div class="bill-footer">
+        We'd love your feedback on the new look and feel of the bills details view
+        <span class="sep">·</span>
+        <a href="#">Share feedback</a>
+        <span class="sep">·</span>
+        <a href="#">Go to full page view</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    var TAX_RATE   = 0.15;
+    var CALC_TOTAL = 316.48;
+
+    /* ── CALC TOTALS ── */
+    function calcTotals() {
+      var subtotal = 0;
+      for (var i = 0; i < 3; i++) {
+        var qty   = parseFloat(document.getElementById('qty-' + i).value) || 0;
+        var price = parseFloat(document.getElementById('prc-' + i).value) || 0;
+        var amt   = Math.round(qty * price * 100) / 100;
+        document.getElementById('amt-' + i).textContent = amt.toFixed(2);
+        subtotal += amt;
+      }
+      subtotal = Math.round(subtotal * 100) / 100;
+      var gst   = Math.round(subtotal * TAX_RATE * 100) / 100;
+      var total = Math.round((subtotal + gst) * 100) / 100;
+
+      document.getElementById('v-subtotal').textContent = subtotal.toFixed(2);
+      document.getElementById('v-gst').textContent      = gst.toFixed(2);
+      document.getElementById('v-total').textContent    = total.toFixed(2);
+      document.getElementById('v-payamt').textContent   = total.toFixed(2);
+      CALC_TOTAL = total;
+
+      var btval = document.getElementById('v-btinput').value;
+      if (btval.trim() !== '') {
+        applyBtStatus(parseFloat(btval));
+      } else {
+        clearBtStatus();
+      }
+    }
+
+    /* ── BILL TOTAL INPUT ── */
+    function onBtInput(val) {
+      var num = parseFloat(val);
+      if (val.trim() === '' || isNaN(num)) { clearBtStatus(); }
+      else { applyBtStatus(num); }
+    }
+
+    function clearBtStatus() {
+      document.getElementById('v-btinput').className = 'bt-input';
+      document.getElementById('v-btstat').className  = 'bt-status';
+      document.getElementById('v-btstat').innerHTML  = '';
+      document.getElementById('v-rndrow').style.display = 'none';
+      document.getElementById('v-total').textContent = CALC_TOTAL.toFixed(2);
+    }
+
+    function applyBtStatus(num) {
+      var inp  = document.getElementById('v-btinput');
+      var stat = document.getElementById('v-btstat');
+      var rnd  = document.getElementById('v-rndrow');
+      var diff    = Math.round((num - CALC_TOTAL) * 100) / 100;
+      var absDiff = Math.abs(diff);
+
+      if (absDiff === 0) {
+        inp.className  = 'bt-input s-match';
+        stat.className = 'bt-status ok';
+        stat.innerHTML = '<span class="stat-ico ok">✓</span> Totals match';
+        rnd.style.display = 'none';
+        document.getElementById('v-total').textContent = CALC_TOTAL.toFixed(2);
+      } else if (absDiff <= 0.10) {
+        inp.className  = 'bt-input s-warn';
+        stat.className = 'bt-status warn';
+        stat.innerHTML = '<span class="stat-ico warn">!</span> Rounded to match totals';
+        rnd.style.display = 'flex';
+        document.getElementById('v-rndamt').textContent = (diff > 0 ? '+' : '') + diff.toFixed(2);
+        document.getElementById('v-total').textContent = num.toFixed(2);
+      } else {
+        inp.className  = 'bt-input s-error';
+        stat.className = 'bt-status err';
+        stat.innerHTML = '<span class="stat-ico err">!</span> Totals don\'t match';
+        rnd.style.display = 'none';
+        document.getElementById('v-total').textContent = CALC_TOTAL.toFixed(2);
+      }
+    }
+
+    /* ── TOAST ── */
+    function showToast(type, title, msg) {
+      var container = document.getElementById('toast-container');
+      var t = document.createElement('div');
+      t.className = 'toast toast-' + type;
+      var iClass = type === 'success' ? 'ti-ok' : 'ti-err';
+      var iChar  = type === 'success' ? '✓' : '✕';
+      t.innerHTML =
+        '<div class="toast-icon-wrap ' + iClass + '">' + iChar + '</div>' +
+        '<div class="toast-body">' +
+          '<div class="toast-title">' + title + '</div>' +
+          '<div class="toast-msg">' + msg + '</div>' +
+        '</div>' +
+        '<button class="toast-close" onclick="dismissToast(this.parentNode)">×</button>';
+      container.appendChild(t);
+      setTimeout(function () { dismissToast(t); }, 5000);
+    }
+
+    function dismissToast(el) {
+      if (!el || !el.parentNode) return;
+      el.classList.add('is-leaving');
+      setTimeout(function () { if (el.parentNode) el.remove(); }, 200);
+    }
+
+    /* ── HANDLE SAVE / APPROVE ── */
+    function handleAction(action) {
+      var btval   = document.getElementById('v-btinput').value.trim();
+      var total   = CALC_TOTAL;
+      var fmtTotal = total.toFixed(2);
+
+      /* No bill total entered → always pass */
+      if (btval === '' || btval === '0' || btval === '0.00') {
+        if (action === 'save') {
+          showToast('success', 'Bill saved',
+            'Bill from Fanning\'s Punches for $' + fmtTotal + ' has been saved as a draft.');
+        } else {
+          showToast('success', 'Bill approved',
+            'Bill from Fanning\'s Punches for $' + fmtTotal + ' is awaiting payment.');
+        }
+        return;
+      }
+
+      var num     = parseFloat(btval);
+      if (isNaN(num)) {
+        showToast('error', 'Invalid bill total', 'Please enter a valid number.');
+        return;
+      }
+
+      var diff    = Math.round((num - total) * 100) / 100;
+      var absDiff = Math.abs(diff);
+
+      if (absDiff <= 0.10) {
+        /* Pass — exact match or rounding */
+        if (absDiff > 0) {
+          var roundStr = (diff > 0 ? '+' : '') + diff.toFixed(2);
+          if (action === 'save') {
+            showToast('success', 'Bill saved',
+              'A rounding adjustment of ' + roundStr + ' has been applied and the bill has been saved.');
+          } else {
+            showToast('success', 'Bill approved',
+              'A rounding adjustment of ' + roundStr + ' has been applied. Bill is awaiting payment.');
+          }
+        } else {
+          if (action === 'save') {
+            showToast('success', 'Bill saved',
+              'Bill from Fanning\'s Punches for $' + fmtTotal + ' has been saved as a draft.');
+          } else {
+            showToast('success', 'Bill approved',
+              'Bill from Fanning\'s Punches for $' + fmtTotal + ' is awaiting payment.');
+          }
+        }
+      } else {
+        /* Fail — totals don't match */
+        showToast('error', 'Totals don\'t match',
+          'Bill total (' + num.toFixed(2) + ') differs from the calculated total (' +
+          fmtTotal + ') by ' + absDiff.toFixed(2) + '. Review your line items.');
+      }
+    }
+
+    /* ── VIEW SWITCHER ── */
+    function setView(v) {
+      var draft = (v === 'draft');
+
+      document.querySelectorAll('.proto-btn').forEach(function (b, i) {
+        b.classList.toggle('active', i === (draft ? 0 : 1));
+      });
+
+      var pill = document.getElementById('v-pill');
+      pill.className   = 'status-pill ' + (draft ? 'pill-draft' : 'pill-paid');
+      pill.textContent = draft ? 'Draft' : 'Paid';
+
+      document.querySelectorAll('.ptab').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.ptab')[draft ? 1 : 4].classList.add('active');
+
+      document.getElementById('v-banner').style.display = draft ? 'none' : 'block';
+
+      /* Action buttons — wire up Save and Approve with handlers in draft */
+      var acts = document.getElementById('v-actions');
+      if (draft) {
+        acts.innerHTML =
+          '<button class="tbtn tbtn-g">Attach files</button>' +
+          '<button class="tbtn tbtn-g">Copy</button>' +
+          '<button class="tbtn tbtn-g" onclick="handleAction(\'save\')">Save</button>' +
+          '<div class="tbtn-split">' +
+            '<button class="main" onclick="handleAction(\'approve\')">Approve &amp; next</button>' +
+            '<button class="caret">▾</button>' +
+          '</div>';
+      } else {
+        acts.innerHTML =
+          '<button class="tbtn tbtn-g">Files (1)</button>' +
+          '<button class="tbtn tbtn-g">Copy</button>' +
+          '<button class="tbtn tbtn-g">Cancel</button>' +
+          '<button class="tbtn tbtn-save-blue">Save</button>';
+      }
+
+      /* Form field lock */
+      ['v-f1','v-f2','v-f3','v-f4','v-f5','v-f6'].forEach(function (id) {
+        document.getElementById(id).disabled = !draft;
+      });
+      document.getElementById('v-ct').classList.toggle('locked', !draft);
+      document.getElementById('v-cx').style.display = draft ? '' : 'none';
+
+      /* Table — toggle is-paid class (strips interactive styles) and disable inputs */
+      document.getElementById('v-table').classList.toggle('is-paid', !draft);
+      for (var i = 0; i < 3; i++) {
+        document.getElementById('qty-' + i).disabled = !draft;
+        document.getElementById('prc-' + i).disabled = !draft;
+        document.getElementById('v-d' + i).style.display = draft ? '' : 'none';
+      }
+
+      document.getElementById('v-addrow').style.display = draft ? '' : 'none';
+      document.getElementById('v-payrow').style.display  = draft ? 'none' : 'flex';
+      document.getElementById('v-amtdue').style.display  = draft ? 'none' : 'flex';
+      document.getElementById('v-btsection').style.display = draft ? 'block' : 'none';
+      document.getElementById('v-rndrow').style.display = 'none';
+
+      document.getElementById('v-hist').innerHTML = draft
+        ? 'Created by System Generated on 25 Feb 2026 at 09:11AM'
+        : 'Created by System Generated on 25 Feb 2026 at 09:11AM<br>' +
+          'Edited by Vivian Ngai on 15 Mar 2026 at 16:52PM &mdash; ' +
+          '<strong>From Fanning\'s Punches for 316.48</strong><br>' +
+          'Payment received via PayPal on 15 Mar 2026.';
+
+      if (draft) {
+        document.getElementById('v-btinput').value = '';
+        clearBtStatus();
+      }
+    }
+
+    setView('draft');
+
+    /* ── CUSTOM TOOLTIPS ── */
+    var ttEl = document.getElementById('xtooltip');
+    var ttTimer;
+
+    document.querySelectorAll('[data-tooltip]').forEach(function (el) {
+      el.addEventListener('mouseenter', function (e) {
+        clearTimeout(ttTimer);
+        ttEl.textContent = el.getAttribute('data-tooltip');
+        ttEl.classList.add('show');
+        moveTooltip(e);
+      });
+      el.addEventListener('mousemove', moveTooltip);
+      el.addEventListener('mouseleave', function () {
+        ttTimer = setTimeout(function () { ttEl.classList.remove('show'); }, 80);
+      });
+    });
+
+    function moveTooltip(e) {
+      var pad = 14;
+      var x = e.clientX + pad;
+      var y = e.clientY + pad;
+      /* keep within viewport */
+      var w = ttEl.offsetWidth  || 270;
+      var h = ttEl.offsetHeight || 60;
+      if (x + w > window.innerWidth  - 8) x = e.clientX - w - pad;
+      if (y + h > window.innerHeight - 8) y = e.clientY - h - pad;
+      ttEl.style.left = x + 'px';
+      ttEl.style.top  = y + 'px';
+    }
+  </script>
+
+</body>
+</html>

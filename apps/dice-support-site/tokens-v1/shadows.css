@@ -1,0 +1,15 @@
+/**
+ * JAX Design System - Shadow Tokens
+ * Extracted from: source-jax-styles/
+ *
+ * Usage: var(--shadow-pop)
+ */
+
+:root {
+  /* ===== Shadows ===== */
+  --shadow-none: none;
+  --shadow-pop: 0px 8px 16px rgba(0, 10, 30, 0.20188);
+
+  /* Focus ring glow effect */
+  --shadow-focus-glow: 0 0 8px rgba(23, 89, 255, 0.6);
+}

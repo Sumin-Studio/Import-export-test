@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Xero – Bill Details</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --white: #FFFFFF;
+    --blue: #0078C8;
+    --blue-hover: #006BB3;
+    --nav-bg: #13243A;
+    --text-std: #000A1E;
+    --text-muted: #404756;
+    --text-link: #0078C8;
+    --grey3: #E6E7E9;
+    --grey5: #A6A9B0;
+    --grey6: #CCCED2;
+    --grey8: rgba(0,10,30,0.05);
+    --border-shadow: rgba(0,10,30,0.2);
+    --negative: #DC3246;
+    --font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+  body { font-family: var(--font); background: #F0F1F2; overflow: hidden; height: 100vh; }
+  button { font-family: var(--font); }
+  input { font-family: var(--font); }
+
+  /* NAV */
+  .nav { background: var(--nav-bg); height: 64px; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; flex-shrink: 0; }
+  .nav-brand { color: #00B7E2; font-weight: 700; font-size: 22px; letter-spacing: 2px; }
+  .nav-org { display: flex; align-items: center; gap: 4; margin-left: 16; background: rgba(255,255,255,0.12); border-radius: 4px; padding: 6px 12px; cursor: pointer; }
+  .nav-org span { color: white; font-size: 13px; font-weight: 700; }
+  .nav-items { display: flex; align-items: center; gap: 0; }
+  .nav-item { color: white; font-size: 13px; padding: 8px 12px; cursor: pointer; text-decoration: none; border-bottom: 2px solid transparent; line-height: 20px; }
+  .nav-item.active { font-weight: 700; border-bottom-color: white; }
+  .nav-right { display: flex; align-items: center; gap: 4; }
+  .nav-icon-btn { background: transparent; border: none; cursor: pointer; padding: 8px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; }
+  .nav-avatar { width: 32px; height: 32px; border-radius: 50%; background: #5B4FC7; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 12px; font-weight: 700; }
+
+  /* HEADER */
+  .header { background: var(--white); padding: 8px 20px; display: flex; justify-content: space-between; align-items: flex-end; box-shadow: 0 1px 0 0 var(--border-shadow); flex-shrink: 0; min-height: 74px; }
+  .header-left { display: flex; flex-direction: column; gap: 10px; }
+  .breadcrumbs { display: flex; align-items: center; gap: 8px; }
+  .breadcrumbs a { font-size: 13px; color: var(--text-link); text-decoration: none; cursor: pointer; }
+  .breadcrumbs a:hover { text-decoration: underline; }
+  .bc-sep { font-size: 8px; color: var(--grey5); transform: rotate(-90deg); display: inline-block; }
+  .title-row { display: flex; align-items: center; gap: 15px; }
+  .title-row h1 { font-size: 17px; font-weight: 700; color: var(--text-std); line-height: 28px; }
+  .tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: var(--grey3); color: var(--text-muted); line-height: 16px; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .btn-outline { border: 1px solid var(--grey5); border-radius: 3px; background: var(--white); font-weight: 700; font-size: 13px; color: var(--text-std); padding: 6px 12px; cursor: pointer; height: 32px; line-height: 20px; }
+  .btn-outline:hover { background: #F5F5F5; }
+  .btn-files { display: flex; align-items: center; gap: 6px; border: 1px solid var(--grey5); border-radius: 3px; padding: 6px 12px; background: var(--white); cursor: pointer; height: 32px; transition: background 0.15s; }
+  .btn-files.active { background: #E8F4FD; border-color: var(--blue); }
+  .btn-files span.label { font-weight: 700; font-size: 13px; color: var(--text-link); }
+  .btn-primary-group { display: flex; border-radius: 3px; overflow: hidden; }
+  .btn-primary { background: var(--blue); border: none; color: white; font-weight: 700; font-size: 13px; padding: 6px 12px; cursor: pointer; height: 32px; }
+  .btn-primary:hover { background: var(--blue-hover); }
+  .btn-primary-caret { background: var(--blue); border: none; border-left: 1px solid rgba(255,255,255,0.3); color: white; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .btn-primary-caret:hover { background: var(--blue-hover); }
+  .icon-btn { background: transparent; border: none; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 3px; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+
+  /* LAYOUT */
+  .main-area { flex: 1; display: flex; overflow: hidden; position: relative; }
+  .side-toggle { width: 40px; background: var(--white); border-top: 1px solid var(--grey6); border-right: 1px solid var(--grey6); cursor: pointer; display: flex; flex-direction: column; align-items: center; padding-top: 20px; flex-shrink: 0; }
+  .side-toggle:hover { background: #F5F5F5; }
+
+  /* FILE PREVIEW */
+  .file-preview { width: 576px; flex-shrink: 0; background: #F5F5F5; display: flex; flex-direction: column; border-top: 1px solid var(--grey6); border-right: 1px solid var(--grey6); overflow: hidden; }
+  .fp-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--white); border-bottom: 1px solid var(--grey6); height: 56px; flex-shrink: 0; }
+  .fp-header-left { display: flex; align-items: center; gap: 12px; }
+  .fp-header-right { display: flex; align-items: center; gap: 8px; }
+  .fp-filename { font-size: 15px; color: var(--text-std); }
+  .btn-download { display: flex; align-items: center; gap: 6px; background: transparent; border: 1px solid var(--grey5); border-radius: 3px; padding: 4px 12px; cursor: pointer; height: 32px; }
+  .btn-download span { font-weight: 700; font-size: 13px; color: var(--text-link); }
+  .fp-toolbar { display: flex; align-items: center; gap: 2px; padding: 6px 12px; background: var(--white); border-bottom: 1px solid var(--grey6); flex-shrink: 0; flex-wrap: wrap; }
+  .tb { background: transparent; border: none; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; border-radius: 3px; }
+  .tb:hover { background: rgba(0,0,0,0.06); }
+  .tb-text { font-size: 12px; color: var(--text-muted); padding: 0 4px; min-width: 20px; text-align: center; }
+  .fp-body { flex: 1; display: flex; align-items: flex-start; justify-content: center; overflow: auto; padding: 16px; }
+  .pdf-page { width: 90%; background: var(--white); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); padding: 32px; }
+  .fp-footer { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px 16px; background: var(--white); border-top: 1px solid var(--grey6); flex-shrink: 0; }
+  .fp-footer a { font-size: 13px; color: var(--text-link); cursor: pointer; text-decoration: none; }
+  .fp-nav-btn { background: transparent; border: none; cursor: pointer; display: flex; padding: 4px; }
+  .fp-nav-btn:hover svg path, .fp-nav-btn:hover svg line { stroke: var(--blue-hover); }
+
+  /* CONTENT AREA */
+  .content-scroll { flex: 1; overflow: auto; padding: 20px; }
+  .content-card { background: var(--white); padding: 20px; }
+
+  /* FORM FIELDS */
+  .form-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+  .field { flex: 1 0 0; min-width: 180px; }
+  .field-label { font-weight: 700; font-size: 13px; color: var(--text-muted); line-height: 20px; margin-bottom: 4px; }
+  .field-input { background: var(--white); border: 1px solid var(--grey5); border-radius: 3px; height: 32px; display: flex; align-items: center; width: 100%; overflow: hidden; }
+  .field-icon { width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .field-input input, .field-input .field-text { font-size: 13px; color: var(--text-std); border: none; outline: none; background: transparent; flex: 1; padding: 0 8px; line-height: 20px; height: 100%; }
+  .field-input .field-text { display: flex; align-items: center; }
+  .field-clear { background: transparent; border: none; cursor: pointer; padding: 4px 6px; display: flex; opacity: 0.5; }
+  .field-clear:hover { opacity: 1; }
+  .field-caret { width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  /* TABLE */
+  .lig { border: 1px solid var(--grey6); border-radius: 3px; overflow: hidden; margin-top: 20px; }
+  .lig-header { display: flex; }
+  .lig-hcell { background: var(--grey8); height: 40px; font-weight: 700; font-size: 13px; color: var(--text-muted); padding: 10px 16px; line-height: 20px; }
+  .lig-row { display: flex; }
+  .lig-cell { height: 40px; border-bottom: 1px solid var(--grey6); border-right: 1px solid var(--grey6); }
+  .lig-cell:last-child { border-right: none; }
+  .lig-cell input { width: 100%; height: 100%; border: none; outline: none; font-size: 15px; color: var(--text-std); padding: 8px 16px; line-height: 24px; background: transparent; }
+  .lig-cell input:focus { background: #FAFBFC; }
+  .lig-cell.right input { text-align: right; }
+  .lig-cell.trash-cell { display: flex; align-items: center; justify-content: center; }
+  .lig-footer { padding: 3px 0; }
+  .btn-add-row { background: transparent; border: none; font-weight: 700; font-size: 13px; color: var(--text-link); cursor: pointer; padding: 6px 12px; }
+  .btn-add-row:hover { text-decoration: underline; }
+
+  /* BUTTONS + SUMMARY */
+  .btns-summary { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px; }
+  .action-buttons { display: flex; gap: 10px; align-items: center; }
+  .btn-show-cols { background: transparent; border: 1px solid var(--blue); border-radius: 3px; font-weight: 700; font-size: 13px; color: var(--text-link); cursor: pointer; padding: 6px 12px; height: 32px; }
+  .btn-show-cols:hover { background: #E8F4FD; }
+  .btn-hubdoc { background: transparent; border: none; font-weight: 700; font-size: 13px; color: var(--text-link); cursor: pointer; padding: 6px 12px; height: 32px; display: flex; align-items: center; gap: 8px; }
+  .btn-hubdoc:hover { text-decoration: underline; }
+  .amount-summary { width: 432px; padding: 0 16px; }
+  .summary-line { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; color: var(--text-std); line-height: 24px; }
+  .summary-divider { padding-top: 4px; }
+  .summary-divider div { background: var(--grey5); height: 3px; }
+  .summary-total { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; font-weight: 700; font-size: 21px; color: var(--text-std); line-height: 32px; }
+
+  /* HISTORY */
+  .history { margin-top: 20px; }
+  .history-header { display: flex; justify-content: space-between; align-items: center; height: 56px; }
+  .history-toggle { display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; }
+  .history-toggle:hover { opacity: 0.8; }
+  .history-title { font-weight: 700; font-size: 15px; color: var(--text-std); }
+  .btn-add-note { border: 1px solid var(--grey5); border-radius: 3px; background: var(--white); font-weight: 700; font-size: 13px; color: var(--text-link); padding: 6px 12px; cursor: pointer; height: 32px; }
+  .btn-add-note:hover { background: #F5F5F5; }
+  .history-body { padding: 12px 0; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--grey6); }
+
+  /* PDF Mock Content */
+  .pdf-right { text-align: right; font-size: 10px; color: var(--text-muted); }
+  .pdf-bold { font-weight: 700; }
+  .pdf-title { font-size: 14px; font-weight: 700; color: var(--text-std); margin-top: 16px; }
+  .pdf-sub { font-size: 9px; color: var(--text-muted); }
+  .pdf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .pdf-sm { font-size: 9px; color: var(--text-muted); margin: 2px 0; }
+  .pdf-sm-bold { font-size: 9px; font-weight: 700; color: var(--text-std); }
+  .pdf-highlight { margin-top: 20px; padding: 8px 12px; background: #FFF8E0; border: 1px solid #E6D464; border-radius: 3px; font-size: 10px; font-weight: 700; color: var(--text-std); display: flex; justify-content: space-between; }
+  .pdf-chart { display: flex; align-items: flex-end; gap: 6px; height: 80px; margin-top: 8px; }
+  .pdf-bar { width: 20px; border-radius: 2px 2px 0 0; }
+  .pdf-section-title { font-size: 10px; font-weight: 700; color: var(--text-std); margin: 20px 0 8px; }
+  .pdf-question { margin-top: 12px; padding: 8px; background: #E8F4FD; border-radius: 3px; }
+  .pdf-question-title { font-size: 9px; font-weight: 700; color: var(--blue); }
+  .pdf-question-text { font-size: 8px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Panel animated wrappers — display:flex so children stretch to full height */
+  .preview-wrapper { flex-shrink: 0; overflow: hidden; display: flex; }
+  .toggle-wrapper  { flex-shrink: 0; overflow: hidden; display: flex; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+/* ── SVG Icons ── */
+const I = {
+  search: <svg width="16" height="16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="white" strokeWidth="1.5"/><line x1="11" y1="11" x2="14" y2="14" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>,
+  plus: <svg width="16" height="16" fill="none"><path d="M8 3v10M3 8h10" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>,
+  question: <svg width="16" height="16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="white" strokeWidth="1.5"/><path d="M6 6a2 2 0 113 1.73c-.28.18-.5.5-.5.77V9" stroke="white" strokeWidth="1.2" strokeLinecap="round"/><circle cx="8.5" cy="11" r=".75" fill="white"/></svg>,
+  lightning: <svg width="16" height="16" fill="none"><path d="M9 2L4 9h4l-1 5 5-7H8l1-5z" stroke="white" strokeWidth="1.2" strokeLinejoin="round"/></svg>,
+  chat: <svg width="16" height="16" fill="none"><path d="M3 3h10v7H6l-3 3V3z" stroke="white" strokeWidth="1.3" strokeLinejoin="round"/></svg>,
+  bell: <svg width="16" height="16" fill="none"><path d="M4 6a4 4 0 018 0v3l1.5 2H2.5L4 9V6z" stroke="white" strokeWidth="1.2"/><path d="M6.5 13a1.5 1.5 0 003 0" stroke="white" strokeWidth="1.2"/></svg>,
+  grid: <svg width="16" height="16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="white" strokeWidth="1.2"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="white" strokeWidth="1.2"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="white" strokeWidth="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="white" strokeWidth="1.2"/></svg>,
+  contact: <svg width="12" height="12" fill="none"><circle cx="6" cy="4" r="2.5" stroke="#59606D" strokeWidth="1"/><path d="M1.5 11c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="#59606D" strokeWidth="1"/></svg>,
+  calendar: <svg width="12" height="13" fill="none"><rect x=".5" y="1.5" width="11" height="10" rx="1.5" stroke="#59606D" strokeWidth="1"/><path d="M.5 4.5h11" stroke="#59606D" strokeWidth="1"/><path d="M3 0v2M9 0v2" stroke="#59606D" strokeWidth="1" strokeLinecap="round"/></svg>,
+  planned: <svg width="16" height="16" fill="none"><rect x="2" y="3" width="12" height="11" rx="2" stroke="#59606D" strokeWidth="1.2"/><path d="M2 6h12" stroke="#59606D" strokeWidth="1.2"/><path d="M5 1v3M11 1v3" stroke="#59606D" strokeWidth="1.2" strokeLinecap="round"/><circle cx="8" cy="10" r="1.5" stroke="#59606D" strokeWidth="1"/></svg>,
+  hash: <svg width="13" height="12" fill="none"><path d="M4.5 0L3 12M10 0L8.5 12M1 3.5h11M.5 8.5h11" stroke="#59606D" strokeWidth="1"/></svg>,
+  currency: <svg width="14" height="14" fill="none"><circle cx="7" cy="7" r="6" stroke="#59606D" strokeWidth="1.2"/><circle cx="7" cy="7" r="3" stroke="#59606D" strokeWidth="1"/></svg>,
+  caret: <svg width="10" height="6" fill="none"><path d="M1 1l4 4 4-4" stroke="#59606D" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  caretWhite: <svg width="10" height="6" fill="none"><path d="M1 1l4 4 4-4" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  document: <svg width="14" height="16" fill="none"><path d="M1.5 1.5A1.5 1.5 0 013 0h5.5l4 4.5V14a1.5 1.5 0 01-1.5 1.5H3A1.5 1.5 0 011.5 14V1.5z" stroke="#0078C8" strokeWidth="1.1"/><path d="M8 0v5h4" stroke="#0078C8" strokeWidth="1.1"/></svg>,
+  trash: <svg width="11" height="14" fill="none"><path d="M1 3h9v9a1 1 0 01-1 1H2a1 1 0 01-1-1V3z" stroke="#59606D" strokeWidth="1.1"/><path d="M0 3h11" stroke="#59606D" strokeWidth="1.1"/><path d="M3.5 1h4" stroke="#59606D" strokeWidth="1.1" strokeLinecap="round"/><path d="M4 5.5v5M7 5.5v5" stroke="#59606D" strokeWidth="1"/></svg>,
+  external: <svg width="12" height="12" fill="none"><path d="M5 1H2a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V7" stroke="#0078C8" strokeWidth="1.2" strokeLinecap="round"/><path d="M7 1h4v4" stroke="#0078C8" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/><path d="M11 1L5 7" stroke="#0078C8" strokeWidth="1.2" strokeLinecap="round"/></svg>,
+  chevDown: <svg width="16" height="16" fill="none"><path d="M4 6l4 4 4-4" stroke="#000A1E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  chevUp: <svg width="16" height="16" fill="none"><path d="M4 10l4-4 4 4" stroke="#000A1E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  overflow: <svg width="4" height="16" fill="none"><circle cx="2" cy="2" r="1.3" fill="#59606D"/><circle cx="2" cy="8" r="1.3" fill="#59606D"/><circle cx="2" cy="14" r="1.3" fill="#59606D"/></svg>,
+  arrowUp: <svg width="12" height="14" fill="none"><path d="M6 13V1M1 5l5-4 5 4" stroke="#59606D" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  arrowDown: <svg width="12" height="14" fill="none"><path d="M6 1v12M1 9l5 4 5-4" stroke="#59606D" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  cross: <svg width="12" height="12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="#59606D" strokeWidth="1.5" strokeLinecap="round"/></svg>,
+  crossSm: <svg width="8" height="8" fill="none"><path d="M1 1l6 6M7 1L1 7" stroke="#59606D" strokeWidth="1.2" strokeLinecap="round"/></svg>,
+  externalDk: <svg width="14" height="14" fill="none"><path d="M6 2H3a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V8" stroke="#59606D" strokeWidth="1.2" strokeLinecap="round"/><path d="M8 2h4v4" stroke="#59606D" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 2L6 8" stroke="#59606D" strokeWidth="1.2" strokeLinecap="round"/></svg>,
+  download: <svg width="14" height="14" fill="none"><path d="M7 1v8M3 6l4 4 4-4" stroke="#0078C8" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/><path d="M1 11v1a1 1 0 001 1h10a1 1 0 001-1v-1" stroke="#0078C8" strokeWidth="1.3" strokeLinecap="round"/></svg>,
+  burger: <svg width="16" height="14" fill="none"><path d="M1 1h14M1 7h14M1 13h14" stroke="#59606D" strokeWidth="1.5" strokeLinecap="round"/></svg>,
+  zoomIn: <svg width="14" height="14" fill="none"><circle cx="6" cy="6" r="5" stroke="#59606D" strokeWidth="1.2"/><line x1="10" y1="10" x2="13" y2="13" stroke="#59606D" strokeWidth="1.2" strokeLinecap="round"/><path d="M6 3.5v5M3.5 6h5" stroke="#59606D" strokeWidth="1"/></svg>,
+  zoomOut: <svg width="14" height="14" fill="none"><circle cx="6" cy="6" r="5" stroke="#59606D" strokeWidth="1.2"/><line x1="10" y1="10" x2="13" y2="13" stroke="#59606D" strokeWidth="1.2" strokeLinecap="round"/><path d="M3.5 6h5" stroke="#59606D" strokeWidth="1"/></svg>,
+  rotate: <svg width="14" height="14" fill="none"><path d="M11 5a5 5 0 10-1 6" stroke="#59606D" strokeWidth="1.2" strokeLinecap="round"/><path d="M9 2l2 3h-3" stroke="#59606D" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  fitW: <svg width="14" height="14" fill="none"><rect x="1" y="1" width="12" height="12" rx="1" stroke="#59606D" strokeWidth="1.2"/><path d="M5 4L2 7l3 3M9 4l3 3-3 3" stroke="#59606D" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  copy: <svg width="14" height="14" fill="none"><rect x="4" y="4" width="9" height="9" rx="1" stroke="#59606D" strokeWidth="1.2"/><path d="M10 4V2a1 1 0 00-1-1H2a1 1 0 00-1 1v7a1 1 0 001 1h2" stroke="#59606D" strokeWidth="1.2"/></svg>,
+  print: <svg width="14" height="14" fill="none"><rect x="1" y="5" width="12" height="6" rx="1" stroke="#59606D" strokeWidth="1.1"/><path d="M3 5V1h8v4" stroke="#59606D" strokeWidth="1.1"/><path d="M3 9h8v4H3V9z" stroke="#59606D" strokeWidth="1.1"/></svg>,
+  arLeft: <svg width="14" height="14" fill="none"><path d="M12 7H2M6 3L2 7l4 4" stroke="#0078C8" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  arRight: <svg width="14" height="14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="#0078C8" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  downloadDk: <svg width="14" height="14" fill="none"><path d="M7 1v8M3 6l4 4 4-4" stroke="#59606D" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/><path d="M1 11v1a1 1 0 001 1h10a1 1 0 001-1v-1" stroke="#59606D" strokeWidth="1.3" strokeLinecap="round"/></svg>,
+};
+
+/* NAV */
+function Nav() {
+  const items = ["Home","Sales","Purchases","Reporting","Payroll","Accounting","Tax","Contacts"];
+  return (
+    <div className="nav">
+      <div style={{display:"flex",alignItems:"center"}}>
+        <span className="nav-brand">xero</span>
+        <div className="nav-org"><span>Hornblower Enterprises</span><span style={{color:"white",fontSize:8,marginLeft:4}}>▼</span></div>
+        <div className="nav-items">
+          {items.map(i=><a key={i} className={`nav-item ${i==="Purchases"?"active":""}`}>{i}</a>)}
+        </div>
+      </div>
+      <div className="nav-right">
+        {[I.plus,I.search,I.lightning,I.question,I.chat,I.bell,I.grid].map((ic,i)=><button key={i} className="nav-icon-btn">{ic}</button>)}
+        <div className="nav-avatar">NH</div>
+      </div>
+    </div>
+  );
+}
+
+/* HEADER */
+function Header({filesOpen}) {
+  const [filesMenuOpen, setFilesMenuOpen] = useState(false);
+  return (
+    <div className="header">
+      <div className="header-left">
+        <div className="breadcrumbs">
+          <a>Purchases overview</a>
+          <span className="bc-sep">▼</span>
+          <a>Bills to pay</a>
+        </div>
+        <div className="title-row">
+          <h1>Edit bill</h1>
+          <span className="tag">Draft</span>
+        </div>
+      </div>
+      <div className="header-right">
+        <button className={`btn-files ${filesMenuOpen?"active":""}`} onClick={()=>setFilesMenuOpen(!filesMenuOpen)}>
+          {I.document}
+          <span className="label" style={{fontWeight:700,fontSize:13,color:"#0078C8"}}>Files (1)</span>
+          {I.caret}
+        </button>
+        <button className="btn-outline">Copy</button>
+        <button className="btn-outline">Save</button>
+        <div className="btn-primary-group">
+          <button className="btn-primary">Approve &amp; next</button>
+          <button className="btn-primary-caret">{I.caretWhite}</button>
+        </div>
+        <button className="icon-btn">{I.overflow}</button>
+        <button className="icon-btn">{I.arrowUp}</button>
+        <button className="icon-btn">{I.arrowDown}</button>
+        <button className="icon-btn">{I.cross}</button>
+      </div>
+    </div>
+  );
+}
+
+/* FILE PREVIEW */
+function FilePreview({onClose}) {
+  const [page, setPage] = useState(1);
+  const [zoom, setZoom] = useState(70);
+  const total = 4;
+  const bars = [40,55,30,65,50,70,45,80,60,45,75,50];
+  return (
+    <div className="file-preview">
+      <div className="fp-header">
+        <div className="fp-header-left">
+          <button className="icon-btn" onClick={onClose} style={{width:32,height:32}}>{I.cross}</button>
+          <span className="fp-filename">muskoka-invoice.pdf</span>
+        </div>
+        <div className="fp-header-right">
+          <button className="icon-btn" style={{width:32,height:32}}>{I.externalDk}</button>
+          <button className="btn-download">{I.download}<span>Download</span></button>
+        </div>
+      </div>
+      <div className="fp-toolbar">
+        <button className="tb">{I.burger}</button>
+        <span className="tb-text">{page}</span>
+        <span className="tb-text">/</span>
+        <span className="tb-text">{total}</span>
+        <button className="tb" onClick={()=>setZoom(Math.max(30,zoom-10))}>{I.zoomOut}</button>
+        <span className="tb-text" style={{minWidth:40}}>{zoom}%</span>
+        <button className="tb" onClick={()=>setZoom(Math.min(200,zoom+10))}>{I.zoomIn}</button>
+        <button className="tb">{I.fitW}</button>
+        <button className="tb">{I.rotate}</button>
+        <button className="tb">{I.copy}</button>
+        <button className="tb">{I.downloadDk}</button>
+        <button className="tb">{I.print}</button>
+      </div>
+      <div className="fp-body">
+        <div className="pdf-page">
+          <div className="pdf-right">Account No : 9931087407</div>
+          <div className="pdf-right">Statement Date : 09/01/2025</div>
+          <div className="pdf-right pdf-bold">Due Date : 09/30/2025</div>
+          <div className="pdf-title">MUSKOKA ENERGY</div>
+          <div className="pdf-sub">muskokaenergy.com</div>
+          <div className="pdf-grid">
+            <div>
+              <div className="pdf-sm-bold">Service For:</div>
+              <div className="pdf-sm">TREV'S TOOLS AND TRADES</div>
+              <div className="pdf-sm">121 MAIN ST</div>
+              <div className="pdf-sm">BRISBANE, AU 4000</div>
+              <div className="pdf-question" style={{marginTop:12}}>
+                <div className="pdf-question-title">Question about your bill?</div>
+                <div className="pdf-question-text">Monday-Friday 7 a.m.-9 p.m.</div>
+                <div className="pdf-question-text">Saturday 9 a.m.-6 p.m.</div>
+                <div className="pdf-question-text">Phone: 7-840-735-0123</div>
+              </div>
+            </div>
+            <div>
+              <div className="pdf-sm-bold">Your Account Summary</div>
+              <div className="pdf-sm" style={{display:"flex",justifyContent:"space-between"}}>
+                <span>Amount Due On Previous Statement</span><span>A$220.00</span>
+              </div>
+              <div className="pdf-sm" style={{display:"flex",justifyContent:"space-between"}}>
+                <span>Payment(s) Received Since Last Statement</span><span>-A$220.00</span>
+              </div>
+              <div className="pdf-sm" style={{display:"flex",justifyContent:"space-between"}}>
+                <span>Previous Unpaid Balance</span><span>A$0.00</span>
+              </div>
+              <div className="pdf-sm" style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
+                <span>Current Muskoka Energy Electric delivery Charges</span><span>A$220.39</span>
+              </div>
+              <div className="pdf-sm" style={{display:"flex",justifyContent:"space-between"}}>
+                <span>Silicon Valley Clean Energy Electric Generation Charges</span><span>A$128.61</span>
+              </div>
+            </div>
+          </div>
+          <div className="pdf-highlight">
+            <span>Total Amount Due by 09/30/2025</span>
+            <span>A$349.00</span>
+          </div>
+          <div className="pdf-section-title">Ways To Pay</div>
+          <div className="pdf-sub">muskokaenergy.com</div>
+          <div className="pdf-section-title">Monthly Billing History</div>
+          <div className="pdf-chart">
+            {bars.map((h,i)=><div key={i} className="pdf-bar" style={{height:h,background:i===bars.length-1?"#0078C8":"#B0B4BA"}}/>)}
+          </div>
+          <div className="pdf-sub" style={{textAlign:"center",marginTop:4}}>2024–2025</div>
+        </div>
+      </div>
+      <div className="fp-footer">
+        <button className="fp-nav-btn" onClick={()=>setPage(Math.max(1,page-1))}>{I.arLeft}</button>
+        <a>{page} of {total}</a>
+        {I.caret}
+        <button className="fp-nav-btn" onClick={()=>setPage(Math.min(total,page+1))}>{I.arRight}</button>
+      </div>
+    </div>
+  );
+}
+
+/* FIELD */
+function Field({label, icon, value, onChange, hasClear}) {
+  return (
+    <div className="field">
+      <div className="field-label">{label}</div>
+      <div className="field-input">
+        {icon && <span className="field-icon">{icon}</span>}
+        <input value={value} onChange={e=>onChange(e.target.value)} style={{paddingLeft:icon?0:8}} />
+        {hasClear && value && <button className="field-clear" onClick={()=>onChange("")}>{I.crossSm}</button>}
+      </div>
+    </div>
+  );
+}
+
+function SelectField({label, icon, value}) {
+  return (
+    <div className="field">
+      <div className="field-label">{label}</div>
+      <div className="field-input" style={{cursor:"pointer"}}>
+        {icon && <span className="field-icon">{icon}</span>}
+        <span className="field-text" style={{paddingLeft:icon?0:8}}>{value}</span>
+        <span className="field-caret">{I.caret}</span>
+      </div>
+    </div>
+  );
+}
+
+/* METADATA */
+function Metadata({compact}) {
+  const [from, setFrom] = useState("");
+  const [issueDate, setIssueDate] = useState(compact ? "18 Feb 2024" : "Mar 1 2026");
+  const [plannedDate, setPlannedDate] = useState(compact ? "1 Mar 2024" : "");
+  const [dueDate, setDueDate] = useState(compact ? "1 Mar 2024" : "Mar 30 2026");
+  const [billNum, setBillNum] = useState(compact ? "INV-02308" : "");
+  const [ref, setRef] = useState("");
+  const [cur, setCur] = useState(compact ? "New Zealand Dollar" : "USD United States Dollar");
+  const [tax, setTax] = useState("Tax inclusive");
+
+  return (
+    <div className="form-grid">
+      <Field label="From" icon={I.contact} value={from} onChange={setFrom} />
+      <Field label="Issue date" icon={I.calendar} value={issueDate} onChange={setIssueDate} hasClear />
+      <Field label="Planned date" icon={I.planned} value={plannedDate} onChange={setPlannedDate} hasClear />
+      {!compact && <Field label="Due date" icon={I.calendar} value={dueDate} onChange={setDueDate} hasClear />}
+      {compact && <Field label="Due date" icon={I.calendar} value={dueDate} onChange={setDueDate} hasClear />}
+      <Field label="Bill number" icon={I.hash} value={billNum} onChange={setBillNum} />
+      <Field label="Reference" icon={I.hash} value={ref} onChange={setRef} />
+      <SelectField label="Currency" icon={I.currency} value={cur} />
+      <SelectField label="Tax" value={tax} />
+    </div>
+  );
+}
+
+/* LINE ITEMS */
+function LineItems({compact}) {
+  const initDesc = compact ? "Energy monthly" : "Energy monthly - August";
+  const [rows, setRows] = useState([
+    {item:"", desc:initDesc, qty:"1", price:"349.00", acct:"415 - Equipment", tax:"HST 13%", amt:"349.00"}
+  ]);
+  const cols = [
+    {k:"item", l:"Item", w:compact?60:80},
+    {k:"desc", l:"Description", w:compact?140:240},
+    {k:"qty", l:"Quantity", w:90},
+    {k:"price", l:"Unit price", w:compact?95:102},
+    {k:"acct", l:"Account", flex:true},
+    {k:"tax", l:"Tax rate", flex:true},
+    {k:"amt", l:"Amount", w:110, r:true},
+  ];
+  const upd = (i,k,v) => { const n=[...rows]; n[i]={...n[i],[k]:v}; setRows(n); };
+  const del = i => setRows(rows.filter((_,j)=>j!==i));
+  const add = () => setRows([...rows, {item:"",desc:"",qty:"",price:"",acct:"",tax:"",amt:""}]);
+
+  return (
+    <div className="lig">
+      <div className="lig-header">
+        {cols.map(c=><div key={c.k} className="lig-hcell" style={{width:c.flex?undefined:c.w, flex:c.flex?"1 0 0":undefined, textAlign:c.r?"right":"left"}}>{c.l}</div>)}
+        <div className="lig-hcell" style={{width:40}}></div>
+      </div>
+      {rows.map((row,ri)=>(
+        <div key={ri} className="lig-row">
+          {cols.map(c=>(
+            <div key={c.k} className={`lig-cell ${c.r?"right":""}`} style={{width:c.flex?undefined:c.w, flex:c.flex?"1 0 0":undefined}}>
+              <input value={row[c.k]} onChange={e=>upd(ri,c.k,e.target.value)} />
+            </div>
+          ))}
+          <div className="lig-cell trash-cell" style={{width:40}}>
+            <button className="icon-btn" style={{width:32,height:32}} onClick={()=>del(ri)}>{I.trash}</button>
+          </div>
+        </div>
+      ))}
+      <div className="lig-footer">
+        <button className="btn-add-row" onClick={add}>Add new row</button>
+      </div>
+    </div>
+  );
+}
+
+/* SUMMARY */
+function Summary() {
+  return (
+    <div className="btns-summary">
+      <div className="action-buttons">
+        <button className="btn-show-cols">Show/hide columns</button>
+        <button className="btn-hubdoc">Go to Hubdoc {I.external}</button>
+      </div>
+      <div className="amount-summary">
+        <div className="summary-line"><span>Subtotal</span><span>349.00</span></div>
+        <div className="summary-line"><span>Tax</span><span>45.37</span></div>
+        <div className="summary-divider"><div/></div>
+        <div className="summary-total"><span>Amount due</span><span>394.37</span></div>
+        <div className="summary-divider"><div/></div>
+      </div>
+    </div>
+  );
+}
+
+/* HISTORY */
+function History() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="history">
+      <div className="history-header">
+        <div className="history-toggle" onClick={()=>setOpen(!open)}>
+          {open ? I.chevUp : I.chevDown}
+          <span className="history-title">History and notes</span>
+        </div>
+        <button className="btn-add-note">Add note</button>
+      </div>
+      {open && <div className="history-body"><p>No history or notes yet.</p></div>}
+    </div>
+  );
+}
+
+/* SIDE TOGGLE */
+function SideToggle({onClick}) {
+  return <div className="side-toggle" onClick={onClick}>{I.document}</div>;
+}
+
+/* APP */
+const OPEN_EASING  = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const CLOSE_EASING = 'cubic-bezier(0.55, 0, 1, 0.45)';
+
+/*
+  Three panel states so the opening path never carries a stale transform:
+    'idle'    — panel hidden, NO transform property on the element
+    'open'    — panel visible, pure width expansion (no transform = no kick/bounce)
+    'closing' — panel animating shut, translateX slides it left as width collapses
+*/
+function App() {
+  const [panelState, setPanelState] = useState('idle');
+  const timerRef = useRef(null);
+
+  const handleOpen = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setPanelState('open');
+  };
+
+  const handleClose = () => {
+    setPanelState('closing');
+    timerRef.current = setTimeout(() => setPanelState('idle'), 220);
+  };
+
+  const isOpen    = panelState === 'open';
+  const isClosing = panelState === 'closing';
+  const isVisible = isOpen || isClosing;
+
+  // Preview panel: idle has NO transform so nothing stale exists when open starts
+  const previewStyle = isClosing ? {
+    width: 0,
+    transform: 'translateX(-40px)',
+    transition: `width 200ms ${CLOSE_EASING}, transform 200ms ${CLOSE_EASING}`,
+  } : isOpen ? {
+    width: 576,
+    transform: 'translateX(0)',
+    transition: `width 300ms ${OPEN_EASING}`,
+  } : {
+    width: 0,
+    // deliberately no transform here — clean slate for next open
+  };
+
+  // Toggle: collapses when panel opens, reappears as panel closes
+  const toggleStyle = isVisible ? {
+    width: isClosing ? 40 : 0,
+    transition: isClosing
+      ? `width 220ms ${OPEN_EASING}`
+      : `width 150ms ${CLOSE_EASING}`,
+  } : {
+    width: 40,
+  };
+
+  return (
+    <div style={{height:"100vh",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      <Nav />
+      <Header filesOpen={isVisible} />
+      <div className="main-area">
+        <div className="toggle-wrapper" style={toggleStyle}>
+          <SideToggle onClick={handleOpen} />
+        </div>
+
+        <div className="preview-wrapper" style={previewStyle}>
+          <FilePreview onClose={handleClose} />
+        </div>
+
+        <div className="content-scroll">
+          <div className="content-card">
+            <Metadata compact={isVisible} />
+            <LineItems compact={isVisible} />
+            <div style={{marginTop:20}}><Summary /></div>
+            <History />
+          </div>
+        </div>
+      </div>
+      <div style={{textAlign:'center', padding:'10px 20px', flexShrink:0}}>
+        <span style={{fontSize:11, color:'var(--grey5)'}}>Last updated: Apr 21, 2026 @2:00PM EDT</span>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

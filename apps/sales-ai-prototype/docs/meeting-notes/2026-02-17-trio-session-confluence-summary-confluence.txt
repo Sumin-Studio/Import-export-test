@@ -1,0 +1,61 @@
+h1. Bill Pay Agent PoC — Trio Session Summary (17 Feb 2026)
+
+*Attendees:* Jon Bell, Neeraj Sahu, Tauqir Ahmed, Angus Tait, Jenny Nedanovski, Kate Givoni
+*Meeting:* Bill Pay Agent PoC | Trio (Design, Engg, Prod)
+
+----
+
+h2. Outcome
+
+After sorting through the ideas (gut check on concepts, swim lane alignment), the team landed on *one prototype* for Friday — not three. Focus is on one high-priority proof of concept to drive discussion.
+
+----
+
+h2. Scope and focus
+
+* *Swim lane:* Focus is *Swim lane 1 — Cash-flow aware planner* (bill preparation and planning, latter part of the bill journey). Swim lane 2 (approval) was deprioritised because of overlap with Melio's out-of-the-box payment approval.
+* *Geography:* *US only* for now. PoC design is flexible enough to pivot to UK if API integration is easier there; Melio's iframe/SDK structure was noted as a potential constraint.
+* *Framing:* Treat the prototype as a *proof of concept to drive discussion*. Goal is "what does good look like" and productive conversation with Melio/stakeholders — even if we get shot down, it drives the next iteration.
+
+----
+
+h2. Concepts: what stayed in vs out
+
+*Retained (in scope for the one prototype):*
+Cash runway watcher, Instant Pay intent capture, Early pay discount radar, Bill timing optimizer (discounts may be de-emphasised).
+
+*Dismissed for this round:*
+Policy-aware approval drafts, Risk tier routing (just logic), One-Tap Billets Pay (retrospective bills — confusion), Approval SLA nudger, Multi-account Liquidity Splitter.
+
+----
+
+h2. Design direction
+
+* Prototype should be *JAX-aligned* (look and feel of Xero's AI experience).
+* Move *beyond chatbot-only* — e.g. insights in list view, emergent banners, not just side-drawer.
+* Tauqir confirmed the UI change to JAX look is doable for Friday if it's purely visual.
+
+----
+
+h2. Friday deliverables
+
+# *Evolution story* — Journey from problem statements → concepts → narrowing → proof we believe in.
+# *Synthesised narrative* — The story the team stands behind.
+# *Working prototype* — One concept, JAX-aligned, Swim lane 1.
+
+----
+
+h2. Next steps
+
+||Owner||Action||
+|Jon|End-of-day synthesis update (17 Feb); build the story arc (problems → concepts → winnowing → prototype) this week.|
+|Tauqir|Restyle PoC to look like JAX by Friday.|
+|Team|Engage Toronto team (Pratik's) after prototype is ready.|
+
+----
+
+h2. Current PoC (Tauqir's demo)
+
+* Payment assistant chatbot in the bill UI: bill breakdowns, totals, overdue status, cash impact.
+* Works with *approved bills only*.
+* Stack: Python API under {{/api}}, Portkey as LLM gateway.

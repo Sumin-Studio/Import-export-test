@@ -1,0 +1,170 @@
+/**
+ * Survey Feedback Component
+ *
+ * Likert scale feedback for CES (Customer Effort Score)
+ * and CSAT (Customer Satisfaction) surveys.
+ */
+
+/* ===== Survey Container ===== */
+.survey-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-small);
+  max-width: 400px;
+}
+
+.survey-feedback__heading {
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-emphasis);
+  color: var(--color-text-primary);
+}
+
+/* ===== Survey Card ===== */
+.survey-feedback__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-standard);
+  padding: var(--s-large);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+/* ===== Question ===== */
+.survey-feedback__question {
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  line-height: var(--font-line-height-standard);
+}
+
+/* ===== Likert Scale ===== */
+.survey-feedback__scale {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-xsmall);
+}
+
+.survey-feedback__options {
+  display: flex;
+  border: 1px solid var(--color-border-standard);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-bg-surface);
+}
+
+.survey-feedback__option {
+  flex: 1;
+  padding: var(--s-small) var(--s-standard);
+  border: none;
+  border-right: 1px solid var(--color-border-standard);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.survey-feedback__option:last-child {
+  border-right: none;
+}
+
+.survey-feedback__option:hover {
+  background: var(--color-bg-secondary);
+}
+
+.survey-feedback__option.is-selected {
+  background: var(--color-blue);
+  color: var(--color-white);
+}
+
+/* ===== Anchor Labels ===== */
+.survey-feedback__anchors {
+  display: flex;
+  justify-content: space-between;
+}
+
+.survey-feedback__anchor {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+/* ===== Explanation Field ===== */
+.survey-feedback__explain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-xsmall);
+}
+
+.survey-feedback__explain-label {
+  font-size: var(--font-size-medium);
+  color: var(--color-text-primary);
+}
+
+.survey-feedback__explain-label span {
+  color: var(--color-text-secondary);
+}
+
+.survey-feedback__textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: var(--s-small);
+  border: 1px solid var(--color-border-standard);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: var(--font-size-medium);
+  line-height: var(--font-line-height-standard);
+  resize: vertical;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+.survey-feedback__textarea:focus {
+  outline: none;
+  border-color: var(--color-blue);
+}
+
+.survey-feedback__textarea::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+/* ===== Submit Button ===== */
+.survey-feedback__submit {
+  align-self: flex-start;
+  padding: var(--s-small) var(--s-large);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-blue);
+  color: var(--color-white);
+  font-family: var(--font-family);
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.survey-feedback__submit:hover {
+  background: var(--color-blue-dark, #0066b3);
+}
+
+.survey-feedback__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== Thank You State ===== */
+.survey-feedback__thanks {
+  display: none;
+  padding: var(--s-standard);
+  text-align: center;
+  color: var(--color-text-primary);
+}
+
+.survey-feedback__card.is-submitted .survey-feedback__form {
+  display: none;
+}
+
+.survey-feedback__card.is-submitted .survey-feedback__thanks {
+  display: block;
+}

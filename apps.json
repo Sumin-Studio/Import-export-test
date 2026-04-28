@@ -1,0 +1,496 @@
+{
+  "bills-file-toggle": {
+    "name": "Bills File Toggle",
+    "description": "Xero Bill Details page design prototype with file toggle",
+    "latestUpdate": "2026 Apr 9",
+    "url": "bills-file-toggle-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Vivian Ngai"
+    ],
+    "vercelProjectId": "prj_gN8uiY22DXgcebzkwvCJ17FfFueY"
+  },
+  "bills-rounding-and-total": {
+    "name": "Bills Rounding and Total",
+    "description": "Prototype of bills total amount and rounding in mod details view",
+    "latestUpdate": "2026 Apr 23",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Vivian Ngai"
+    ],
+    "vercelProjectId": "prj_2YescFKF0ZZ2JBngSEX61u55T5NU",
+    "url": "bills-rounding-and-total-xro.vercel.app"
+  },
+  "design-internal": {
+    "name": "Design Internal Home",
+    "description": "Lists all available apps and prototypes",
+    "vercelProjectId": "prj_CovDowlLTd2vAo8IlFsrAwbRSbmB",
+    "latestUpdate": "2026 Mar 11",
+    "url": "design-internal.vercel.app",
+    "tags": [
+      "app",
+      "repository-app"
+    ],
+    "authors": []
+  },
+  "dev-onboarding-prototype": {
+    "name": "Developer onboarding prototype",
+    "description": "Static prototype of Xero developer onboarding / My Apps experience for usability testing",
+    "vercelProjectId": "prj_kdOWHmJqMlJYgYkieHlRs2Tu31F6",
+    "latestUpdate": "2026 Apr 9",
+    "url": "dev-onboarding-prototype-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Chloe Akerblom"
+    ]
+  },
+  "ai-design-scorecard": {
+    "name": "AI Design Scorecard",
+    "description": "Configure AI design parameters with real-time scorecard generation",
+    "vercelProjectId": "prj_rq7273vIUAbPGOB9ltzjs6UZh3A2",
+    "latestUpdate": "2025 Dec 20",
+    "url": "https://ai-design-scorecard-xro.vercel.app",
+    "tags": [
+      "app"
+    ],
+    "authors": [
+      "Ben White"
+    ]
+  },
+  "mtd-it-client-record-search": {
+    "name": "MTD IT Client Record Search",
+    "description": "NI Number onboarding flow prototype for MTD for Income Tax",
+    "vercelProjectId": "prj_gbFmWNpP20hXX4NuT8cFn61qDN5Q",
+    "latestUpdate": "2025 Dec 20",
+    "url": "https://mtd-it-client-record-search-xro.vercel.app/",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Clouston Mahon"
+    ]
+  },
+  "mtd-it-transaction-allocation": {
+    "name": "MTD IT Transaction Allocation",
+    "description": "Transaction allocation settings prototype for MTD for Income Tax",
+    "vercelProjectId": "prj_74qAWZvSZ7ivOb1xScMAUS94f8DU",
+    "latestUpdate": "2026 Mar 5",
+    "url": "mtd-it-transaction-allocation-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Clouston Mahon"
+    ]
+  },
+  "client-readiness-prototype": {
+    "name": "Client Readiness Prototype",
+    "description": "Client readiness insights prototype for Xero",
+    "vercelProjectId": "prj_czLLyr2a0pCUrbUsGMBN6zBtBvxW",
+    "latestUpdate": "2026 Feb 5",
+    "url": "client-readiness-prototype-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Rebecca Dodson"
+    ]
+  },
+  "timezone-picker": {
+    "name": "Timezone Picker",
+    "description": "Compare visually timezones to help pick overlapping work hours",
+    "vercelProjectId": "prj_Ae1uBC1EgnfklLFqB55y3CyYa8VT",
+    "latestUpdate": "2026 Mar 4",
+    "url": "timezone-picker-xro.vercel.app",
+    "tags": [
+      "app"
+    ],
+    "authors": [
+      "Erin Casali"
+    ]
+  },
+  "video-to-gif": {
+    "name": "Video to GIF",
+    "description": "Convert video files to GIF with drag-and-drop (browser or local server)",
+    "vercelProjectId": "prj_8Refdk4Yq6W7Y1Q1Y8TBy8xx3jGR",
+    "latestUpdate": "2026 Mar 6",
+    "url": "video-to-gif-xro.vercel.app",
+    "tags": [
+      "app",
+      "deleted"
+    ],
+    "authors": []
+  },
+  "frame-of-mind": {
+    "name": "Frame of mind",
+    "description": "Convert video files to GIF with drag-and-drop (browser or local server)",
+    "vercelProjectId": "prj_FLLKuJWRIQMsMEmTSENdAXtjwvUa",
+    "latestUpdate": "2026 Apr 9",
+    "url": "frame-of-mind-xro.vercel.app",
+    "tags": [
+      "app"
+    ],
+    "authors": "Mustafa Kurtuldu"
+  },
+  "bills-xdl": {
+    "name": "Bills XDL Vision",
+    "description": "Vision of the bills product redesigned with XDL (pw: password)",
+    "vercelProjectId": "prj_aq2zEC7dSyfGcElN8cFoNeepxvX5",
+    "latestUpdate": "2026 Mar 5",
+    "url": "https://bills-xdl.vercel.app/",
+    "repositoryUrl": "https://github.com/xero-internal-actions-poc/bills-xdl-prototype",
+    "tags": [
+      "prototype",
+      "external"
+    ],
+    "authors": [
+      "Robb Schiller"
+    ]
+  },
+  "spend-cards": {
+    "name": "Spend Cards",
+    "description": "Spend Cards prototype to pitch for FY27 planning (pw: password)",
+    "vercelProjectId": "prj_TrUuSPFqbbFeVDPQNRACId3BXmW8",
+    "latestUpdate": "2026 Mar 5",
+    "url": "https://spend-cards.vercel.app/",
+    "repositoryUrl": "https://github.com/xero-internal-actions-poc/spend-cards",
+    "tags": [
+      "prototype",
+      "external"
+    ],
+    "authors": [
+      "Robb Schiller"
+    ]
+  },
+  "nz-tax-widget": {
+    "name": "NZ Tax Widget",
+    "description": "NZ tax compliance dashboard tax alerts and workload insights (pw: NZTAXWIDGET)",
+    "vercelProjectId": "prj_BS3EBGOlzwkjtc676l8oLD6IEkTe",
+    "url": "nz-tax-widget-xro.vercel.app",
+    "latestUpdate": "2026 Mar 24",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Thibault Michel"
+    ]
+  },
+  "iap-switch-rules": {
+    "name": "Switch Rules",
+    "description": "Rules to move account balances between groups based on conditions",
+    "latestUpdate": "2026 Mar 18",
+    "vercelProjectId": "prj_ck05pxBRArtRB3pTYoCtXMA9U4gu",
+    "url": "iap-switch-rules-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Vivien Ilett"
+    ]
+  },
+  "cashflow-xdl-prototype": {
+    "name": "Cashflow – Pay a supplier",
+    "description": "Prototype of the cashflow-first pay-a-supplier flow using XDL",
+    "latestUpdate": "2026 Mar 20",
+    "vercelProjectId": "prj_TmXp5XOMTtvNgnEHsiZDAclt3F0S",
+    "url": "cashflow-xdl-prototype-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "John Dentino"
+    ]
+  },
+  "xdl-prototype": {
+    "name": "Tax readiness",
+    "description": "Exploring what a Clients page with workflow modes would look like (PW: XDL-XRO)",
+    "latestUpdate": "2026 Mar 30",
+    "vercelProjectId": "prj_0r3n7s0emoAPm8xRJzQkFcVadFQi",
+    "url": "xdl-prototype-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Thibault Michel"
+    ]
+  },
+  "dice-support-site": {
+    "name": "Central concepts",
+    "description": "Exploring future Xero Central concepts",
+    "latestUpdate": "2026 Mar 30",
+    "url": "dice-support-site-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [],
+    "vercelProjectId": "prj_bFFOl1QYojoAtjjW8X10k3JGfmM6"
+  },
+  "dmpt-graph": {
+    "name": "DMPT Graph",
+    "description": "Interactive Jira dependency graph for DMPT issues with issue details and AI summaries.",
+    "vercelProjectId": "prj_GBKbjd5nAJmvTW4KhRXA7eHuU9q9",
+    "latestUpdate": "2026 Apr 23",
+    "url": "dmpt-graph-xro.vercel.app",
+    "tags": [
+      "app"
+    ],
+    "authors": [
+      "Robbie Cheng"
+    ]
+  },
+  "git-for-designers": {
+    "name": "Git for designers",
+    "description": "An interactive visual guide to Git concepts for designers.",
+    "vercelProjectId": null,
+    "latestUpdate": "2026 Mar 31",
+    "url": "https://didactic-adventure-j18qrlz.pages.github.io/",
+    "tags": [
+      "app",
+      "external"
+    ],
+    "authors": []
+  },
+  "ai-document-collection": {
+    "name": "AI document collection",
+    "description": "Clients connect their own cloud storage to Xero, then an AI agent automatically collects and organises relevant documents.",
+    "vercelProjectId": "prj_VzLVWXZ1A2wK7MmtcyR73bReIfqn",
+    "latestUpdate": "2026 Mar 31",
+    "url": "ai-document-collection-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Thibault Michel"
+    ]
+  },
+  "checkout-preview-app": {
+    "name": "Checkout preview",
+    "description": "Dev shell for Customise preview: settings sidebar, Web/Mobile, iframe (mybills)",
+    "vercelProjectId": "prj_6gcXozfX8mTL4e6VUAOe5d8R0vel",
+    "latestUpdate": "2026 Apr 1",
+    "url": "checkout-preview-app-xro.vercel.app",
+    "tags": [
+      "prototype",
+      "deleted"
+    ],
+    "authors": [
+      "Adam Huskisson"
+    ]
+  },
+  "payment-simulator-poc": {
+    "name": "Payment simulator",
+    "description": "POC: small business payment / checkout simulator (XUI + Next.js, aligned with mybills)",
+    "vercelProjectId": "prj_iyCM7NbF67VyYD3nJbhfocjK8qBX",
+    "latestUpdate": "2026 Apr 1",
+    "url": "payment-simulator-poc-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Adam Huskisson"
+    ]
+  },
+  "reel-estate": {
+    "name": "Reel estate",
+    "description": "Record your screen in the browser; download WebM. Internal tool — every pixel counts.",
+    "vercelProjectId": "prj_aexDRSCjH0yPAKEGgnwgEtTEKzno",
+    "latestUpdate": "2026 Apr 10",
+    "url": "reel-estate-xro.vercel.app",
+    "tags": [
+      "app"
+    ],
+    "authors": "Mustafa Kurtuldu"
+  },
+  "surcharging-ban-au-wizard": {
+    "name": "Surcharging ban AU wizard",
+    "description": "Step-by-step wizard guiding AU merchants through the RBA ban on surcharging",
+    "vercelProjectId": "prj_aXerHgGYgwKVJ0m2AFDNsBmm2OoN",
+    "latestUpdate": "2026 Apr 7",
+    "url": "surcharging-ban-au-wizard-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Adam Huskisson"
+    ]
+  },
+  "the-builders-workshop": {
+    "name": "The Builders Workshop",
+    "description": "A place to learn how to build with Cursor",
+    "vercelProjectId": "prj_KnL7znpBn5xomWGD4T90gvD3jD4B",
+    "latestUpdate": "2026 Apr 08",
+    "url": "the-builders-workshop-xro.vercel.app",
+    "tags": [
+      "prototype",
+      "repository-app"
+    ],
+    "authors": [
+      "Jon Bell"
+    ]
+  },
+  "xdl-test": {
+    "name": "XDL Test",
+    "description": "xdl scaffold test",
+    "latestUpdate": "2026 Apr 9",
+    "vercelProjectId": "prj_kPMRXnAaeq5ONSh8xG0ycFXFtNzc",
+    "url": "xdl-test-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Robb Schiller"
+    ]
+  },
+  "splash": {
+    "name": "Splash Screen Redirect",
+    "description": "Landing page with rotating greetings that redirects designers to a configurable destination",
+    "vercelProjectId": "prj_dX3Vo2Ahf6DJd5gHCXYu35twGC9s",
+    "latestUpdate": "2026 Apr 10",
+    "url": "splash-xro.vercel.app",
+    "tags": [
+      "app"
+    ],
+    "authors": [
+      "Erin Casali"
+    ]
+  },
+  "xero-developer-onboarding-prototype": {
+    "name": "Xero Developer onboarding prototype",
+    "description": "First-run developer onboarding shell: orientation, setup path, and next actions",
+    "latestUpdate": "2026 Apr 13",
+    "vercelProjectId": "prj_6dJBN851zHNbrJRAagS3zjkkVkSU",
+    "url": "xero-developer-onboarding-prototype.vercel.app",
+    "tags": [
+      "prototype",
+      "deleted"
+    ],
+    "authors": [
+      "Chloe Akerblom"
+    ]
+  },
+  "ai-monetization": {
+    "name": "AI Monetisation",
+    "description": "Shared workspace for the AI Monetisation (Credit Management) effort — docs, source links, meeting notes, research briefs",
+    "latestUpdate": "2026 Apr 14",
+    "url": "ai-monetization-xro.vercel.app",
+    "tags": [
+      "app",
+      "docs"
+    ],
+    "authors": [
+      "Jon Bell"
+    ],
+    "vercelProjectId": "prj_c1uS5o0zCb5b0rQIvE5WNFgb9jCl"
+  },
+  "user-research-2026-04-14": {
+    "name": "User research 2026-04-14",
+    "description": "Next.js research build: Purchases overview v4 + Xero Protect bills v9 (password via Vercel)",
+    "latestUpdate": "2026 Apr 14",
+    "url": "user-research-2026-04-14-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Jon Bell"
+    ],
+    "vercelProjectId": "prj_Io4sSaBae1K9zqNMjC8wvrNvRFIb"
+  },
+  "sales-ai-prototype": {
+    "name": "Sales",
+    "description": "Design sprint prototype for Xero Sales",
+    "latestUpdate": "2026 Apr 14",
+    "vercelProjectId": "prj_ylAb9BSsT6T9oVBuirmkqAmgT5IW",
+    "url": "sales-ai-prototype-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Audrey Chen"
+    ]
+  },
+  "bill-cash-flow-prototype": {
+    "name": "Bill Cash Flow",
+    "description": "Renamed to master-prototype (folder apps/master-prototype).",
+    "latestUpdate": "2026 Apr 20",
+    "vercelProjectId": null,
+    "url": null,
+    "tags": [
+      "prototype",
+      "deleted"
+    ],
+    "authors": [
+      "Mustafa Kurtuldu"
+    ]
+  },
+  "master-prototype": {
+    "name": "Master prototype",
+    "description": "Next.js prototype: bills, purchases overview, cashflow and pay-a-supplier flows",
+    "latestUpdate": "2026 Apr 20",
+    "vercelProjectId": "prj_nVu0IdPlIB3NBlo2MrFXNw8Eaj1K",
+    "url": "master-prototype-xro.vercel.app",
+    "tags": [
+      "app"
+    ],
+    "authors": [
+      "Mustafa Kurtuldu"
+    ]
+  },
+  "automatic-payments": {
+    "name": "Automatic Payments",
+    "description": "Autopay UI prototype — new invoice flow with enrolment, management, and promo experience",
+    "latestUpdate": "2026 Apr 20",
+    "vercelProjectId": "prj_rnb7lxLQAsqiEv7KzDSmGY5ngtgK",
+    "url": "automatic-payments-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Adam Huskisson"
+    ]
+  },
+  "app-certification-prototype": {
+    "name": "App Certification",
+    "description": "AI-assisted certification submission flow for Xero apps — simplified form pre-populated from simulated scraping",
+    "latestUpdate": "2026 Apr 22",
+    "vercelProjectId": "prj_fa4QSsSN56n3PFkDjY84p1ES76So",
+    "url": "app-certification-prototype-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Thibault Michel"
+    ]
+  },
+  "switchers_usertesting": {
+    "name": "Switchers user testing",
+    "description": "Payroll switching wizard prototype for usability testing",
+    "latestUpdate": "2026 Apr 22",
+    "vercelProjectId": "prj_v0so4C48gH3mLGDURBjxz6f5p15I",
+    "url": "switchersusertesting-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Jarrett Kunze"
+    ]
+  },
+  "xpf-navigator": {
+    "name": "XPF Navigator",
+    "description": "XPF Navigator is a web app that helps teams validate they're ready to move to the next phase of XPF and provide suggested next best steps. It doubles as a checklist to help teams orient what they still need to check.",
+    "latestUpdate": "2026 Apr 23",
+    "vercelProjectId": "prj_8NSwzN7LbmS0ubGU7vmW3ZlXUGpo",
+    "url": "xpf-navigator-xro.vercel.app",
+    "tags": [
+      "prototype"
+    ],
+    "authors": [
+      "Libby Tiding"
+    ]
+  }
+}

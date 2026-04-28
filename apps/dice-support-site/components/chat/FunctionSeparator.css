@@ -1,0 +1,32 @@
+/**
+ * Function Separator Component
+ *
+ * Horizontal divider with centered label pill.
+ * Use cases: new session, time skip, topic change, etc.
+ */
+
+/* ===== Separator Container ===== */
+.function-separator {
+  display: flex;
+  align-items: center;
+  gap: var(--s-standard);
+  padding: var(--s-standard) 0;
+}
+
+/* ===== Lines ===== */
+.function-separator__line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border-standard);
+}
+
+/* ===== Label Pill ===== */
+.function-separator__label {
+  padding: var(--s-2xsmall) var(--s-small);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-standard);
+  border-radius: var(--radius-max);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}

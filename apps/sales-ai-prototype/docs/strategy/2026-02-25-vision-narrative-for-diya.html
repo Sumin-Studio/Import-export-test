@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bills / Pay Out: Three Agent Concepts</title>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink-light: #4a4a6a;
+    --ink-muted: #8888a0;
+    --bg: #fafaf8;
+    --surface: #ffffff;
+    --border: #e8e8e4;
+    --accent: #0057ff;
+    --accent-bg: #eef4ff;
+    --red: #d4380d;
+    --red-bg: #fff1ee;
+    --green: #1a7a3a;
+    --green-bg: #f0f9f2;
+    --amber: #9a6700;
+    --amber-bg: #fef9ec;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.65;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 60px 32px 120px;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 56px;
+  }
+
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+
+  .meta span { white-space: nowrap; }
+  .meta strong { color: var(--ink-light); font-weight: 500; }
+
+  /* Sections */
+  .section {
+    margin-bottom: 56px;
+  }
+
+  .section-number {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    margin-top: 32px;
+    line-height: 1.3;
+  }
+
+  p {
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+
+  ul, ol {
+    margin-bottom: 16px;
+    padding-left: 24px;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+
+  li strong {
+    color: var(--ink);
+  }
+
+  /* Blockquotes */
+  blockquote {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-bg);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--ink-light);
+  }
+
+  blockquote.callout-red {
+    border-left-color: var(--red);
+    background: var(--red-bg);
+  }
+
+  blockquote.callout-green {
+    border-left-color: var(--green);
+    background: var(--green-bg);
+  }
+
+  blockquote.callout-amber {
+    border-left-color: var(--amber);
+    background: var(--amber-bg);
+  }
+
+  /* Divider */
+  hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* Hero moments table */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .hero-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .hero-card .hero-number {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .hero-card .hero-image {
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-bottom: 12px;
+  }
+
+  .hero-card .hero-moment {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  /* Concept cards */
+  .concept {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 24px 0;
+  }
+
+  .concept h3 {
+    margin-top: 0;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .concept .pitch {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--accent-bg);
+    border-radius: 8px;
+    font-style: italic;
+  }
+
+  .concept-detail {
+    margin-bottom: 14px;
+  }
+
+  .concept-detail .label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--ink-muted);
+    margin-bottom: 4px;
+  }
+
+  .concept-detail p {
+    margin-bottom: 0;
+    font-size: 15px;
+  }
+
+  .flow-steps {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .flow-step {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 13px;
+    color: var(--ink-light);
+    white-space: nowrap;
+  }
+
+  .flow-arrow {
+    color: var(--ink-muted);
+    font-size: 12px;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 15px;
+  }
+
+  th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--ink-muted);
+    padding: 10px 16px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  td strong {
+    color: var(--ink);
+  }
+
+  td em {
+    color: var(--ink-muted);
+    font-style: normal;
+  }
+
+  /* Journey arc */
+  .journey-arc {
+    margin: 24px 0;
+  }
+
+  .journey-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 10px 0;
+  }
+
+  .journey-step .step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+
+  .journey-step.active .step-num {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .journey-step .step-label {
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .journey-step .step-note {
+    font-size: 14px;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+
+  /* One-liner box */
+  .one-liner {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 24px 0;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .one-liner strong {
+    color: #fff;
+  }
+
+  /* Summary label */
+  .summary-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+
+  /* Next steps */
+  .next-steps {
+    display: grid;
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .next-step {
+    display: flex;
+    gap: 16px;
+    align-items: baseline;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .next-step .when {
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 120px;
+  }
+
+  .next-step .what {
+    font-size: 15px;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .page { padding: 32px 20px 80px; }
+    .header h1 { font-size: 26px; }
+    h2 { font-size: 20px; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .concept { padding: 24px 20px; }
+    .meta { flex-direction: column; gap: 4px; }
+  }
+
+  @media print {
+    body { font-size: 14px; }
+    .page { max-width: none; padding: 0; }
+    .concept, .hero-card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>Bills / Pay Out: Three Agent Concepts</h1>
+    <div class="meta">
+      <span><strong>For</strong> David checkpoint (Wed)</span>
+      <span><strong>Feeds into</strong> Chong's Payments Agent Vision deck</span>
+      <span><strong>Scope</strong> Bills / Pay Out &middot; L2.7B.2</span>
+      <span><strong>Date</strong> 25 Feb 2026</span>
+    </div>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="section">
+    <div class="section-number">Section 1</div>
+    <h2>Why this, why now</h2>
+
+    <p>Diya's mandate is clear: AI everywhere, not just "support some agentic flows." In the AI review, Payments was showing as <strong style="color: var(--red)">RED</strong>. The wake-up call landed across the leadership team in the same week:</p>
+
+    <ul>
+      <li><strong>Bharathi</strong>: Frame everything as <strong>cashflow optimization</strong> &mdash; it's the main stressor for customers, and it transcends individual payment transactions and AR/AP concepts. Competitors can match us move-for-move on small business AI, but the <strong>accountant-to-small-business connection is defensible and differentiated</strong>.</li>
+      <li><strong>Chong's three defensible pillars</strong>: (1) <strong>System of record</strong> &mdash; a cash-aware super-agent combining AR+AP against a cash goal, vs competitors' siloed agents. (2) <strong>System of action</strong> &mdash; cross-client intelligence AND cross-client actions for accountants. (3) <strong>System of engagement</strong> &mdash; fast onboarding, eliminate DIY config, AI-native bill experience.</li>
+      <li><strong>Pratik</strong>: "The map is not the territory." Xero thinks it has an accurate cash flow view but doesn't &mdash; trade accounts, supplier credit, inventory disputes, PO quality issues never make it to Xero. The more we bridge map and territory (extending data models, enabling ecosystem partners), the better our AI can be.</li>
+    </ul>
+
+    <blockquote class="callout-red">
+      "Unless we get on this train, en masse, we are going to piecemeal our way to some insipid, uninspired future. We need escape velocity." &mdash; Bharathi
+    </blockquote>
+
+    <p>A tiger team is forming. Product (Chong, Pete, Darren, Pratik, Neeraj, Prashant), Design (TBD &mdash; David choosing), Eng (Luke, Lili). Twice-a-week meetings. Bharathi: "Let us be resource poor, not imagination poor."</p>
+
+    <p>This is the Facebook mobile moment &mdash; Zuck wanting a mobile version of every product idea, but for AI.</p>
+  </div>
+
+  <hr>
+
+  <!-- Section 2 -->
+  <div class="section">
+    <div class="section-number">Section 2</div>
+    <h2>The reframe: we were automating the easiest part</h2>
+
+    <p>Today's meeting surfaced something we need to sit with:</p>
+
+    <blockquote class="callout-amber">
+      "We're not grappling with feasibility vs ambition anymore, it's actually more 'is this even good?' Like&hellip; pressing the pay button is the easiest part of this whole process. We have an agent doing the easiest bit. Versus all the teeth gnashing and toil leading up until that moment."
+    </blockquote>
+
+    <p>The real toil in bills is <strong>upstream</strong> of the pay button:</p>
+
+    <ul>
+      <li><strong>Bill entry</strong>: uploading bills, checking details, matching to the right contact</li>
+      <li><strong>Account coding</strong>: getting the right account codes, splitting line items</li>
+      <li><strong>Approval workflows</strong>: chasing approvers, waiting for sign-off, managing exceptions</li>
+      <li><strong>Context sorting</strong>: figuring out what's urgent, what can wait, what's an anomaly</li>
+    </ul>
+
+    <p>An agent that presses "pay" on three ready-to-go bills is a chatbot wearing an agent costume. An agent that can <strong>make sense of the million steps of a bill</strong> &mdash; dragging and dropping tons of context into a window and having the agent sort it out &mdash; that is a real user need.</p>
+
+    <p>Each of the three concepts below addresses this reframe. They don't just automate the last click. They tackle the upstream chaos.</p>
+  </div>
+
+  <hr>
+
+  <!-- Section 3 -->
+  <div class="section">
+    <div class="section-number">Section 3</div>
+    <h2>The Hollywood slide: three hero moments</h2>
+
+    <p>One slide. Three images. Intent, not mechanics.</p>
+
+    <div class="hero-grid">
+      <div class="hero-card">
+        <div class="hero-number">1</div>
+        <div class="hero-image">Alert on phone</div>
+        <div class="hero-moment">"Bills have been paid. Click to learn more."</div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-number">2</div>
+        <div class="hero-image">Alert on WhatsApp</div>
+        <div class="hero-moment">"Items have been auto-approved. Click to learn more."</div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-number">3</div>
+        <div class="hero-image">Conversation in ChatGPT</div>
+        <div class="hero-moment">"Paid from chat, no bill needed."</div>
+      </div>
+    </div>
+
+    <blockquote>
+      "Can Diya get up on main stage at Xerocon and announce this idea and get a standing ovation from the crowd? If not, it's probably a bland idea." &mdash; Brett
+    </blockquote>
+
+    <p>Lead with what it looks like once users trust it and sensible org-wide policies are in place. That's a way more compelling story than "AI you can't trust and still have to check."</p>
+  </div>
+
+  <hr>
+
+  <!-- Section 4 -->
+  <div class="section">
+    <div class="section-number">Section 4</div>
+    <h2>The three concepts</h2>
+
+    <!-- Concept 1 -->
+    <div class="concept">
+      <h3>Bill Payment Planner</h3>
+
+      <div class="pitch">
+        "We tell you which bills to pay this week and when, so you don't have to think. You see a recommendation upfront, tap to accept or tweak, then pay. Three clicks when you trust it; you can always drill in for plan mode, anomaly checks, and cash impact. The agent does the planning; you approve. Over time we can make it automatic &mdash; 'do this every week.'"
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Why it matters</div>
+        <p>Cuts 21+ clicks to 3. Reduces cognitive load. Turns bills from manual triage into "review and approve." Fits Zero Bill Entry and Do It For You.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Upstream toil it addresses</div>
+        <p>The agent handles the prepare-and-decide steps &mdash; which bills to pay, when, in what order, against what cash position. Today this is manual spreadsheet work or gut instinct. The planner replaces cognitive load with a recommendation you approve.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Delivery</div>
+        <p>Dashboard / bills view first (inline, not side panel). Optional chat for "show your work" or deeper planning.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">JTBD positioning &middot; L2.7B.2 Pay bills</div>
+        <p>Sits in <strong>Prepare bills to pay</strong> + <strong>Decide when to pay</strong> (and into <strong>Schedule</strong>). "Which bills to pay this week and when." We recommend; you approve. The planning/prioritisation slice.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Agent flow (from workshop)</div>
+        <div class="flow-steps">
+          <span class="flow-step">Context gathering</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">Goal setting</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">Generate recommendations</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">Review gate</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">Batch for payment</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 2 -->
+    <div class="concept">
+      <h3>Intelligent Bill Approval</h3>
+
+      <div class="pitch">
+        "When bills need a second pair of eyes, we flag what's risky and route approval to the right person &mdash; but they don't have to open Xero. The approver gets a WhatsApp (or email): 'Here are 5 items; 4 look good, 1 needs a look.' One tap to approve the clean ones, link to Xero for the exception. No more chasing; the agent sends the nudge."
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Why it matters</div>
+        <p>Approval becomes a 30-second task in the channel they already use, not a login-and-click workflow. Safety Shield (anomalies) + approval automation in one story.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Upstream toil it addresses</div>
+        <p>Today approvers are chased via email, Slack, or in person. Bills sit in limbo. The agent flags anomalies (duplicates, bank detail changes, unusual amounts, policy violations), routes with a GenAI summary card, and lets the approver act without opening Xero. The toil of chasing and waiting disappears.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Delivery</div>
+        <p>Requester may use in-product (bills/chat). Approver experience is <strong>alternative channel</strong> (WhatsApp/email). Not everything in a side panel.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">JTBD positioning &middot; L2.7B.2 Pay bills</div>
+        <p>Sits in the <strong>Get approval</strong> job step. "When bills need a second pair of eyes." We flag risk and route to the right person; they approve in WhatsApp. The approval slice.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Agent flow (from workshop)</div>
+        <div class="flow-steps">
+          <span class="flow-step">Context gathering</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">Risk detection</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">Routing + summary card</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">One-click approve</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">Batch payment</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 3 -->
+    <div class="concept">
+      <h3>Just Pay</h3>
+
+      <div class="pitch">
+        "Pay someone without creating a bill first. You say it &mdash; in Xero or in your agent (e.g. ChatGPT) &mdash; we create the record and run the payment. Review, confirm, done. The 'wow' is the agent just doing it: 'Pay Joel $500' &rarr; 'Done. I've created the bill and scheduled the payment.'"
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Why it matters</div>
+        <p>Removes the biggest friction for small, one-off payments. Speaks to "zero bill entry" and agent-led experience. Fits where the industry is going (agents, not just in-product UI).</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Upstream toil it addresses</div>
+        <p>Only 10% of Xero users use bills. Meaningful SMB spend is ad-hoc &mdash; contractors, reimbursements, subscriptions. The full AP process (create bill, add line items, code accounts, approve, schedule, pay) is overkill for "just pay Joe $500." The agent compresses or skips those upstream steps entirely.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Delivery</div>
+        <p>Can be in-product (Just Pay entry) or <strong>in an agent</strong> (ChatGPT, etc.). Payoff can include a confirmation in WhatsApp. Varied by use case.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">JTBD positioning &middot; L2.7B.2 Pay bills</div>
+        <p>Acts as a shortcut into <strong>Make payment</strong> (often skipping or compressing Receive &rarr; Prepare &rarr; Decide &rarr; Approve). "Pay someone without creating a bill first." Say it &rarr; we create the record and pay. Still L2.7B.2 but a different entry: pay-first, minimal prior steps.</p>
+      </div>
+
+      <div class="concept-detail">
+        <div class="label">Agent flow (from workshop)</div>
+        <div class="flow-steps">
+          <span class="flow-step">Context from feeds + contacts</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">Confirm + match</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">Cash flow outlook</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">Prep/pay</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- One-liner -->
+    <div class="summary-label">One-liner summary</div>
+    <div class="one-liner">
+      Three concepts: <strong>(1) Bill Payment Planner</strong> &mdash; we recommend, you approve, 3 clicks. <strong>(2) Intelligent Bill Approval</strong> &mdash; we flag risk and send approval to the right person in WhatsApp; they tap, done. <strong>(3) Just Pay</strong> &mdash; you say it (in Xero or in your agent), we create the bill and pay; no forms. The delivery mechanic varies: dashboard for 1, WhatsApp for 2, agent or in-product for 3 &mdash; not everything in a side panel.
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Section 5 -->
+  <div class="section">
+    <div class="section-number">Section 5</div>
+    <h2>Where this fits</h2>
+
+    <h3>JTBD arc (Pay Out)</h3>
+
+    <p>Our bills proposal sits in the Pay Out job: <strong>L2.7B.2 Pay bills</strong>. We're not changing the job &mdash; the customer still needs to pay bills. We're changing <strong>how</strong> it's done.</p>
+
+    <div class="journey-arc">
+      <div class="journey-step">
+        <div class="step-num">1</div>
+        <div>
+          <span class="step-label">Receive bill</span>
+          <span class="step-note"> &mdash; Bill enrichment (L2.7B.1) sits here</span>
+        </div>
+      </div>
+      <div class="journey-step active">
+        <div class="step-num">2</div>
+        <div>
+          <span class="step-label">Prepare bills to pay</span>
+          <span class="step-note"> &mdash; Bill Payment Planner starts here</span>
+        </div>
+      </div>
+      <div class="journey-step active">
+        <div class="step-num">3</div>
+        <div>
+          <span class="step-label">Decide when to pay</span>
+          <span class="step-note"> &mdash; Bill Payment Planner continues here</span>
+        </div>
+      </div>
+      <div class="journey-step active">
+        <div class="step-num">4</div>
+        <div>
+          <span class="step-label">Get approval</span>
+          <span class="step-note"> &mdash; Intelligent Bill Approval sits here</span>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="step-num">5</div>
+        <div>
+          <span class="step-label">Schedule / select for payment</span>
+        </div>
+      </div>
+      <div class="journey-step active">
+        <div class="step-num">6</div>
+        <div>
+          <span class="step-label">Make payment</span>
+          <span class="step-note"> &mdash; Just Pay shortcuts to here</span>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="step-num">7</div>
+        <div>
+          <span class="step-label">Record / track payment</span>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>JTBD / Job Step</th>
+          <th>What we're helping with</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Bill Payment Planner</strong></td>
+          <td>Prepare + Decide (into Schedule)</td>
+          <td>"Which bills to pay this week and when." The planning/prioritisation slice.</td>
+        </tr>
+        <tr>
+          <td><strong>Intelligent Bill Approval</strong></td>
+          <td>Get approval</td>
+          <td>"When bills need a second pair of eyes." The approval slice.</td>
+        </tr>
+        <tr>
+          <td><strong>Just Pay</strong></td>
+          <td>Shortcut into Make payment</td>
+          <td>"Pay someone without creating a bill first." A different entry point.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Scope boundaries</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>What</th>
+          <th>Where</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>These three concepts</strong></td>
+          <td>Bills / Pay Out slice (L2.7B.2). This is our proposal.</td>
+        </tr>
+        <tr>
+          <td><strong>Bill enrichment</strong> <em>(zero bill entry, one-click entry)</em></td>
+          <td>Earlier in the arc: L2.7B.1 Receive invoices/bills. Pratik leading.</td>
+        </tr>
+        <tr>
+          <td><strong>Chasing agent</strong> <em>(get invoices paid)</em></td>
+          <td>Pay In, not Pay Out. Committed separately. Prashant leading.</td>
+        </tr>
+        <tr>
+          <td><strong>Full vision</strong> <em>(onboarding, invoicing, practice)</em></td>
+          <td>Chong's Payments Agent Vision deck carries the end-to-end narrative.</td>
+        </tr>
+        <tr>
+          <td><strong>End-to-end bills journey</strong></td>
+          <td>Being aligned with the Bills x Making Payments working group.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Cashflow optimization framing</h3>
+
+    <p>Per Bharathi's direction, this is <strong>cashflow optimization for Pay Out</strong>: three ways we make bills simple &mdash; plan which bills to pay (Planner), approve in one tap (Approval), or just say it and pay (Just Pay). The umbrella framing connects our Bills slice to the broader cashflow story that spans onboarding, invoicing, chasing, and practice intelligence.</p>
+
+    <h3>How the three concepts connect to channel terminology</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Channel term</th>
+          <th>Our concept</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Bill runner</strong></td>
+          <td>Bill Payment Planner (approve + schedule in one flow)</td>
+        </tr>
+        <tr>
+          <td><strong>Bill enrichment</strong></td>
+          <td>Not a starring concept in our three &mdash; sits in L2.7B.1 (Pratik). Our Planner and Just Pay both speak to zero bill entry from different angles.</td>
+        </tr>
+        <tr>
+          <td><strong>Chasing agent</strong></td>
+          <td>Not in our three &mdash; that's Pay In (Prashant). Our Intelligent Bill Approval chases <em>approvers</em>, not <em>customers</em>.</td>
+        </tr>
+        <tr>
+          <td><strong>Safety Shield</strong></td>
+          <td>Folded into Intelligent Bill Approval (anomaly detection + policy enforcement).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- Section 6 -->
+  <div class="section">
+    <div class="section-number">Section 6</div>
+    <h2>What's next</h2>
+
+    <div class="next-steps">
+      <div class="next-step">
+        <div class="when">Wednesday</div>
+        <div class="what">David checkpoint on this write-up. Lock the narrative.</div>
+      </div>
+      <div class="next-step">
+        <div class="when">Thu&ndash;Fri</div>
+        <div class="what">Minimal visuals: one window / couple of components per concept (not full UI). Enough to complement the ideas.</div>
+      </div>
+      <div class="next-step">
+        <div class="when">Friday</div>
+        <div class="what">Diya review via Chong's deck. Our three concepts are the Bills section.</div>
+      </div>
+      <div class="next-step">
+        <div class="when">Ongoing</div>
+        <div class="what">Tiger team twice-a-week. Xerocon target: 90 days for 2+ agents.</div>
+      </div>
+      <div class="next-step">
+        <div class="when">Keep pushing</div>
+        <div class="what">The reframe (upstream toil, not just the pay button) opens up v2 thinking &mdash; deeper into bill entry intelligence, coding assistance, exception handling.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Copy-paste blocks -->
+  <div class="section">
+    <div class="summary-label">Deck-ready one-liner</div>
+    <blockquote class="callout-green">
+      "We're proposing cashflow optimization for Pay Out: three ways we make bills simple &mdash; plan which bills to pay (Planner), approve in one tap (Approval), or just say it and pay (Just Pay). This is the Bills slice; the full vision (onboarding, invoicing, chasing, practice) is in Chong's Payments Agent Vision. How this fits the end-to-end bills journey is being aligned with the Bills x Making Payments working group."
+    </blockquote>
+
+    <div class="summary-label" style="margin-top: 32px;">JTBD positioning paragraph (copy-paste ready)</div>
+    <blockquote>
+      Our bills proposal sits in the Pay Out job: <strong>L2.7B.2 Pay bills</strong>. We're not changing the job &mdash; the customer still needs to pay bills. We're changing how it's done. <strong>Bill Payment Planner</strong> helps them prepare and decide when to pay (we recommend, they approve in 3 clicks). <strong>Intelligent Bill Approval</strong> handles the get approval step when bills need a second pair of eyes (we flag risk and send to the approver in WhatsApp). <strong>Just Pay</strong> lets them pay without the full receive-prepare-approve flow (say it, we create and pay). Earlier in the same arc, <strong>bill enrichment</strong> (one-click entry) lives in <strong>L2.7B.1 Receive invoices/bills</strong>. How this connects to the rest of the bills journey is being aligned in the Bills x Making Payments working group.
+    </blockquote>
+
+    <p style="margin-top: 16px; color: var(--ink-muted); font-size: 15px;">As Peter put it: the <strong>tasks</strong> don't radically change (small business wants to get paid, customer needs to pay). The shift we're proposing is <strong>how</strong> they're done: <em>from laborious and emotional to as simple as a prompt or a click.</em></p>
+  </div>
+
+</div>
+</body>
+</html>

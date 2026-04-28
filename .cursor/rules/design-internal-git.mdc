@@ -1,0 +1,12 @@
+---
+description: Push and PR targets for design-internal — org repo is canonical
+alwaysApply: true
+---
+
+# Git: origin is canonical
+
+- **`origin`** must be `https://github.com/xero-internal-actions-poc/design-internal.git`. That is where PRs and Vercel previews run.
+- This clone may also define **`fork`** (`chloe-akerblom_xero/design-internal`) for backup or cross-fork PRs. **Do not push to `fork` by default.**
+- Repo is configured with `remote.pushDefault = origin`, so plain **`git push`** and **`git push -u origin <branch>`** go to the org remote.
+- When the user asks to commit and push (e.g. “do it”, “push this”), **commit and push to `origin`** without asking them to pick a remote. Open the PR link against the org repo: `https://github.com/xero-internal-actions-poc/design-internal/pull/new/{branch}`.
+- Direct push to `main` is still discouraged unless the user explicitly says they manage `main`; prefer a branch + PR for previews.

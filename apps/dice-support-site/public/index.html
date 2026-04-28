@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support - Flow UI Kit</title>
+
+  <!-- Design System Tokens -->
+  <link rel="stylesheet" href="../tokens/index.css">
+
+  <!-- Layout Components -->
+  <link rel="stylesheet" href="../components/layout/Canvas.css">
+  <link rel="stylesheet" href="../components/layout/Header.css">
+  <link rel="stylesheet" href="../components/layout/ContentArea.css">
+  <link rel="stylesheet" href="../components/layout/FluidPanel.css">
+
+  <!-- Chat Components -->
+  <link rel="stylesheet" href="../components/chat/ChatBubble.css">
+  <link rel="stylesheet" href="../components/chat/OutputEval.css">
+  <link rel="stylesheet" href="../components/chat/SurveyFeedback.css">
+  <link rel="stylesheet" href="../components/chat/FunctionSeparator.css">
+  <link rel="stylesheet" href="../components/chat/EmptyState.css">
+
+  <!-- Input Components -->
+  <link rel="stylesheet" href="../components/input/Composer.css">
+
+  <!-- Common Components -->
+  <link rel="stylesheet" href="../components/common/Card.css">
+  <link rel="stylesheet" href="../components/common/Topic.css">
+
+  <style>
+    /* Base reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-family);
+      font-size: var(--font-size-medium);
+      line-height: var(--font-line-height-standard);
+      color: var(--color-text-primary);
+      background: var(--color-bg-surface);
+    }
+
+    /* Icon placeholders (replace with actual icons) */
+    .icon {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: currentColor;
+      mask-size: contain;
+      -webkit-mask-size: contain;
+    }
+
+    .icon--panel {
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3Cpath d='M15 3v18'/%3E%3C/svg%3E");
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3Cpath d='M15 3v18'/%3E%3C/svg%3E");
+    }
+
+    .icon--expand {
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpath d='M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7'/%3E%3C/svg%3E");
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpath d='M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7'/%3E%3C/svg%3E");
+    }
+
+    .icon--collapse {
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpath d='M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7'/%3E%3C/svg%3E");
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpath d='M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7'/%3E%3C/svg%3E");
+    }
+
+    .icon--close {
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpath d='M18 6L6 18M6 6l12 12'/%3E%3C/svg%3E");
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpath d='M18 6L6 18M6 6l12 12'/%3E%3C/svg%3E");
+    }
+
+    /* Quick reply pill */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--s-xsmall) var(--s-standard);
+      border: 1px solid var(--color-primary);
+      border-radius: var(--radius-max);
+      background: var(--color-bg-surface);
+      color: var(--color-primary);
+      font-size: var(--font-size-medium);
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .pill:hover {
+      background: var(--color-blue-light);
+    }
+
+    /* ===== Header Logo SVG ===== */
+    .header__logo-svg {
+      height: 28px;
+      width: auto;
+      display: block;
+    }
+
+    /* ===== Fluid Panel Logo ===== */
+    .fluid-panel__logo-group {
+      display: none;
+      align-items: center;
+      gap: var(--s-small);
+    }
+
+    .fluid-panel__logo {
+      height: 28px;
+      width: auto;
+      display: block;
+    }
+
+    .fluid-panel__tag {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 var(--s-small);
+      background: var(--color-bg-surface);
+      border: var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-small);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+    }
+
+    /* Show title in side panel, logo group in fullscreen */
+    .canvas[data-state="side-assist"] .fluid-panel__title {
+      display: block;
+    }
+    .canvas[data-state="side-assist"] .fluid-panel__logo-group {
+      display: none;
+    }
+    .canvas[data-state="fullscreen"] .fluid-panel__title {
+      display: none;
+    }
+    .canvas[data-state="fullscreen"] .fluid-panel__logo-group {
+      display: flex;
+    }
+
+    /* ===== Homepage Layout ===== */
+    .canvas[data-state="base"] .canvas__content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: calc(100vh - 64px);
+      padding: 0;
+    }
+
+    /* ===== Homepage Hero ===== */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: var(--s-xlarge) 40px;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero__subtitle {
+      font-size: var(--font-size-small);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--s-small);
+    }
+
+    .hero__title {
+      font-family: var(--font-family);
+      font-size: 34px;
+      font-weight: var(--font-weight-emphasis);
+      color: var(--color-text-primary);
+      line-height: 1.2;
+      margin-bottom: var(--s-large);
+    }
+
+    .hero__search {
+      width: 100%;
+      margin-bottom: var(--s-large);
+    }
+
+    .hero__search .composer__disclaimer {
+      display: none;
+    }
+
+    /* Topics row below search */
+    .hero__topics {
+      margin-bottom: var(--s-xlarge);
+    }
+
+    /* ===== Homepage Sections ===== */
+    .homepage-section {
+      width: 100%;
+      padding: var(--s-large) 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .homepage-section__title {
+      font-size: var(--font-size-large);
+      font-weight: var(--font-weight-emphasis);
+      margin-bottom: var(--s-standard);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== CANVAS: Main Layout Container ===== -->
+  <div class="canvas" data-state="base">
+
+    <!-- ===== HEADER ===== -->
+    <header class="canvas__header">
+      <div class="header__logo">
+        <svg class="header__logo-svg" width="557" height="80" viewBox="0 0 557 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M325.795 39.3883C325.795 28.4305 332.277 21.5883 342.72 21.5883C350.026 21.5883 355.427 25.3438 357.074 31.2085L347.556 35.2212C347.093 32.5461 345.653 30.4368 342.669 30.4368C339.222 30.4368 336.701 33.2149 336.701 39.3883C336.701 45.5617 339.222 48.3912 342.669 48.3912C345.653 48.3912 347.093 46.179 347.556 43.5039L357.074 47.5166C355.427 53.4328 350.026 57.1883 342.72 57.1883C332.277 57.1883 325.795 50.3461 325.795 39.3883ZM385.402 47.8767V56.571H359.833V22.2056H385.299V30.8998H369.968V35.427H383.55V43.1438H369.968V47.8767H385.402ZM411.525 40.6744V22.2056H421.557V56.571H412.246L399.95 38.1022H399.847V56.571H389.764V22.2056H399.642L411.423 40.6744H411.525ZM445.972 56.571H435.426V30.8998H424.983V22.2056H456.416V30.8998H445.972V56.571ZM479.063 33.9865C479.063 31.8258 477.829 30.6426 475.256 30.6426H470.215V37.4848H475.256C477.674 37.4848 479.063 36.4045 479.063 33.9865ZM491.873 56.571H480.555C479.578 55.3877 479.218 54.4103 478.857 52.5582L478.137 48.6999C477.674 46.2819 476.491 45.5617 474.382 45.5617H470.215V56.571H459.874V22.2056H476.542C484.414 22.2056 489.918 25.2409 489.918 32.7004C489.918 37.6391 486.471 40.623 482.767 41.2403V41.3432C485.803 41.8577 487.552 43.6582 488.323 46.7964L489.61 52.301C490.073 54.1016 490.69 55.3363 491.873 56.571ZM510.065 33.0091L506.772 42.8866H513.46L510.168 33.0091H510.065ZM518.039 56.571L516.033 50.5004H504.252L502.245 56.571H491.905L504.303 22.2056H516.341L528.791 56.571H518.039ZM531.24 22.2056H541.787V47.8767H556.14V56.571H531.24V22.2056Z" fill="#000856"/>
+          <path d="M198.524 9.15527e-05C191.446 9.15527e-05 183.902 5.76202 180.043 18.3053V7.53879C180.043 3.38185 176.818 9.15527e-05 172.854 9.15527e-05C168.889 9.15527e-05 165.664 3.38185 165.664 7.53879L165.664 72.4613C165.664 76.6182 168.889 80 172.854 80C176.818 80 180.043 76.6182 180.043 72.4613V41.9675C180.043 27.3011 187.942 18.6019 200.07 15.7508C203.946 14.8396 206.354 11.7719 206.354 7.74451C206.354 3.18468 203.134 9.15527e-05 198.524 9.15527e-05Z" fill="#3ECCFF"/>
+          <path d="M244.188 9.15527e-05C223.154 9.15527e-05 206.041 17.944 206.041 40C206.041 62.0559 223.154 80.0001 244.188 80.0001C265.222 80.0001 282.335 62.0562 282.335 40C282.335 17.9438 265.222 9.15527e-05 244.188 9.15527e-05ZM244.188 64.9283C231.079 64.9283 220.414 53.7454 220.414 40C220.414 26.2546 231.079 15.0718 244.188 15.0718C257.297 15.0718 267.962 26.2545 267.962 40C267.962 53.7455 257.297 64.9283 244.188 64.9283Z" fill="#3ECCFF"/>
+          <path d="M244.177 30.0125C238.938 30.0125 234.676 34.4818 234.676 39.9756C234.676 45.4694 238.938 49.9387 244.177 49.9387C249.417 49.9387 253.679 45.4694 253.679 39.9756C253.679 34.4818 249.417 30.0125 244.177 30.0125Z" fill="#3ECCFF"/>
+          <path d="M116.452 9.15527e-05C95.4086 9.15527e-05 78.2889 17.944 78.2889 40C78.2889 62.2555 94.9026 79.9998 117.882 79.9998C129.099 79.9998 138.358 76.424 146.189 69.0682C147.035 68.1805 148.477 66.2583 148.477 63.5115C148.477 59.3538 145.526 56.2185 141.614 56.2185C139.595 56.2185 138.456 56.8254 137.17 57.8742C131.515 62.7579 125.302 65.135 118.183 65.135C106.041 65.135 96.1196 57.6449 93.4031 46.3546L146.127 46.3548C150.988 46.3352 154.513 42.2252 154.513 36.5676C154.513 22.8866 141.721 9.15527e-05 116.452 9.15527e-05ZM93.382 33.6236C95.9349 22.5826 105.044 14.705 116.452 14.705C127.695 14.705 136.886 21.747 139.5 33.6236H93.382Z" fill="#3ECCFF"/>
+          <path d="M76.2934 7.44613C76.2934 3.3256 73.1082 7.62939e-05 69.1926 7.62939e-05C67.2958 7.62939e-05 65.5126 0.774664 64.1714 2.18102L38.1466 29.469L12.1219 2.18102C10.7807 0.774664 8.9975 7.62939e-05 7.10073 7.62939e-05C3.18517 7.62939e-05 0 3.3256 0 7.44613C0 9.43503 0.738462 11.3049 2.07968 12.7111L28.1042 39.999L2.07968 67.2868C0.738625 68.6931 0 70.563 0 72.5519C0 76.6708 3.17669 79.9979 7.10089 79.9979C8.9975 79.9979 10.7809 79.2234 12.1221 77.817L38.1466 50.529L64.1712 77.817C65.5124 79.2234 67.2958 79.9979 69.1924 79.9979C73.1166 79.9979 76.2933 76.6708 76.2933 72.5519C76.2933 70.563 75.5546 68.6931 74.2136 67.2868L48.1891 39.999L74.2136 12.711C75.5548 11.3048 76.2934 9.43512 76.2934 7.44613Z" fill="#3ECCFF"/>
+        </svg>
+      </div>
+      <div class="header__controls">
+        <button class="header__trigger" data-action="open-panel" aria-label="Open panel">
+          <span class="icon icon--panel"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== BODY (Content + Panel) ===== -->
+    <main class="canvas__body">
+
+      <!-- ===== CONTENT AREA (Homepage) ===== -->
+      <div class="canvas__content">
+
+        <!-- Hero Section -->
+        <section class="hero">
+          <h1 class="hero__title">Need a hand with Xero? Ask us anything.</h1>
+
+          <!-- Search Input -->
+          <div class="hero__search">
+            <div class="composer" id="hero-composer">
+              <div class="composer__wrapper">
+                <div class="composer__input-row">
+                  <input type="text" class="composer__input" id="hero-search" placeholder="Ask away, in your own words">
+                </div>
+                <div class="composer__actions">
+                  <button class="composer__btn composer__btn--add" aria-label="Add">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                  </button>
+                  <button class="composer__btn composer__btn--send" id="hero-send" aria-label="Search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 19V5M5 12l7-7 7 7"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p class="composer__disclaimer">Uses AI. Double-check outputs.</p>
+            </div>
+          </div>
+
+          <!-- Topics -->
+          <div class="hero__topics">
+            <div class="topic-list">
+              <a href="#" class="topic" data-topic="invoicing">Invoicing</a>
+              <a href="#" class="topic" data-topic="bank-feeds">Bank feeds</a>
+              <a href="#" class="topic" data-topic="reconciliation">Reconciliation</a>
+              <a href="#" class="topic" data-topic="payroll">Payroll</a>
+              <a href="#" class="topic--link">
+                All topics
+                <svg class="topic__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cards Section -->
+        <section class="homepage-section">
+          <div class="card-grid card-grid--expandable">
+            <a href="#" class="card">
+              <div class="card__title">Getting Started</div>
+              <div class="card__description">Set up your account and get familiar with the basics.</div>
+            </a>
+            <a href="#" class="card">
+              <div class="card__title">Guides</div>
+              <div class="card__description">Step-by-step guides to help you get the most out of Xero.</div>
+            </a>
+            <a href="#" class="card">
+              <div class="card__title">Product Ideas</div>
+              <div class="card__description">Propose or support ideas for improving Xero.</div>
+            </a>
+            <a href="#" class="card">
+              <div class="card__title">Discussions</div>
+              <div class="card__description">Ask questions in one of our community forums.</div>
+            </a>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ===== FLUID UI PANEL ===== -->
+      <aside class="canvas__fluid-panel" aria-hidden="true">
+        <div class="fluid-panel">
+
+          <!-- Panel Header -->
+          <header class="fluid-panel__header">
+            <span class="fluid-panel__title">Ask away</span>
+            <div class="fluid-panel__logo-group">
+              <svg class="fluid-panel__logo" width="557" height="80" viewBox="0 0 557 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M325.795 39.3883C325.795 28.4305 332.277 21.5883 342.72 21.5883C350.026 21.5883 355.427 25.3438 357.074 31.2085L347.556 35.2212C347.093 32.5461 345.653 30.4368 342.669 30.4368C339.222 30.4368 336.701 33.2149 336.701 39.3883C336.701 45.5617 339.222 48.3912 342.669 48.3912C345.653 48.3912 347.093 46.179 347.556 43.5039L357.074 47.5166C355.427 53.4328 350.026 57.1883 342.72 57.1883C332.277 57.1883 325.795 50.3461 325.795 39.3883ZM385.402 47.8767V56.571H359.833V22.2056H385.299V30.8998H369.968V35.427H383.55V43.1438H369.968V47.8767H385.402ZM411.525 40.6744V22.2056H421.557V56.571H412.246L399.95 38.1022H399.847V56.571H389.764V22.2056H399.642L411.423 40.6744H411.525ZM445.972 56.571H435.426V30.8998H424.983V22.2056H456.416V30.8998H445.972V56.571ZM479.063 33.9865C479.063 31.8258 477.829 30.6426 475.256 30.6426H470.215V37.4848H475.256C477.674 37.4848 479.063 36.4045 479.063 33.9865ZM491.873 56.571H480.555C479.578 55.3877 479.218 54.4103 478.857 52.5582L478.137 48.6999C477.674 46.2819 476.491 45.5617 474.382 45.5617H470.215V56.571H459.874V22.2056H476.542C484.414 22.2056 489.918 25.2409 489.918 32.7004C489.918 37.6391 486.471 40.623 482.767 41.2403V41.3432C485.803 41.8577 487.552 43.6582 488.323 46.7964L489.61 52.301C490.073 54.1016 490.69 55.3363 491.873 56.571ZM510.065 33.0091L506.772 42.8866H513.46L510.168 33.0091H510.065ZM518.039 56.571L516.033 50.5004H504.252L502.245 56.571H491.905L504.303 22.2056H516.341L528.791 56.571H518.039ZM531.24 22.2056H541.787V47.8767H556.14V56.571H531.24V22.2056Z" fill="#000856"/>
+              <path d="M198.524 9.15527e-05C191.446 9.15527e-05 183.902 5.76202 180.043 18.3053V7.53879C180.043 3.38185 176.818 9.15527e-05 172.854 9.15527e-05C168.889 9.15527e-05 165.664 3.38185 165.664 7.53879L165.664 72.4613C165.664 76.6182 168.889 80 172.854 80C176.818 80 180.043 76.6182 180.043 72.4613V41.9675C180.043 27.3011 187.942 18.6019 200.07 15.7508C203.946 14.8396 206.354 11.7719 206.354 7.74451C206.354 3.18468 203.134 9.15527e-05 198.524 9.15527e-05Z" fill="#3ECCFF"/>
+              <path d="M244.188 9.15527e-05C223.154 9.15527e-05 206.041 17.944 206.041 40C206.041 62.0559 223.154 80.0001 244.188 80.0001C265.222 80.0001 282.335 62.0562 282.335 40C282.335 17.9438 265.222 9.15527e-05 244.188 9.15527e-05ZM244.188 64.9283C231.079 64.9283 220.414 53.7454 220.414 40C220.414 26.2546 231.079 15.0718 244.188 15.0718C257.297 15.0718 267.962 26.2545 267.962 40C267.962 53.7455 257.297 64.9283 244.188 64.9283Z" fill="#3ECCFF"/>
+              <path d="M244.177 30.0125C238.938 30.0125 234.676 34.4818 234.676 39.9756C234.676 45.4694 238.938 49.9387 244.177 49.9387C249.417 49.9387 253.679 45.4694 253.679 39.9756C253.679 34.4818 249.417 30.0125 244.177 30.0125Z" fill="#3ECCFF"/>
+              <path d="M116.452 9.15527e-05C95.4086 9.15527e-05 78.2889 17.944 78.2889 40C78.2889 62.2555 94.9026 79.9998 117.882 79.9998C129.099 79.9998 138.358 76.424 146.189 69.0682C147.035 68.1805 148.477 66.2583 148.477 63.5115C148.477 59.3538 145.526 56.2185 141.614 56.2185C139.595 56.2185 138.456 56.8254 137.17 57.8742C131.515 62.7579 125.302 65.135 118.183 65.135C106.041 65.135 96.1196 57.6449 93.4031 46.3546L146.127 46.3548C150.988 46.3352 154.513 42.2252 154.513 36.5676C154.513 22.8866 141.721 9.15527e-05 116.452 9.15527e-05ZM93.382 33.6236C95.9349 22.5826 105.044 14.705 116.452 14.705C127.695 14.705 136.886 21.747 139.5 33.6236H93.382Z" fill="#3ECCFF"/>
+              <path d="M76.2934 7.44613C76.2934 3.3256 73.1082 7.62939e-05 69.1926 7.62939e-05C67.2958 7.62939e-05 65.5126 0.774664 64.1714 2.18102L38.1466 29.469L12.1219 2.18102C10.7807 0.774664 8.9975 7.62939e-05 7.10073 7.62939e-05C3.18517 7.62939e-05 0 3.3256 0 7.44613C0 9.43503 0.738462 11.3049 2.07968 12.7111L28.1042 39.999L2.07968 67.2868C0.738625 68.6931 0 70.563 0 72.5519C0 76.6708 3.17669 79.9979 7.10089 79.9979C8.9975 79.9979 10.7809 79.2234 12.1221 77.817L38.1466 50.529L64.1712 77.817C65.5124 79.2234 67.2958 79.9979 69.1924 79.9979C73.1166 79.9979 76.2933 76.6708 76.2933 72.5519C76.2933 70.563 75.5546 68.6931 74.2136 67.2868L48.1891 39.999L74.2136 12.711C75.5548 11.3048 76.2934 9.43512 76.2934 7.44613Z" fill="#3ECCFF"/>
+              </svg>
+              <span class="fluid-panel__tag">Ask away</span>
+            </div>
+            <div class="fluid-panel__controls">
+              <button class="fluid-panel__btn fluid-panel__btn--expand" data-action="expand-panel" aria-label="Expand to fullscreen">
+                <span class="icon icon--expand"></span>
+              </button>
+              <button class="fluid-panel__btn fluid-panel__btn--collapse" data-action="collapse-panel" aria-label="Collapse to side panel">
+                <span class="icon icon--collapse"></span>
+              </button>
+              <button class="fluid-panel__btn" data-action="close-panel" aria-label="Close assistant">
+                <span class="icon icon--close"></span>
+              </button>
+            </div>
+          </header>
+
+          <!-- Panel Body -->
+          <div class="fluid-panel__body">
+
+            <!-- Empty State -->
+            <div class="empty-state" id="empty-state">
+              <div class="empty-state__intro">
+                <div class="empty-state__greeting">Hi there,</div>
+                <div class="empty-state__heading">What can I help you with?</div>
+              </div>
+              <div class="empty-state__suggestions">
+                <button class="empty-state__suggestion" data-suggestion>How do I send an invoice?</button>
+                <button class="empty-state__suggestion" data-suggestion>My bank feed is broken</button>
+                <button class="empty-state__suggestion" data-suggestion>I need to talk to someone</button>
+              </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="fluid-panel__messages">
+              <div class="messages-list" id="messages-list">
+                <!-- Chat messages will appear here -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Panel Footer (Composer) -->
+          <div class="fluid-panel__footer">
+            <div class="composer">
+              <div class="composer__wrapper">
+                <div class="composer__input-row">
+                  <textarea class="composer__input" placeholder="Enter message" rows="1"></textarea>
+                </div>
+                <div class="composer__actions">
+                  <button class="composer__btn composer__btn--add" aria-label="Add attachment">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                  </button>
+                  <button class="composer__btn composer__btn--send" aria-label="Send">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 19V5M5 12l7-7 7 7"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p class="composer__disclaimer">Uses AI. Double-check outputs.</p>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+    </main>
+
+  </div>
+
+  <!-- Canvas State Manager -->
+  <script src="../src/canvas.js"></script>
+
+  <!-- Chat Functionality -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const composer = document.querySelector('.composer');
+      const input = composer.querySelector('.composer__input');
+      const sendBtn = composer.querySelector('.composer__btn--send');
+      const messagesList = document.getElementById('messages-list');
+      const emptyState = document.getElementById('empty-state');
+
+      // Toggle send button active state based on input
+      input.addEventListener('input', () => {
+        if (input.value.trim()) {
+          sendBtn.classList.add('is-active');
+        } else {
+          sendBtn.classList.remove('is-active');
+        }
+        // Auto-resize textarea
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 200) + 'px';
+      });
+
+      // Canned responses (inline for file:// compatibility)
+      // Source of truth: content/responses/canned-responses.json
+      const cannedData = {
+        responses: [
+          {
+            id: "send-invoice",
+            keywords: [["send", "invoice"], ["create", "invoice"], ["first", "invoice"], ["email", "invoice"]],
+            response: "To send your first invoice:\n\n1. Go to **Business > Invoices** and click **New Invoice**\n2. Select or add your customer's details\n3. Add line items for your products or services\n4. Set the due date and any other terms\n5. Click **Approve** then **Send** to email it directly\n\nYou can also save as draft if you're not ready to send yet."
+          },
+          {
+            id: "bank-feed-broken",
+            keywords: [["bank", "feed"], ["bank", "broken"], ["bank", "not working"], ["bank", "stopped"], ["feed", "broken"], ["feed", "error"], ["bank", "disconnected"], ["bank", "sync"], ["transactions", "not showing"]],
+            response: "If your bank feed has stopped working:\n\n1. **Check the connection status** in Accounting > Bank Accounts\n2. **Refresh the feed** by clicking the bank account and selecting 'Refresh'\n3. **Re-authenticate** if prompted - your bank may require you to log in again\n4. **Check your bank's website** for any service outages\n\nIf it's still not working after 24 hours, the issue may be with the bank's data feed. Let me know if you'd like to contact support."
+          },
+          {
+            id: "contact-support",
+            keywords: [["need", "help"], ["talk", "someone"], ["contact", "support"], ["speak", "person"], ["human", "help"], ["real", "person"], ["support", "team"], ["get", "help"], ["need", "support"]],
+            response: "I can connect you with our support team. Here are your options:\n\n• **Live chat** - Available 24/7 for subscribers\n• **Raise a case** - Get a response within 24 hours\n• **Community forums** - Ask questions and share knowledge\n\nWould you like me to start a live chat with a support specialist?"
+          }
+        ],
+        fallback: {
+          response: "I'm not sure about that one. Could you try rephrasing, or would you like me to connect you with our support team?"
+        }
+      };
+
+      // Find matching response based on keywords
+      function findResponse(text) {
+        if (!cannedData) return null;
+        const lower = text.toLowerCase();
+
+        for (const item of cannedData.responses) {
+          for (const keywordSet of item.keywords) {
+            const allMatch = keywordSet.every(kw => lower.includes(kw.toLowerCase()));
+            if (allMatch) return item;
+          }
+        }
+        return null;
+      }
+
+      // Render markdown-like formatting (basic)
+      function formatResponse(text) {
+        return text
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\n/g, '<br>');
+      }
+
+      // Add user message
+      function addUserMessage(text) {
+        const message = document.createElement('div');
+        message.className = 'message message--user';
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble chat-bubble--user';
+        bubble.textContent = text;
+        message.appendChild(bubble);
+        messagesList.appendChild(message);
+      }
+
+      // Add system message with output evaluation
+      function addSystemMessage(text) {
+        const message = document.createElement('div');
+        message.className = 'message message--system';
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble chat-bubble--system';
+        bubble.innerHTML = formatResponse(text);
+        message.appendChild(bubble);
+
+        // Add output evaluation (pass plain text for copy)
+        const plainText = text.replace(/\*\*(.+?)\*\*/g, '$1');
+        const evalHtml = createOutputEval(plainText);
+        message.appendChild(evalHtml);
+
+        messagesList.appendChild(message);
+      }
+
+      // Create output evaluation component
+      function createOutputEval(responseText) {
+        const evalContainer = document.createElement('div');
+        evalContainer.className = 'output-eval';
+        evalContainer.dataset.responseText = responseText;
+        evalContainer.innerHTML = `
+          <div class="output-eval__actions">
+            <button class="output-eval__btn output-eval__btn--copy" aria-label="Copy response" data-action="copy">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+            <button class="output-eval__btn output-eval__btn--up" aria-label="Helpful" data-action="thumbs-up">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+              </svg>
+            </button>
+            <button class="output-eval__btn output-eval__btn--down" aria-label="Not helpful" data-action="thumbs-down">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/>
+                <path d="M17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/>
+              </svg>
+            </button>
+          </div>
+          <div class="output-eval__feedback-positive">
+            <div class="output-eval__feedback-header">
+              <span class="output-eval__feedback-title">What did you like?</span>
+              <button class="output-eval__feedback-close" aria-label="Close feedback" data-action="close-positive">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="output-eval__categories">
+              <button class="output-eval__category" data-category="clear">Clear and easy to follow</button>
+              <button class="output-eval__category" data-category="solved">Solved my problem</button>
+              <button class="output-eval__category" data-category="accurate">Accurate information</button>
+              <button class="output-eval__category" data-category="thorough">Thorough explanation</button>
+            </div>
+            <div class="output-eval__details">
+              <label class="output-eval__details-label">Anything else? (optional)</label>
+              <textarea class="output-eval__textarea" placeholder=""></textarea>
+            </div>
+          </div>
+          <div class="output-eval__feedback">
+            <div class="output-eval__feedback-header">
+              <span class="output-eval__feedback-title">Tell us more:</span>
+              <button class="output-eval__feedback-close" aria-label="Close feedback" data-action="close-negative">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="output-eval__categories">
+              <button class="output-eval__category" data-category="inappropriate">Inappropriate</button>
+              <button class="output-eval__category" data-category="unclear">Unclear</button>
+              <button class="output-eval__category" data-category="inaccurate">Inaccurate</button>
+              <button class="output-eval__category" data-category="irrelevant">Irrelevant</button>
+              <button class="output-eval__category" data-category="didnt-follow">Didn't follow instructions</button>
+            </div>
+            <span class="output-eval__other" data-action="other">Other</span>
+            <div class="output-eval__details">
+              <label class="output-eval__details-label">Add more details (optional)</label>
+              <textarea class="output-eval__textarea" placeholder=""></textarea>
+            </div>
+          </div>
+        `;
+
+        // Bind eval events
+        bindEvalEvents(evalContainer);
+
+        return evalContainer;
+      }
+
+      // Bind output eval events
+      function bindEvalEvents(container) {
+        const copyBtn = container.querySelector('[data-action="copy"]');
+        const thumbsUp = container.querySelector('[data-action="thumbs-up"]');
+        const thumbsDown = container.querySelector('[data-action="thumbs-down"]');
+        const feedbackPositive = container.querySelector('.output-eval__feedback-positive');
+        const feedbackNegative = container.querySelector('.output-eval__feedback');
+        const closePositive = container.querySelector('[data-action="close-positive"]');
+        const closeNegative = container.querySelector('[data-action="close-negative"]');
+        const categories = container.querySelectorAll('.output-eval__category');
+
+        // Copy response
+        copyBtn.addEventListener('click', () => {
+          const responseText = container.dataset.responseText || '';
+          navigator.clipboard.writeText(responseText).then(() => {
+            copyBtn.classList.add('is-copied');
+            setTimeout(() => copyBtn.classList.remove('is-copied'), 1500);
+          });
+        });
+
+        // Thumbs up - opens positive feedback panel
+        thumbsUp.addEventListener('click', () => {
+          thumbsUp.classList.add('output-eval__btn--active');
+          thumbsDown.classList.remove('output-eval__btn--active');
+          feedbackNegative.classList.remove('is-open');
+          feedbackPositive.classList.add('is-open');
+        });
+
+        // Thumbs down - opens negative feedback panel
+        thumbsDown.addEventListener('click', () => {
+          thumbsDown.classList.add('output-eval__btn--active');
+          thumbsUp.classList.remove('output-eval__btn--active');
+          feedbackPositive.classList.remove('is-open');
+          feedbackNegative.classList.add('is-open');
+        });
+
+        // Close positive feedback
+        closePositive.addEventListener('click', () => {
+          feedbackPositive.classList.remove('is-open');
+        });
+
+        // Close negative feedback
+        closeNegative.addEventListener('click', () => {
+          feedbackNegative.classList.remove('is-open');
+        });
+
+        // Category selection
+        categories.forEach(cat => {
+          cat.addEventListener('click', () => {
+            cat.classList.toggle('is-selected');
+          });
+        });
+      }
+
+      // Survey configurations
+      const surveyConfigs = {
+        ces: {
+          question: 'How easy did we make it for you to get chat support?',
+          anchorLow: 'Very difficult',
+          anchorHigh: 'Very easy',
+          explainLabel: 'Can you explain why you chose this score?',
+          explainOptional: true
+        },
+        csat: {
+          question: 'Overall, how satisfied are you with chat support?',
+          anchorLow: 'Very dissatisfied',
+          anchorHigh: 'Very satisfied',
+          explainLabel: 'Can you explain why you chose this score?',
+          explainOptional: true
+        }
+      };
+
+      // Track if survey has been shown
+      let surveyShown = false;
+
+      // Create survey feedback component
+      function createSurveyFeedback(type = 'ces') {
+        const config = surveyConfigs[type];
+        const container = document.createElement('div');
+        container.className = 'survey-feedback';
+        container.innerHTML = `
+          <div class="survey-feedback__heading">Some quick feedback</div>
+          <div class="survey-feedback__card">
+            <div class="survey-feedback__form">
+              <div class="survey-feedback__question">${config.question}</div>
+              <div class="survey-feedback__scale">
+                <div class="survey-feedback__options">
+                  <button class="survey-feedback__option" data-value="1">1</button>
+                  <button class="survey-feedback__option" data-value="2">2</button>
+                  <button class="survey-feedback__option" data-value="3">3</button>
+                  <button class="survey-feedback__option" data-value="4">4</button>
+                  <button class="survey-feedback__option" data-value="5">5</button>
+                </div>
+                <div class="survey-feedback__anchors">
+                  <span class="survey-feedback__anchor">${config.anchorLow}</span>
+                  <span class="survey-feedback__anchor">${config.anchorHigh}</span>
+                </div>
+              </div>
+              <div class="survey-feedback__explain">
+                <label class="survey-feedback__explain-label">
+                  ${config.explainOptional ? '<span>Optional:</span> ' : ''}${config.explainLabel}
+                </label>
+                <textarea class="survey-feedback__textarea" placeholder="Enter your response"></textarea>
+              </div>
+              <button class="survey-feedback__submit">Send feedback</button>
+            </div>
+            <div class="survey-feedback__thanks">
+              Thanks for your feedback!
+            </div>
+          </div>
+        `;
+
+        // Bind survey events
+        bindSurveyEvents(container);
+
+        return container;
+      }
+
+      // Bind survey events
+      function bindSurveyEvents(container) {
+        const options = container.querySelectorAll('.survey-feedback__option');
+        const submitBtn = container.querySelector('.survey-feedback__submit');
+        const card = container.querySelector('.survey-feedback__card');
+        let selectedValue = null;
+
+        // Option selection
+        options.forEach(opt => {
+          opt.addEventListener('click', () => {
+            options.forEach(o => o.classList.remove('is-selected'));
+            opt.classList.add('is-selected');
+            selectedValue = opt.dataset.value;
+          });
+        });
+
+        // Submit
+        submitBtn.addEventListener('click', () => {
+          if (selectedValue) {
+            // Could send feedback to server here
+            card.classList.add('is-submitted');
+          }
+        });
+      }
+
+      // Check if message indicates conversation end
+      function isConversationEnd(text) {
+        const lower = text.toLowerCase().trim();
+        const endPhrases = [
+          'thanks',
+          'thank you',
+          'thankyou',
+          'thx',
+          'ty',
+          'no thanks',
+          'no thank you',
+          'no, thanks',
+          'no, thank you',
+          "that's all",
+          'thats all',
+          "i'm good",
+          'im good',
+          'all good',
+          'perfect, thanks',
+          'great, thanks',
+          'awesome, thanks',
+          'cheers'
+        ];
+        return endPhrases.some(phrase => lower === phrase || lower.startsWith(phrase + '!') || lower.startsWith(phrase + '.'));
+      }
+
+      // Create function separator
+      function createFunctionSeparator(label = 'New') {
+        const separator = document.createElement('div');
+        separator.className = 'function-separator';
+        separator.innerHTML = `
+          <div class="function-separator__line"></div>
+          <span class="function-separator__label">${label}</span>
+          <div class="function-separator__line"></div>
+        `;
+        return separator;
+      }
+
+      // Add function separator to messages
+      function addFunctionSeparator(label = 'New') {
+        const separator = createFunctionSeparator(label);
+        messagesList.appendChild(separator);
+      }
+
+      // Add survey to messages
+      function addSurvey(type = 'ces') {
+        if (surveyShown) return;
+        surveyShown = true;
+
+        const surveyEl = createSurveyFeedback(type);
+        messagesList.appendChild(surveyEl);
+
+        // Scroll to bottom
+        const messagesContainer = document.querySelector('.fluid-panel__messages');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+
+      // Send message and get response
+      function sendMessage(text) {
+        if (!text.trim()) return;
+
+        // Hide empty state after first message
+        if (emptyState) emptyState.style.display = 'none';
+
+        // Add user message
+        addUserMessage(text);
+
+        // Clear input and reset send button
+        input.value = '';
+        input.style.height = 'auto';
+        sendBtn.classList.remove('is-active');
+
+        // Check if this is a conversation-ending message
+        if (isConversationEnd(text)) {
+          // Show brief acknowledgment then survey
+          setTimeout(() => {
+            addSystemMessage("You're welcome! Happy to help anytime.");
+            setTimeout(() => {
+              addSurvey('ces');
+            }, 600);
+          }, 500);
+          return;
+        }
+
+        // Find and show response after brief delay
+        setTimeout(() => {
+          const match = findResponse(text);
+          if (match) {
+            addSystemMessage(match.response);
+          } else if (cannedData?.fallback) {
+            addSystemMessage(cannedData.fallback.response);
+          }
+
+          // Scroll to bottom
+          const messagesContainer = document.querySelector('.fluid-panel__messages');
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 500);
+      }
+
+      // Send on button click
+      sendBtn.addEventListener('click', () => {
+        sendMessage(input.value);
+      });
+
+      // Send on Enter key
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage(input.value);
+        }
+      });
+
+      // Quick suggestion pills send their text
+      document.querySelectorAll('[data-suggestion]').forEach(suggestion => {
+        suggestion.addEventListener('click', () => {
+          sendMessage(suggestion.textContent);
+        });
+      });
+
+      // ===== HOMEPAGE SEARCH =====
+      // Search from homepage triggers fullscreen view
+      const heroSearch = document.getElementById('hero-search');
+      const heroSendBtn = document.getElementById('hero-send');
+
+      if (heroSearch && heroSendBtn) {
+        // Toggle send button active state
+        heroSearch.addEventListener('input', () => {
+          if (heroSearch.value.trim()) {
+            heroSendBtn.classList.add('is-active');
+          } else {
+            heroSendBtn.classList.remove('is-active');
+          }
+        });
+
+        // Handle search submission
+        function handleHeroSearch() {
+          const query = heroSearch.value.trim();
+          if (!query) return;
+
+          // Open fullscreen panel
+          if (window.canvasManager) {
+            window.canvasManager.openFullscreen();
+          }
+
+          // Clear hero search
+          heroSearch.value = '';
+          heroSendBtn.classList.remove('is-active');
+
+          // Send the message after panel is open
+          setTimeout(() => {
+            sendMessage(query);
+          }, 100);
+        }
+
+        heroSendBtn.addEventListener('click', handleHeroSearch);
+
+        heroSearch.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            handleHeroSearch();
+          }
+        });
+
+        // Focus on hero search opens panel too (optional behavior)
+        heroSearch.addEventListener('focus', () => {
+          // Optionally open panel on focus - commented out for now
+          // if (window.canvasManager && window.canvasManager.getState() === 'base') {
+          //   window.canvasManager.openFullscreen();
+          // }
+        });
+      }
+
+      // Topic clicks can trigger search with that topic
+      document.querySelectorAll('[data-topic]').forEach(topic => {
+        topic.addEventListener('click', (e) => {
+          e.preventDefault();
+          const topicText = topic.textContent.trim();
+          heroSearch.value = `Help with ${topicText.toLowerCase()}`;
+          heroSendBtn.classList.add('is-active');
+          heroSearch.focus();
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

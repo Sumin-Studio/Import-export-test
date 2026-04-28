@@ -1,0 +1,5458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <meta name="googlebot" content="noindex, nofollow" />
+  <meta name="bingbot" content="noindex, nofollow" />
+  <title>Xero Developer – My Apps</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: #f2f3f4;
+      min-height: 100vh;
+    }
+
+    /* ── Main nav ── */
+    .main-nav {
+      background: #000a1e;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      height: 60px;
+      padding: 0 0 0 0;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-icon {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    /* Xero "X" logo – drawn with CSS */
+    .xero-x {
+      width: 32px;
+      height: 32px;
+      background: #13b5ea;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+      color: white;
+      letter-spacing: -1px;
+    }
+
+    .nav-logo-text {
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-tabs {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .nav-tab {
+      display: flex;
+      align-items: center;
+      height: 57px;
+      padding: 0 16px;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+
+    .nav-tab:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-tab.selected {
+      border-bottom: 3px solid white;
+      height: 60px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-icon-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 50%;
+      color: white;
+    }
+
+    .nav-icon-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Help icon – question mark in circle */
+    .icon-help {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .account-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      background: #50dcaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(0, 10, 30, 0.65);
+      cursor: pointer;
+    }
+
+    /* ── Page title bar ── */
+    .page-title-bar {
+      background: white;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: 0 1px 0 0 rgba(0, 10, 30, 0.2);
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      z-index: 99;
+    }
+
+    .page-breadcrumbs {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 48px;
+    }
+
+    .breadcrumb-label {
+      font-size: 12px;
+      color: #59606d;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #000a1e;
+    }
+
+    .page-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-primary {
+      background: #0078c8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 0 16px;
+      height: 32px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      background: #006ab4;
+    }
+
+    .btn-overflow {
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 0;
+    }
+
+    .btn-overflow:hover {
+      background: #f2f3f4;
+    }
+
+    .dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #59606d;
+    }
+
+    /* ── Main content ── */
+    .main-content {
+      margin-top: 130px; /* nav (60) + title bar (70) */
+      padding: 28px 16px;
+      max-width: 820px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 28px;
+    }
+
+    /* offset for fixed headers */
+    .content-wrapper {
+      margin-top: 130px;
+      padding: 28px 16px;
+    }
+
+    .apps-list-container {
+      max-width: 785px;
+      margin: 0 auto;
+    }
+
+    /* ── Apps table ── */
+    .apps-table {
+      background: white;
+      border: 1px solid rgba(0, 10, 30, 0.15);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .app-row {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      height: 48px;
+      border-bottom: 1px solid rgba(0, 10, 30, 0.1);
+      gap: 12px;
+    }
+
+    .app-row:last-child {
+      border-bottom: none;
+    }
+
+    .app-row:hover {
+      background: #f7f8f9;
+    }
+
+    .app-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(0, 10, 30, 0.75);
+      flex-shrink: 0;
+    }
+
+    .app-name-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .app-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0078c8;
+      text-decoration: underline;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .app-name:hover {
+      color: #006ab4;
+    }
+
+    .test-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 400;
+      color: #000a1e;
+      background: white;
+      border: 1px solid #c0c4ca;
+      border-radius: 3px;
+      padding: 0 5px;
+      line-height: 16px;
+      white-space: nowrap;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+
+    .app-tag {
+      font-size: 12px;
+      color: #59606d;
+      white-space: nowrap;
+    }
+
+    .app-connections {
+      font-size: 14px;
+      color: #59606d;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .apps-count {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #59606d;
+      padding: 0 2px;
+    }
+
+    /* ── Modal overlay ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: white;
+      z-index: 200;
+      flex-direction: column;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Modal header */
+    .modal-header {
+      height: 60px;
+      flex-shrink: 0;
+      background: white;
+      box-shadow: 0 1px 0 0 rgba(0, 10, 30, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      color: #59606d;
+      font-size: 18px;
+    }
+
+    .modal-close:hover {
+      background: #f2f3f4;
+    }
+
+    .modal-close svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* Modal body */
+    .modal-body {
+      overflow-y: auto;
+      flex: 1;
+      padding: 48px 0 48px;
+    }
+
+    .modal-form {
+      width: 520px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* Illustration + heading */
+    .modal-heading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .modal-illustration {
+      width: 191px;
+      height: 120px;
+      object-fit: contain;
+    }
+
+    .modal-h1 {
+      font-size: 30px;
+      font-weight: 700;
+      color: #1e3145;
+      text-align: center;
+      line-height: 44px;
+    }
+
+    /* Section headings */
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .form-section-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 28px;
+    }
+
+    .form-divider {
+      height: 1px;
+      background: #ccced2;
+      margin-top: 8px;
+    }
+
+    /* Field */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #404756;
+      line-height: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .field-hint {
+      font-size: 11px;
+      color: rgba(0, 10, 30, 0.75);
+      line-height: 16px;
+      margin-top: 4px;
+    }
+
+    .field-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      color: #0078c8;
+      line-height: 16px;
+      margin-top: 4px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .field-link:hover { text-decoration: underline; }
+
+    .field-link svg { flex-shrink: 0; }
+
+    .field input[type="text"],
+    .field input[type="url"] {
+      height: 40px;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      padding: 0 15px;
+      font-size: 15px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000a1e;
+      background: white;
+      outline: none;
+      width: 100%;
+    }
+
+    .field input[type="text"]:focus,
+    .field input[type="url"]:focus {
+      border-color: #0078c8;
+      box-shadow: 0 0 0 2px rgba(0, 120, 200, 0.2);
+    }
+
+    /* Select / dropdown */
+    .field-select-wrap {
+      position: relative;
+    }
+
+    .field-select-wrap select {
+      width: 100%;
+      height: 40px;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      padding: 0 40px 0 15px;
+      font-size: 15px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000a1e;
+      background: white;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .field-select-wrap select:focus {
+      border-color: #0078c8;
+      box-shadow: 0 0 0 2px rgba(0, 120, 200, 0.2);
+    }
+
+    .field-select-wrap::after {
+      content: "";
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 6px;
+      background: #59606d;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      pointer-events: none;
+    }
+
+    /* Grouped radio */
+    .radio-group-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(0, 10, 30, 0.75);
+      line-height: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .radio-group-options {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .radio-option {
+      position: relative;
+      height: 40px;
+      border: 1px solid #a6a9b0;
+      background: white;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .radio-option:not(:last-child) {
+      margin-bottom: -1px; /* overlap borders */
+    }
+
+    .radio-option:first-child {
+      border-radius: 3px 3px 0 0;
+    }
+
+    .radio-option:last-child {
+      border-radius: 0 0 3px 3px;
+    }
+
+    .radio-option:hover {
+      background: #f7f8f9;
+      z-index: 1;
+    }
+
+    .radio-option input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 1px solid #a6a9b0;
+      border-radius: 50%;
+      background: white;
+      flex-shrink: 0;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .radio-option input[type="radio"]:checked {
+      border-color: #0078c8;
+      border-width: 6px;
+      background: white;
+    }
+
+    .radio-option label {
+      font-size: 15px;
+      color: #000a1e;
+      line-height: 24px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    /* Checkbox */
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      background: white;
+      cursor: pointer;
+      position: relative;
+      margin-top: 1px;
+    }
+
+    .checkbox-row input[type="checkbox"]:checked {
+      background: #0078c8;
+      border-color: #0078c8;
+    }
+
+    .checkbox-row input[type="checkbox"]:checked::after {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 3px;
+      width: 6px;
+      height: 11px;
+      border: 2px solid white;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+    }
+
+    .checkbox-row label {
+      font-size: 13px;
+      color: #404756;
+      line-height: 20px;
+      cursor: pointer;
+      padding-top: 3px;
+    }
+
+    .checkbox-row label a {
+      color: #0078c8;
+      text-decoration: underline;
+    }
+
+    /* Info icon + tooltip */
+    .info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 10, 30, 0.4);
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(0, 10, 30, 0.5);
+      cursor: default;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .tooltip-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+
+    .tooltip-box {
+      display: none;
+      position: absolute;
+      left: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%);
+      background: #000a1e;
+      color: white;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 20px;
+      border-radius: 3px;
+      padding: 4px 8px;
+      width: 190px;
+      text-align: center;
+      box-shadow: 0 3px 6px rgba(0, 10, 30, 0.2);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .tooltip-box::before {
+      content: "";
+      position: absolute;
+      left: -6px;
+      top: 50%;
+      transform: translateY(-50%);
+      border-width: 6px 6px 6px 0;
+      border-style: solid;
+      border-color: transparent #000a1e transparent transparent;
+    }
+
+    .tooltip-wrap:hover .tooltip-box {
+      display: block;
+    }
+
+    /* ── Validation error states ── */
+    .field-error {
+      font-size: 11px;
+      color: #d0021b;
+      line-height: 16px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .field.has-error .field-error {
+      display: block;
+    }
+
+    .field.has-error input[type="text"],
+    .field.has-error input[type="url"] {
+      border-color: #d0021b;
+    }
+
+    .field.has-error input[type="text"]:focus,
+    .field.has-error input[type="url"]:focus {
+      border-color: #d0021b;
+      box-shadow: 0 0 0 2px rgba(208, 2, 27, 0.15);
+    }
+
+    .field.has-error .radio-group-options,
+    .field.has-error .field-select-wrap select {
+      border-color: #d0021b;
+    }
+
+    .field.has-error .radio-option {
+      border-color: #d0021b;
+    }
+
+    .field.has-error .checkbox-row input[type="checkbox"] {
+      border-color: #d0021b;
+    }
+
+    /* ── Conditional test-app dropdown ── */
+    .test-app-extra {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .test-app-extra.visible {
+      display: flex;
+    }
+
+    /* Modal submit button */
+    .btn-create-app {
+      width: 100%;
+      height: 44px;
+      background: #0078c8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+    }
+
+    .btn-create-app:hover {
+      background: #006ab4;
+    }
+
+    /* ── Two-view structure ── */
+    .modal-view {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .modal-view.active {
+      display: flex;
+    }
+
+    /* ── Success screen ── */
+    .success-body {
+      overflow-y: auto;
+      flex: 1;
+      padding: 60px 24px 48px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .success-content {
+      width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .success-illustration {
+      width: 156px;
+      height: 149px;
+      object-fit: contain;
+    }
+
+    .success-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .success-title {
+      font-size: 30px;
+      font-weight: 700;
+      color: #1e3145;
+      line-height: 44px;
+    }
+
+    .success-subtitle {
+      font-size: 15px;
+      font-weight: 400;
+      color: #1e3145;
+      line-height: 24px;
+    }
+
+    .success-prompt {
+      font-size: 17px;
+      font-weight: 700;
+      color: #000;
+      line-height: 28px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .setup-cards {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .setup-card {
+      background: #f2f8fc;
+      border-radius: 4px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .setup-card-img {
+      width: 50px;
+      height: 44px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .setup-card-text {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+    }
+
+    .setup-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000;
+      line-height: 24px;
+    }
+
+    .setup-card-desc {
+      font-size: 13px;
+      font-weight: 400;
+      color: #000;
+      line-height: 20px;
+    }
+
+    .success-actions {
+      width: 100%;
+      display: flex;
+      gap: 20px;
+    }
+
+    .btn-skip {
+      flex: 1;
+      height: 44px;
+      background: white;
+      color: #0078c8;
+      border: 1px solid #a6a9b0;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+    }
+
+    .btn-skip:hover {
+      background: #f2f3f4;
+    }
+
+    .btn-continue {
+      flex: 1;
+      height: 44px;
+      background: #0078c8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+    }
+
+    .btn-continue:hover {
+      background: #006ab4;
+    }
+
+    /* ── Setup view (sidebar + form) ── */
+    .setup-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .setup-sidebar {
+      width: 384px;
+      flex-shrink: 0;
+      background: #f2f3f4;
+      border-right: 1px solid #ccced2;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .task-card {
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 3px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .task-card.active {
+      border: 2px solid #0078c8;
+    }
+
+    .task-card {
+      cursor: pointer;
+    }
+
+    .task-card:hover:not(.active) {
+      background: #f7f8f9;
+    }
+
+    .task-tick {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 2px solid #a6a9b0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .task-tick svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .task-tick svg path {
+      stroke: #a6a9b0;
+      transition: stroke 0.15s;
+    }
+
+    .task-tick.completed {
+      background: #00823c;
+      border-color: #00823c;
+    }
+
+    .task-tick.completed svg path {
+      stroke: white;
+    }
+
+    .task-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 24px;
+    }
+
+    /* Setup panels */
+    .setup-panel {
+      display: none;
+      width: 100%;
+    }
+
+    .setup-panel.active {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Customer info — conditional variant fields */
+    .customer-variant-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .customer-variant-fields.hidden {
+      display: none;
+    }
+
+    /* Inline grouped checkbox (used in external biz-type) */
+    .radio-option input[type="checkbox"] {
+      border-radius: 3px;
+      width: 20px;
+      height: 20px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid #a6a9b0;
+      background: white;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .radio-option input[type="checkbox"]:checked {
+      background: #0078c8;
+      border-color: #0078c8;
+    }
+
+    .radio-option input[type="checkbox"]:checked::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 6px;
+      height: 10px;
+      border: 2px solid white;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+    }
+
+    /* Setup main content */
+    .setup-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 60px 24px 48px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .setup-form-wrap {
+      width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .setup-form-wrap .modal-illustration {
+      width: 138px;
+      height: 120px;
+    }
+
+    .setup-heading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .setup-title {
+      font-size: 30px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 44px;
+    }
+
+    .setup-subtitle {
+      font-size: 17px;
+      font-weight: 400;
+      color: #000a1e;
+      line-height: 28px;
+    }
+
+    .setup-fields {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Textarea */
+    .field textarea {
+      width: 100%;
+      height: 120px;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      padding: 8px 15px;
+      font-size: 15px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000a1e;
+      background: white;
+      outline: none;
+      resize: vertical;
+    }
+
+    .field textarea:focus {
+      border-color: #0078c8;
+      box-shadow: 0 0 0 2px rgba(0, 120, 200, 0.2);
+    }
+
+    .field-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .char-counter {
+      font-size: 11px;
+      color: rgba(0, 10, 30, 0.75);
+      line-height: 16px;
+    }
+
+    /* Setup buttons */
+    .setup-actions {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .btn-next {
+      flex: 1;
+      height: 44px;
+      background: #0078c8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+    }
+
+    .btn-next:hover { background: #006ab4; }
+
+    .btn-back {
+      flex: 1;
+      height: 44px;
+      background: white;
+      color: #0078c8;
+      border: 1px solid #a6a9b0;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+    }
+
+    .btn-back:hover { background: #f2f3f4; }
+
+    /* Save and exit link in header */
+    .modal-header-link {
+      font-size: 15px;
+      font-weight: 600;
+      color: #0078c8;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .modal-header-link:hover { text-decoration: underline; }
+
+    /* ── Collaborators panel ── */
+    .collab-illustration {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      overflow: hidden;
+      flex-shrink: 0;
+      margin-bottom: 16px;
+    }
+
+    /* Each collaborator in its own bordered box */
+    .collab-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .collab-row {
+      display: flex;
+      align-items: center;
+      min-height: 72px;
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 3px;
+    }
+
+    /* Left slot: 68px wide for avatar */
+    .collab-left {
+      width: 68px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .collab-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .collab-avatar--mint  { background: #A8EED5; color: #1C4D3C; }
+    .collab-avatar--violet { background: #ADADF3; color: #202051; }
+    .collab-avatar--blue  { background: #b3d9f5; color: #00538a; }
+    .collab-avatar--peach { background: #ffd6c0; color: #7a2e00; }
+
+    /* Main content */
+    .collab-main {
+      flex: 1;
+      min-width: 0;
+      padding: 12px 0;
+    }
+
+    .collab-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 3px;
+    }
+
+    .collab-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+      white-space: nowrap;
+    }
+
+    .collab-tag {
+      font-size: 11px;
+      font-weight: 400;
+      color: #404756;
+      border: 1px solid #ccced2;
+      border-radius: 3px;
+      padding: 1px 6px;
+      white-space: nowrap;
+    }
+
+    .collab-tag--pending {
+      font-size: 11px;
+      font-weight: 400;
+      color: #404756;
+      background: #f2f3f4;
+      border: 1px solid #ccced2;
+      border-radius: 3px;
+      padding: 1px 6px;
+      white-space: nowrap;
+    }
+
+    .collab-email {
+      font-size: 13px;
+      color: #404756;
+      line-height: 20px;
+    }
+
+    .collab-email strong {
+      font-weight: 700;
+    }
+
+    /* Right actions */
+    .collab-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 8px 8px 0;
+      flex-shrink: 0;
+    }
+
+    .collab-edit-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #0078c8;
+      border-radius: 3px;
+    }
+
+    .collab-edit-btn:hover { background: #f0f7ff; }
+
+    .collab-remove-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: #59606d;
+    }
+
+    .collab-remove-btn:hover { background: #f2f3f4; color: #c0392b; }
+
+    /* Add collaborator inline form panel */
+    .collab-add-form {
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 3px;
+      padding: 20px;
+      width: 100%;
+    }
+
+    .collab-add-form.hidden { display: none; }
+
+    .collab-form-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      margin-bottom: 0;
+    }
+
+    .collab-form-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #404756;
+      line-height: 24px;
+    }
+
+    .collab-form-close {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .collab-form-close:hover { background: #f2f3f4; }
+
+    .collab-form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .collab-form-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #404756;
+      line-height: 20px;
+    }
+
+    .collab-form-input {
+      height: 40px;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      padding: 0 15px;
+      font-size: 15px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000a1e;
+      background: white;
+      width: 100%;
+      outline: none;
+    }
+
+    .collab-form-input:focus { border-color: #0078c8; box-shadow: 0 0 0 2px rgba(0,120,200,0.15); }
+
+    .collab-form-error {
+      font-size: 11px;
+      color: #c0392b;
+      line-height: 16px;
+    }
+
+    .collab-form-error.hidden { display: none; }
+
+    .collab-select-wrap {
+      position: relative;
+    }
+
+    .collab-form-select {
+      appearance: none;
+      -webkit-appearance: none;
+      height: 40px;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      padding: 0 36px 0 15px;
+      font-size: 15px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000a1e;
+      background: white;
+      width: 100%;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .collab-form-select:focus { border-color: #0078c8; box-shadow: 0 0 0 2px rgba(0,120,200,0.15); }
+
+    .collab-select-caret {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .collab-submit-btn {
+      width: 100%;
+      height: 40px;
+      background: white;
+      border: 1px solid #0078c8;
+      border-radius: 3px;
+      color: #0078c8;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+
+    .collab-submit-btn:hover { background: #f0f7ff; }
+
+    .collab-form-hint {
+      font-size: 11px;
+      color: rgba(0,10,30,0.75);
+      line-height: 16px;
+    }
+
+    /* Add collaborator card button (shown below the form when form is hidden) */
+    .collab-add-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 3px;
+      color: #404756;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+      margin-bottom: 24px;
+    }
+
+    .collab-add-btn:hover { background: #f8f9fa; }
+
+    .collab-add-icon {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── App Details full-page view ── */
+    #view-app-details {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: #f2f3f4;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .app-details-nav {
+      background: #000a1e;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px 0 16px;
+      flex-shrink: 0;
+    }
+
+    .app-details-subnav {
+      background: white;
+      height: 76px;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: 0 1px 0 0 rgba(0, 10, 30, 0.2);
+      flex-shrink: 0;
+    }
+
+    .app-details-subnav-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .app-details-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: #59606d;
+      line-height: 20px;
+    }
+
+    .app-details-breadcrumb .bc-link {
+      color: #0078c8;
+      text-decoration: none;
+    }
+
+    .app-details-breadcrumb .bc-link:hover {
+      text-decoration: underline;
+    }
+
+    .bc-arrow {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-top: 1.5px solid #59606d;
+      border-right: 1.5px solid #59606d;
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+
+    .app-details-page-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 28px;
+    }
+
+    .app-details-subnav-right {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      padding-bottom: 18px;
+    }
+
+    .btn-save-grey {
+      background: #80858f;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 0 12px;
+      height: 32px;
+      cursor: default;
+    }
+
+    .btn-overflow-sm {
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .btn-overflow-sm:hover { background: #f2f3f4; }
+
+    .dot-sm {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(0, 10, 30, 0.65);
+    }
+
+    .app-details-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .app-details-left-nav {
+      width: 220px;
+      flex-shrink: 0;
+      background: #f2f3f4;
+      overflow-y: auto;
+      padding-top: 16px;
+    }
+
+    .ad-nav-item {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 15px;
+      color: #000a1e;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+    }
+
+    .ad-nav-item:hover { color: #0078c8; }
+
+    .ad-nav-item.selected {
+      color: #0078c8;
+      box-shadow: inset 3px 0 0 0 #0078c8;
+    }
+
+    .app-details-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* White panel containing tabs + form (visible overflow so country ms-panels can extend past the card) */
+    .app-details-panel {
+      background: white;
+      border: 1px solid rgba(0, 10, 30, 0.2);
+      border-radius: 3px;
+      width: 800px;
+      max-width: 100%;
+      overflow: visible;
+    }
+
+    /* Tab row */
+    .app-details-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(0, 10, 30, 0.15);
+      background: white;
+    }
+
+    .ad-tab {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      font-size: 15px;
+      color: #000a1e;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .ad-tab:hover { color: #0078c8; }
+
+    .ad-tab.selected {
+      color: #0078c8;
+      border-bottom-color: #0078c8;
+      font-weight: 700;
+    }
+
+    .ad-tab-panel { display: none; }
+    .ad-tab-panel.active { display: block; }
+
+    .ad-section-header {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ad-section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+    }
+
+    .ad-form-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      padding: 40px 0;
+    }
+
+    .ad-field {
+      width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ad-field input[type="text"],
+    .ad-field input[type="url"] {
+      height: 40px;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      padding: 0 15px;
+      font-size: 15px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000a1e;
+      background: white;
+      outline: none;
+      width: 100%;
+    }
+
+    .ad-field input[type="text"]:focus,
+    .ad-field input[type="url"]:focus {
+      border-color: #0078c8;
+      box-shadow: 0 0 0 2px rgba(0, 120, 200, 0.2);
+    }
+
+    .ad-field textarea {
+      width: 100%;
+      height: 120px;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      font-size: 15px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000a1e;
+      padding: 10px 15px;
+      resize: vertical;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .ad-field textarea:focus {
+      border-color: #0078c8;
+      box-shadow: 0 0 0 2px rgba(0, 120, 200, 0.2);
+    }
+
+    .ad-name-with-prefix {
+      display: flex;
+      align-items: stretch;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .ad-name-with-prefix:focus-within {
+      border-color: #0078c8;
+      box-shadow: 0 0 0 2px rgba(0, 120, 200, 0.2);
+    }
+    .ad-name-prefix {
+      display: flex;
+      align-items: center;
+      padding: 0 10px 0 15px;
+      background: #e6e7e9;
+      font-size: 15px;
+      color: rgba(0, 10, 30, 0.75);
+      white-space: nowrap;
+      flex-shrink: 0;
+      border-right: 1px solid #a6a9b0;
+    }
+    /* Input inside the wrapper: no double border */
+    .ad-name-with-prefix input[type="text"] {
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 3px 3px 0 !important;
+      flex: 1;
+      min-width: 0;
+      height: 38px; /* 40px total minus 2px wrapper border */
+    }
+
+    .ad-readonly-wrap {
+      height: 40px;
+      background: #e6e7e9;
+      border: 1px solid #80858f;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .ad-readonly-value {
+      flex: 1;
+      font-size: 15px;
+      color: rgba(0, 10, 30, 0.75);
+      padding: 0 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-field-copy {
+      background: none;
+      border: none;
+      color: #0078c8;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+      padding: 0 12px;
+      height: 100%;
+      flex-shrink: 0;
+    }
+
+    .btn-field-copy:hover { text-decoration: underline; }
+
+    .ad-coming-soon {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #59606d;
+      font-size: 15px;
+    }
+
+    /* ── Manage plan page ── */
+    #manage-plan-content {
+      width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-bottom: 40px;
+    }
+
+    #manage-plan-content.hidden { display: none; }
+
+    .mp-progress-banner {
+      background: #184390;
+      border-radius: 4px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mp-banner-left {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .mp-banner-title-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mp-banner-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: white;
+      line-height: 1.45;
+      white-space: nowrap;
+    }
+
+    .mp-progress-track {
+      height: 4px;
+      background: #17231f;
+      border-radius: 100px;
+      width: 130px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .mp-progress-fill {
+      height: 100%;
+      background: #2db78f;
+      border-radius: 100px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .mp-banner-subtitle {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.45;
+    }
+
+    .mp-complete-btn {
+      background: #1f65d6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 5px 10px;
+      height: 28px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .mp-complete-btn:hover { background: #1856b8; }
+
+    .mp-banner-dismiss {
+      width: 28px;
+      height: 28px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+      color: rgba(255,255,255,0.75);
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      padding: 0;
+    }
+
+    .mp-banner-dismiss:hover { background: rgba(255,255,255,0.12); }
+
+    .mp-info-banner {
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 3px;
+      padding: 12px 15px 12px 19px;
+      font-size: 15px;
+      color: #000a1e;
+      line-height: 24px;
+      position: relative;
+    }
+
+    .mp-info-banner::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: -1px;
+      bottom: -1px;
+      width: 4px;
+      background: #59606d;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .mp-section-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 28px;
+      margin-bottom: 8px;
+    }
+
+    .mp-plan-card {
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 12px;
+      padding: 32px 36px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .mp-plan-left {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      width: 290px;
+      flex-shrink: 0;
+    }
+
+    .mp-plan-top {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mp-plan-name {
+      font-size: 21px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 32px;
+    }
+
+    .mp-features-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mp-features-heading {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 24px;
+    }
+
+    .mp-feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mp-feature {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #000a1e;
+      line-height: 20px;
+    }
+
+    .mp-feature svg {
+      width: 13px;
+      height: 10px;
+      flex-shrink: 0;
+    }
+
+    .mp-plan-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mp-price-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+
+    .mp-price-amount {
+      font-size: 17px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 28px;
+    }
+
+    .mp-price-currency {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0078c8;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      padding: 1px 6px;
+      line-height: 16px;
+    }
+
+    .mp-price-period {
+      font-size: 11px;
+      color: #000a1e;
+      line-height: 16px;
+    }
+
+    .mp-price-note {
+      font-size: 13px;
+      color: #000a1e;
+      line-height: 20px;
+    }
+
+    .mp-plan-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .mp-btn-buy-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .mp-btn-buy-wrap .mp-tooltip {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000a1e;
+      color: white;
+      font-size: 13px;
+      line-height: 20px;
+      border-radius: 3px;
+      padding: 4px 8px;
+      width: 200px;
+      text-align: center;
+      box-shadow: 0 3px 6px rgba(0,10,30,0.2);
+      z-index: 10;
+      pointer-events: none;
+      white-space: normal;
+    }
+
+    .mp-btn-buy-wrap .mp-tooltip::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 0 6px 6px 6px;
+      border-style: solid;
+      border-color: transparent transparent #000a1e transparent;
+    }
+
+    .mp-btn-buy-wrap:hover .mp-tooltip { display: block; }
+
+    .mp-btn-buy {
+      background: #0078c8;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 0 16px;
+      height: 32px;
+      cursor: pointer;
+    }
+
+    .mp-btn-buy:hover:not([disabled]) { background: #006ab4; }
+
+    .mp-btn-buy[disabled] {
+      background: #80858f;
+      cursor: default;
+    }
+
+    .mp-btn-learn {
+      background: none;
+      border: none;
+      color: #0078c8;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+
+    .mp-btn-learn:hover { text-decoration: underline; }
+
+    .mp-plan-illustration {
+      flex: 1;
+      min-width: 0;
+      align-self: stretch;
+      object-fit: contain;
+      display: block;
+    }
+
+    .mp-options-card {
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 12px;
+      padding: 32px 36px;
+    }
+
+    .mp-options-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 32px;
+    }
+
+    .mp-option {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      gap: 20px;
+    }
+
+    .mp-option-content {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mp-option-icon {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .mp-option-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 24px;
+    }
+
+    .mp-option-desc {
+      font-size: 13px;
+      color: #000a1e;
+      line-height: 20px;
+    }
+
+    .mp-option-desc a { color: #0078c8; text-decoration: underline; }
+
+    .mp-option-desc ul { padding-left: 18px; margin: 0; }
+
+    .mp-option-desc li { margin-bottom: 2px; }
+
+    .mp-option-btn {
+      width: 100%;
+      height: 36px;
+      background: white;
+      border: 1px solid #c9d3dc;
+      border-radius: 3px;
+      color: #0078c8;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+    }
+
+    .mp-option-btn:hover { background: #f0f7ff; }
+
+    /* ── Configuration page ── */
+    #configuration-content {
+      width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding-bottom: 40px;
+    }
+
+    #configuration-content.hidden { display: none; }
+
+    .cfg-scopes-banner {
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 3px;
+      padding: 14px 16px 14px 20px;
+      position: relative;
+    }
+
+    .cfg-scopes-banner::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: -1px; bottom: -1px;
+      width: 4px;
+      background: #59606d;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .cfg-scopes-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 24px;
+      margin-bottom: 4px;
+    }
+
+    .cfg-scopes-text {
+      font-size: 13px;
+      color: #000a1e;
+      line-height: 20px;
+    }
+
+    .cfg-scopes-text a { color: #0078c8; text-decoration: underline; }
+
+    .cfg-card {
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 12px;
+      padding: 28px 36px 32px;
+    }
+
+    .cfg-card-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .cfg-card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 28px;
+    }
+
+    .cfg-connections-row {
+      font-size: 13px;
+      color: #59606d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 2px;
+    }
+
+    .cfg-info-icon {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid #80858f;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: #80858f;
+      flex-shrink: 0;
+    }
+
+    .cfg-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 400px;
+      margin: 0 auto;
+    }
+
+    .cfg-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cfg-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(0, 10, 30, 0.75);
+      line-height: 20px;
+    }
+
+    .cfg-input {
+      height: 36px;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      padding: 0 10px;
+      font-size: 15px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000a1e;
+      width: 100%;
+    }
+
+    .cfg-input:focus {
+      outline: none;
+      border-color: #0078c8;
+      box-shadow: 0 0 0 2px rgba(0, 120, 200, 0.15);
+    }
+
+    .cfg-link {
+      font-size: 13px;
+      color: #0078c8;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .cfg-link:hover { text-decoration: underline; }
+
+    .cfg-action-link {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0078c8;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      text-align: center;
+      align-self: center;
+    }
+
+    .cfg-action-link:hover { text-decoration: underline; }
+
+    .cfg-readonly-wrap {
+      display: flex;
+      align-items: center;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      height: 36px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .cfg-readonly-value {
+      flex: 1;
+      min-width: 0;
+      padding: 0 10px;
+      font-size: 15px;
+      color: #000a1e;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cfg-readonly-value.masked,
+    .ad-readonly-value.masked { letter-spacing: 3px; }
+
+    .cfg-icon-btn {
+      width: 34px;
+      height: 100%;
+      border: none;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #59606d;
+      flex-shrink: 0;
+      padding: 0;
+    }
+
+    .cfg-icon-btn:hover { background: #f2f3f4; color: #000a1e; }
+
+    .ad-readonly-wrap .cfg-icon-btn {
+      background: #e6e7e9;
+    }
+
+    .ad-readonly-wrap .cfg-icon-btn:hover { background: #d5d6d9; }
+
+    .cfg-copy-btn {
+      height: 100%;
+      padding: 0 10px;
+      border: none;
+      border-left: 1px solid #a6a9b0;
+      background: white;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      color: #0078c8;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      flex-shrink: 0;
+    }
+
+    .cfg-copy-btn:hover { background: #f0f7ff; }
+
+    .cfg-divider {
+      height: 1px;
+      background: rgba(0, 10, 30, 0.12);
+      margin: 4px 0;
+    }
+
+    .cfg-helper-text {
+      font-size: 13px;
+      color: #59606d;
+      line-height: 20px;
+    }
+
+    .cfg-helper-text strong { color: #000a1e; }
+    .cfg-helper-text a { color: #0078c8; text-decoration: underline; }
+
+    /* ── Collaborators page ── */
+    #collaborators-content {
+      width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 40px;
+    }
+
+    #collaborators-content.hidden { display: none; }
+
+    .cp-info-card {
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 12px;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .cp-illustration {
+      width: 130px;
+      height: 92px;
+      flex-shrink: 0;
+      background: #ddf0e8;
+      border-radius: 8px;
+    }
+
+    .cp-info-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+      line-height: 24px;
+      margin-bottom: 6px;
+    }
+
+    .cp-info-body {
+      font-size: 13px;
+      color: #000a1e;
+      line-height: 20px;
+    }
+
+    .cp-info-body a {
+      color: #0078c8;
+      text-decoration: underline;
+    }
+
+    .cp-list-card {
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 12px;
+    }
+
+    .cp-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      gap: 12px;
+      border-bottom: 1px solid rgba(0, 10, 30, 0.1);
+      position: relative;
+    }
+
+    .cp-row:first-child { border-radius: 12px 12px 0 0; }
+    .cp-row:last-child { border-bottom: none; border-radius: 0 0 12px 12px; }
+    .cp-row:only-child { border-radius: 12px; }
+
+    .cp-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .cp-identity {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cp-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+    }
+
+    .cp-email { font-size: 15px; color: #59606d; }
+
+    .cp-pending-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #59606d;
+      background: #e6e7e9;
+      border-radius: 3px;
+      padding: 2px 6px;
+    }
+
+    .cp-role { font-size: 15px; color: #000a1e; margin-right: 4px; }
+
+    .cp-overflow {
+      width: 28px;
+      height: 28px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .cp-overflow:hover { background: #f2f3f4; }
+
+    .btn-invite-collab {
+      height: 32px;
+      background: #0078c8;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 0 14px;
+      cursor: pointer;
+    }
+
+    .btn-invite-collab:hover { background: #006ab4; }
+
+    /* ── Invite collaborator modal ── */
+    .ic-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 10, 30, 0.45);
+      z-index: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ic-modal-backdrop.hidden { display: none; }
+    .ic-modal {
+      background: white;
+      border-radius: 6px;
+      width: 520px;
+      max-width: calc(100vw - 32px);
+      box-shadow: 0 8px 32px rgba(0,10,30,0.2);
+      display: flex;
+      flex-direction: column;
+    }
+    .ic-modal-header {
+      height: 60px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      box-shadow: 0 1px 0 0 rgba(0, 10, 30, 0.2);
+    }
+    .ic-modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+    }
+    .ic-modal-close {
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      color: #59606d;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0;
+    }
+    .ic-modal-close:hover { background: #f2f3f4; }
+    .ic-modal-body {
+      padding: 24px 24px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .ic-subtitle {
+      font-size: 13px;
+      color: rgba(0, 10, 30, 0.75);
+      line-height: 20px;
+      margin: 0;
+    }
+    .ic-info-box {
+      background: #f5f6f7;
+      border-radius: 3px;
+      padding: 12px 15px;
+      font-size: 15px;
+      color: #000a1e;
+      line-height: 22px;
+    }
+    .ic-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .ic-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #404756;
+      line-height: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ic-input-wrap {
+      position: relative;
+    }
+    .ic-input-wrap input,
+    .ic-input-wrap select {
+      width: 100%;
+      height: 40px;
+      border: 1px solid #a6a9b0;
+      border-radius: 3px;
+      font-size: 15px;
+      color: #000a1e;
+      padding: 0 40px 0 15px;
+      box-sizing: border-box;
+      background: white;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+    }
+    .ic-input-wrap input:focus,
+    .ic-input-wrap select:focus {
+      border-color: #0078c8;
+      box-shadow: 0 0 0 2px rgba(0, 120, 200, 0.2);
+    }
+    .ic-input-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8a9099;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+    }
+    .ic-select-arrow {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      width: 10px;
+      height: 6px;
+      background: #59606d;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+    }
+    .ic-error {
+      font-size: 11px;
+      color: #c0392b;
+      line-height: 16px;
+    }
+    .ic-error.hidden { display: none; }
+    .ic-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 20px 24px 24px;
+    }
+    .ic-btn-send {
+      height: 40px;
+      background: #0078c8;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 0 20px;
+      cursor: pointer;
+    }
+    .ic-btn-send:hover { background: #006ab4; }
+    .ic-btn-cancel {
+      height: 40px;
+      background: white;
+      color: #0078c8;
+      border: 1px solid #0078c8;
+      border-radius: 3px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 0 20px;
+      cursor: pointer;
+    }
+    .ic-btn-cancel:hover { background: #f0f7fd; }
+
+    /* ── Collaborator row dropdown menu ── */
+    .cp-dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 4px);
+      background: white;
+      border: 1px solid #ccced2;
+      border-radius: 4px;
+      box-shadow: 0 4px 16px rgba(0,10,30,0.12);
+      z-index: 500;
+      min-width: 140px;
+      display: none;
+    }
+    .cp-dropdown.open { display: block; }
+    .cp-dropdown-item {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000a1e;
+      cursor: pointer;
+      display: block;
+    }
+    .cp-dropdown-item:hover { background: #f2f3f4; }
+    .cp-dropdown-item.destructive { color: #c0392b; }
+    .cp-dropdown-item.destructive:hover { background: #fdf1f0; }
+    .cp-row { position: relative; }
+
+    /* ── Delete confirmation modal ── */
+    .del-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 10, 30, 0.45);
+      z-index: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .del-modal-backdrop.hidden { display: none; }
+    .del-modal {
+      background: white;
+      border-radius: 6px;
+      width: 420px;
+      max-width: calc(100vw - 32px);
+      box-shadow: 0 8px 32px rgba(0,10,30,0.2);
+      display: flex;
+      flex-direction: column;
+    }
+    .del-modal-header {
+      height: 60px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      box-shadow: 0 1px 0 0 rgba(0, 10, 30, 0.2);
+    }
+    .del-modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000a1e;
+    }
+    .del-modal-close {
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      color: #59606d;
+      font-size: 18px;
+      padding: 0;
+    }
+    .del-modal-close:hover { background: #f2f3f4; }
+    .del-modal-body {
+      padding: 24px;
+      font-size: 15px;
+      color: #000a1e;
+      line-height: 22px;
+    }
+    .del-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 0 24px 24px;
+    }
+    .del-btn-confirm {
+      height: 40px;
+      background: #c0392b;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 0 20px;
+      cursor: pointer;
+    }
+    .del-btn-confirm:hover { background: #a93226; }
+    .del-btn-cancel {
+      height: 40px;
+      background: white;
+      color: #0078c8;
+      border: 1px solid #0078c8;
+      border-radius: 3px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 0 20px;
+      cursor: pointer;
+    }
+    .del-btn-cancel:hover { background: #f0f7fd; }
+
+    /* ── Multi-select dropdowns ── */
+    .ms-wrap { position: relative; width: 100%; }
+    .ms-trigger {
+      width: 100%; height: 40px;
+      border: 1px solid #a6a9b0; border-radius: 3px;
+      padding: 0 36px 0 15px;
+      font-size: 15px; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: white; cursor: pointer; text-align: left;
+      display: flex; align-items: center;
+    }
+    .ms-trigger:focus { outline: none; border-color: #0078c8; box-shadow: 0 0 0 2px rgba(0,120,200,0.2); }
+    .ms-wrap.ms-open .ms-trigger { border-color: #0078c8; box-shadow: 0 0 0 2px rgba(0,120,200,0.2); border-radius: 3px 3px 0 0; }
+    .ms-display { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #8a9099; }
+    .ms-display.has-value { color: #000a1e; }
+    .ms-trigger-arrow {
+      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+      width: 10px; height: 6px; background: #59606d;
+      clip-path: polygon(0 0, 100% 0, 50% 100%); pointer-events: none; flex-shrink: 0;
+    }
+    .ms-panel {
+      display: none; position: absolute; top: 100%; left: -1px; right: -1px;
+      background: white; border: 1px solid #0078c8; border-top: none;
+      border-radius: 0 0 3px 3px; max-height: 220px; overflow-y: auto;
+      z-index: 400; box-shadow: 0 4px 12px rgba(0,10,30,0.1);
+    }
+    .ms-wrap.ms-open .ms-panel { display: block; }
+    .ms-option {
+      display: flex; align-items: center; padding: 0 10px;
+      gap: 10px; cursor: pointer; font-size: 15px; color: #000a1e;
+      height: 36px; border-bottom: 1px solid rgba(0,10,30,0.08);
+      position: relative; background: white;
+    }
+    .ms-option:last-child { border-bottom: none; }
+    .ms-option:hover { background: #f5f6f7; }
+    .ms-option input[type="checkbox"] { flex-shrink: 0; cursor: pointer; margin: 0; width: 15px; height: 15px; }
+    .ms-option span { flex: 1; }
+
+    /* Variant fields within app details tabs */
+    .ad-variant-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      width: 400px;
+    }
+
+    .ad-variant-fields.hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main nav -->
+  <nav class="main-nav">
+    <div class="nav-left">
+      <a href="#" class="nav-logo">
+        <div class="xero-x">x</div>
+        <span class="nav-logo-text">Developer</span>
+      </a>
+      <div class="nav-tabs">
+        <a href="#" class="nav-tab">Docs</a>
+        <a href="#" class="nav-tab">SDKs</a>
+        <a href="#" class="nav-tab">Explorer</a>
+        <a href="#" class="nav-tab selected">My Apps</a>
+        <a href="#" class="nav-tab">Community</a>
+        <a href="#" class="nav-tab">Partner</a>
+        <a href="#" class="nav-tab">Media</a>
+      </div>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon-btn" aria-label="Help">
+        <div class="icon-help">?</div>
+      </button>
+      <div class="account-avatar" title="My account">MI</div>
+    </div>
+  </nav>
+
+  <!-- Page title bar -->
+  <div class="page-title-bar">
+    <div class="page-breadcrumbs">
+      <span class="page-title">My Apps</span>
+    </div>
+    <div class="page-actions">
+      <button class="btn-primary" id="new-app-btn">New app</button>
+      <button class="btn-overflow" aria-label="More options">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="content-wrapper">
+    <div class="apps-list-container">
+      <div class="apps-table" id="apps-table">
+        <!-- rows injected by JS -->
+      </div>
+      <p class="apps-count" id="apps-count"></p>
+    </div>
+  </div>
+
+  <!-- Create new app modal -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+
+      <!-- ── View 1: Create app form ── -->
+      <div class="modal-view active" id="view-form">
+
+        <!-- Header -->
+        <div class="modal-header">
+          <span class="modal-title">Create new app</span>
+          <button class="modal-close" id="modal-close" aria-label="Close">
+            <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L11 11M11 1L1 11" stroke="#59606d" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Scrollable body -->
+        <div class="modal-body">
+          <form class="modal-form" id="create-app-form" novalidate>
+
+            <!-- Illustration + title -->
+            <div class="modal-heading">
+              <img
+                class="modal-illustration"
+                src="images/new_app_form.svg"
+                alt=""
+              />
+              <h2 class="modal-h1">Create a new app</h2>
+            </div>
+
+            <!-- App type -->
+            <div class="form-section">
+              <div class="form-section-title">App type</div>
+              <div class="field" id="field-test-app">
+                <div class="radio-group-label">
+                  Is this a test app?
+                  <span class="tooltip-wrap">
+                    <span class="info-icon">i</span>
+                    <span class="tooltip-box">A test app is used to experiment with our API and is not used in production</span>
+                  </span>
+                </div>
+                <div class="radio-group-options">
+                  <label class="radio-option">
+                    <input type="radio" name="test-app" value="yes" id="test-app-yes" />
+                    <label for="test-app-yes">Yes</label>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="test-app" value="no" id="test-app-no" />
+                    <label for="test-app-no">No</label>
+                  </label>
+                </div>
+                <div class="test-app-extra" id="test-app-extra">
+                  <label class="field-label" for="test-app-parent">If applicable, select the existing app it is a test for:</label>
+                  <div class="field-select-wrap">
+                    <select id="test-app-parent" name="test-app-parent">
+                      <option value="">None</option>
+                    </select>
+                  </div>
+                </div>
+                <span class="field-error" id="err-test-app">Please select an option.</span>
+              </div>
+              <div class="form-divider"></div>
+            </div>
+
+            <!-- App details -->
+            <div class="form-section">
+              <div class="form-section-title">App details</div>
+
+              <div class="field" id="field-app-name">
+                <label class="field-label" for="app-name">App name</label>
+                <input type="text" id="app-name" name="app-name" autocomplete="off" />
+                <span class="field-error">App name is required.</span>
+              </div>
+
+              <div class="field">
+                <label class="field-label" for="integration-type">Integration type</label>
+                <div class="field-select-wrap">
+                  <select id="integration-type" name="integration-type">
+                    <option value="web-app" selected>Web app</option>
+                    <option value="mobile-or-desktop">Mobile or desktop app</option>
+                    <option value="custom-connection">Custom connection</option>
+                  </select>
+                </div>
+                <a href="#" class="field-link">Learn about integration types <svg width="11" height="11" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6.5V10.5C10 10.7652 9.89464 11.0196 9.70711 11.2071C9.51957 11.3946 9.26522 11.5 9 11.5H1.5C1.23478 11.5 0.98043 11.3946 0.792893 11.2071C0.605357 11.0196 0.5 10.7652 0.5 10.5V3C0.5 2.73478 0.605357 2.48043 0.792893 2.29289C0.98043 2.10536 1.23478 2 1.5 2H5.5M8 0.5H11.5M11.5 0.5V4M11.5 0.5L5 7" stroke="#0078c8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              </div>
+
+              <div class="field" id="field-company-url">
+                <label class="field-label" for="company-url">Company website URL</label>
+                <input type="url" id="company-url" name="company-url" />
+                <span class="field-hint">URL must start with https://</span>
+                <span class="field-error">Please enter a valid URL starting with https://</span>
+              </div>
+
+              <div class="field" id="field-redirect-uri">
+                <label class="field-label" for="redirect-uri">OAuth 2.0 redirect URI</label>
+                <input type="url" id="redirect-uri" name="redirect-uri" />
+                <span class="field-hint">URI must start with https:// unless it's a local host. <a href="#" class="field-link" style="display:inline;font-size:inherit">Learn more about redirects <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline;vertical-align:middle"><path d="M10 6.5V10.5C10 10.7652 9.89464 11.0196 9.70711 11.2071C9.51957 11.3946 9.26522 11.5 9 11.5H1.5C1.23478 11.5 0.98043 11.3946 0.792893 11.2071C0.605357 11.0196 0.5 10.7652 0.5 10.5V3C0.5 2.73478 0.605357 2.48043 0.792893 2.29289C0.98043 2.10536 1.23478 2 1.5 2H5.5M8 0.5H11.5M11.5 0.5V4M11.5 0.5L5 7" stroke="#0078c8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></span>
+                <span class="field-error">Please enter a valid URI starting with https:// or http://localhost</span>
+              </div>
+
+              <div class="form-divider"></div>
+            </div>
+
+            <!-- Compliance -->
+            <div class="form-section">
+              <div class="form-section-title">Compliance</div>
+
+              <div class="field" id="field-ai-training">
+                <div class="radio-group-label">Do you intend to use data from Xero to train, fine tune, adapt, or enhance an AI model?</div>
+                <div class="radio-group-options">
+                  <label class="radio-option">
+                    <input type="radio" name="ai-training" value="yes" id="ai-yes" />
+                    <label for="ai-yes">Yes</label>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="ai-training" value="no" id="ai-no" />
+                    <label for="ai-no">No</label>
+                  </label>
+                </div>
+                <span class="field-error" id="err-ai-training">Please select an option.</span>
+                <a href="#" class="field-link">Learn about our AI requirements <svg width="11" height="11" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6.5V10.5C10 10.7652 9.89464 11.0196 9.70711 11.2071C9.51957 11.3946 9.26522 11.5 9 11.5H1.5C1.23478 11.5 0.98043 11.3946 0.792893 11.2071C0.605357 11.0196 0.5 10.7652 0.5 10.5V3C0.5 2.73478 0.605357 2.48043 0.792893 2.29289C0.98043 2.10536 1.23478 2 1.5 2H5.5M8 0.5H11.5M11.5 0.5V4M11.5 0.5L5 7" stroke="#0078c8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              </div>
+
+              <div class="field" id="field-security-reqs">
+                <div class="radio-group-label">Do you understand our minimum security requirements and do you agree to meet them?</div>
+                <div class="radio-group-options">
+                  <label class="radio-option">
+                    <input type="radio" name="security-reqs" value="yes" id="sec-yes" />
+                    <label for="sec-yes">Yes</label>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="security-reqs" value="no" id="sec-no" />
+                    <label for="sec-no">No</label>
+                  </label>
+                </div>
+                <span class="field-error" id="err-security-reqs">Please select an option.</span>
+                <a href="#" class="field-link">Learn about our security requirements <svg width="11" height="11" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6.5V10.5C10 10.7652 9.89464 11.0196 9.70711 11.2071C9.51957 11.3946 9.26522 11.5 9 11.5H1.5C1.23478 11.5 0.98043 11.3946 0.792893 11.2071C0.605357 11.0196 0.5 10.7652 0.5 10.5V3C0.5 2.73478 0.605357 2.48043 0.792893 2.29289C0.98043 2.10536 1.23478 2 1.5 2H5.5M8 0.5H11.5M11.5 0.5V4M11.5 0.5L5 7" stroke="#0078c8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              </div>
+
+              <div class="field" id="field-bots-rpa">
+                <div class="radio-group-label">Are you using any bots, screenscraping, or RPA to perform actions inside of Xero?</div>
+                <div class="radio-group-options">
+                  <label class="radio-option">
+                    <input type="radio" name="bots-rpa" value="yes" id="bots-yes" />
+                    <label for="bots-yes">Yes</label>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="bots-rpa" value="no" id="bots-no" />
+                    <label for="bots-no">No</label>
+                  </label>
+                </div>
+                <span class="field-error" id="err-bots-rpa">Please select an option.</span>
+                <a href="#" class="field-link">Learn about our policy regarding bots, screen scraping, and RPA <svg width="11" height="11" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6.5V10.5C10 10.7652 9.89464 11.0196 9.70711 11.2071C9.51957 11.3946 9.26522 11.5 9 11.5H1.5C1.23478 11.5 0.98043 11.3946 0.792893 11.2071C0.605357 11.0196 0.5 10.7652 0.5 10.5V3C0.5 2.73478 0.605357 2.48043 0.792893 2.29289C0.98043 2.10536 1.23478 2 1.5 2H5.5M8 0.5H11.5M11.5 0.5V4M11.5 0.5L5 7" stroke="#0078c8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              </div>
+
+              <div class="field" id="field-terms">
+                <div class="checkbox-row">
+                  <input type="checkbox" id="terms" name="terms" />
+                  <label for="terms">I have read and agree to the <a href="#" style="color:#0078c8;text-decoration:none;white-space:nowrap">Xero Developer Platform terms and conditions <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline;vertical-align:middle"><path d="M10 6.5V10.5C10 10.7652 9.89464 11.0196 9.70711 11.2071C9.51957 11.3946 9.26522 11.5 9 11.5H1.5C1.23478 11.5 0.98043 11.3946 0.792893 11.2071C0.605357 11.0196 0.5 10.7652 0.5 10.5V3C0.5 2.73478 0.605357 2.48043 0.792893 2.29289C0.98043 2.10536 1.23478 2 1.5 2H5.5M8 0.5H11.5M11.5 0.5V4M11.5 0.5L5 7" stroke="#0078c8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></label>
+                </div>
+                <span class="field-error">You must agree to the terms and conditions.</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-create-app">Create app</button>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- ── View 3: Setup (all steps) ── -->
+      <div class="modal-view" id="view-setup">
+        <div class="modal-header">
+          <span class="modal-title">Set up your app</span>
+          <button class="modal-header-link" id="btn-save-exit">Save and exit</button>
+        </div>
+        <div class="setup-layout">
+          <!-- Sidebar — rendered by JS -->
+          <div class="setup-sidebar" id="setup-sidebar"></div>
+
+          <!-- Panel area -->
+          <div class="setup-main" id="setup-panel-area">
+
+            <!-- Panel 0: App information -->
+            <div class="setup-panel active" id="panel-app-info">
+              <div class="setup-form-wrap">
+                <img src="images/app_information.svg" alt="" style="width:138px;height:120px;object-fit:contain;display:block;flex-shrink:0;" />
+                <div class="setup-heading">
+                  <p class="setup-title">Tell us about your app</p>
+                </div>
+                <div class="setup-fields">
+                  <div class="field">
+                    <label class="field-label" for="setup-app-name">App name</label>
+                    <input type="text" id="setup-app-name" name="setup-app-name" autocomplete="off" />
+                  </div>
+                  <div class="field">
+                    <div class="field-label-row">
+                      <label class="field-label" for="setup-description" style="margin-bottom:0">App description</label>
+                      <span class="char-counter"><span id="desc-count">0</span> / 1000</span>
+                    </div>
+                    <textarea id="setup-description" name="setup-description" maxlength="1000"></textarea>
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="setup-use-case">What is your app used for?</label>
+                    <input type="hidden" id="setup-use-case" name="setup-use-case">
+                    <div class="ms-wrap" id="ms-setup-use-case"><button type="button" class="ms-trigger"><span class="ms-display" data-placeholder="Select use case(s)">Select use case(s)</span><span class="ms-trigger-arrow"></span></button><div class="ms-panel"></div></div>
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="setup-redirect-uri">OAuth 2.0 redirect URI</label>
+                    <input type="url" id="setup-redirect-uri" name="setup-redirect-uri" />
+                    <span class="field-hint">URI must start with https:// unless it is a local host</span>
+                  </div>
+                </div>
+                <div class="setup-actions">
+                  <button class="btn-back" data-panel-back>Back</button>
+                  <button class="btn-next" data-panel-next>Next</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel 1: Customer information -->
+            <div class="setup-panel" id="panel-customer-info">
+              <div class="setup-form-wrap">
+                <img src="images/customer_information.svg" alt="" style="width:153px;height:120px;object-fit:contain" />
+                <div class="setup-heading">
+                  <p class="setup-title">Tell us about your customer</p>
+                </div>
+                <div class="setup-fields">
+
+                  <!-- Who is the app for? — always visible -->
+                  <div class="field">
+                    <div class="radio-group-label">Who is the app for?</div>
+                    <div class="radio-group-options">
+                      <label class="radio-option">
+                        <input type="radio" name="customer-type" value="internal" id="customer-internal" />
+                        <label for="customer-internal">Internal customers</label>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="customer-type" value="external" id="customer-external" />
+                        <label for="customer-external">External customers</label>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Internal-only fields -->
+                  <div id="customer-internal-fields" class="customer-variant-fields hidden">
+                    <div class="field">
+                      <label class="field-label" for="customer-company-name">Company name</label>
+                      <input type="text" id="customer-company-name" name="customer-company-name" autocomplete="off" />
+                    </div>
+                    <div class="field">
+                      <label class="field-label" for="customer-company-url-int">Company website URL</label>
+                      <input type="url" id="customer-company-url-int" name="customer-company-url-int" />
+                      <span class="field-hint">URL must start with https://</span>
+                    </div>
+                    <div class="field">
+                      <div class="radio-group-label">Business type</div>
+                      <div class="checkbox-row">
+                        <input type="checkbox" id="customer-accountant-int" name="customer-accountant-int" />
+                        <label for="customer-accountant-int">The company is an accountant or bookkeeper</label>
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label class="field-label" for="customer-region-int">Where are you based?</label>
+                      <input type="hidden" id="customer-region-int" name="customer-region-int">
+                      <div class="ms-wrap" id="ms-customer-region-int"><button type="button" class="ms-trigger"><span class="ms-display" data-placeholder="Select countries">Select countries</span><span class="ms-trigger-arrow"></span></button><div class="ms-panel"></div></div>
+                    </div>
+                  </div>
+
+                  <!-- External-only fields -->
+                  <div id="customer-external-fields" class="customer-variant-fields hidden">
+                    <div class="field">
+                      <div class="radio-group-label">Business type</div>
+                      <div class="radio-group-options">
+                        <label class="radio-option">
+                          <input type="checkbox" id="customer-biz-small" name="customer-biz-small" />
+                          <label for="customer-biz-small">Small business</label>
+                        </label>
+                        <label class="radio-option">
+                          <input type="checkbox" id="customer-biz-accountant" name="customer-biz-accountant" />
+                          <label for="customer-biz-accountant">Accountant or bookkeeper</label>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label class="field-label" for="customer-region-ext">Where are they based?</label>
+                      <input type="hidden" id="customer-region-ext" name="customer-region-ext">
+                      <div class="ms-wrap" id="ms-customer-region-ext"><button type="button" class="ms-trigger"><span class="ms-display" data-placeholder="Select countries">Select countries</span><span class="ms-trigger-arrow"></span></button><div class="ms-panel"></div></div>
+                    </div>
+                    <div class="field">
+                      <label class="field-label" for="customer-company-url-ext">Company website URL</label>
+                      <input type="url" id="customer-company-url-ext" name="customer-company-url-ext" />
+                      <span class="field-hint">URL must start with https://</span>
+                    </div>
+                    <div class="field">
+                      <div class="radio-group-label">Do you intend to commercialise this app?</div>
+                      <div class="radio-group-options">
+                        <label class="radio-option">
+                          <input type="radio" name="customer-commercialise" value="yes" id="commercialise-yes" />
+                          <label for="commercialise-yes">Yes</label>
+                        </label>
+                        <label class="radio-option">
+                          <input type="radio" name="customer-commercialise" value="no" id="commercialise-no" />
+                          <label for="commercialise-no">No</label>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="setup-actions">
+                  <button class="btn-back" data-panel-back>Back</button>
+                  <button class="btn-next" data-panel-next>Next</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel 2: Developer information -->
+            <div class="setup-panel" id="panel-developer-info">
+              <div class="setup-form-wrap">
+                <img src="images/developer_information.svg" alt="" style="width:149px;height:120px;object-fit:contain" />
+                <div class="setup-heading">
+                  <p class="setup-title">Tell us about your developers</p>
+                </div>
+                <div class="setup-fields">
+
+                  <!-- Who's building the app? — always visible -->
+                  <div class="field">
+                    <div class="radio-group-label">Who's building the app?</div>
+                    <div class="radio-group-options">
+                      <label class="radio-option">
+                        <input type="radio" name="dev-builder" value="inhouse" id="dev-inhouse" />
+                        <label for="dev-inhouse">In-house developers</label>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="dev-builder" value="external" id="dev-external" />
+                        <label for="dev-external">External developers</label>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- In-house fields -->
+                  <div id="dev-inhouse-fields" class="customer-variant-fields hidden">
+                    <div class="field">
+                      <label class="field-label" for="dev-region-inhouse">Where is the developer based?</label>
+                      <input type="hidden" id="dev-region-inhouse" name="dev-region-inhouse">
+                      <div class="ms-wrap" id="ms-dev-region-inhouse"><button type="button" class="ms-trigger"><span class="ms-display" data-placeholder="Select countries">Select countries</span><span class="ms-trigger-arrow"></span></button><div class="ms-panel"></div></div>
+                    </div>
+                  </div>
+
+                  <!-- External fields -->
+                  <div id="dev-external-fields" class="customer-variant-fields hidden">
+                    <div class="field">
+                      <label class="field-label" for="dev-company-name">Developer company name</label>
+                      <input type="text" id="dev-company-name" name="dev-company-name" autocomplete="off" />
+                    </div>
+                    <div class="field">
+                      <label class="field-label" for="dev-region-external">Where is the developer based?</label>
+                      <input type="hidden" id="dev-region-external" name="dev-region-external">
+                      <div class="ms-wrap" id="ms-dev-region-external"><button type="button" class="ms-trigger"><span class="ms-display" data-placeholder="Select countries">Select countries</span><span class="ms-trigger-arrow"></span></button><div class="ms-panel"></div></div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="setup-actions">
+                  <button class="btn-back" data-panel-back>Back</button>
+                  <button class="btn-next" data-panel-next>Next</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel 3: Add collaborators -->
+            <div class="setup-panel" id="panel-collaborators">
+              <div class="setup-form-wrap">
+                <div class="setup-heading">
+                  <!-- Handshake illustration -->
+                  <div class="collab-illustration">
+                    <img src="images/collab-handshake.svg" alt="" style="width:100%;height:100%;display:block;">
+                  </div>
+                  <p class="setup-title">Add collaborators</p>
+                  <p class="setup-subtitle">All collaborators will have edit access to billing information on App Store apps. Only invite people who you know and trust.</p>
+                </div>
+
+                <!-- Collaborators bordered container -->
+                <div class="collab-list" id="collab-list"></div>
+
+                <!-- Invite form (shown when Add is clicked, hidden by default) -->
+                <div class="collab-add-form hidden" id="collab-add-form">
+                  <div class="collab-form-header">
+                    <span class="collab-form-title" id="collab-form-title">Add collaborator</span>
+                    <button class="collab-form-close" id="collab-cancel-btn" title="Close">
+                      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1L10 10M10 1L1 10" stroke="#000a1e" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    </button>
+                  </div>
+                  <div class="collab-form-field">
+                    <label class="collab-form-label" for="collab-email-input">Email address</label>
+                    <input class="collab-form-input" type="email" id="collab-email-input" placeholder="" />
+                    <span class="collab-form-error hidden" id="collab-email-error"></span>
+                  </div>
+                  <div class="collab-form-field">
+                    <label class="collab-form-label" for="collab-role-select">Role</label>
+                    <div class="collab-select-wrap">
+                      <select class="collab-form-select" id="collab-role-select">
+                        <option value="standard">Standard</option>
+                        <option value="owner">Owner</option>
+                      </select>
+                      <span class="collab-select-caret">
+                        <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="#59606d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </span>
+                    </div>
+                  </div>
+                  <button class="collab-submit-btn" id="collab-invite-btn">Add collaborator</button>
+                  <p class="collab-form-hint">An invite will be sent by email. The invitation needs to be accepted within 5 days.</p>
+                </div>
+
+                <!-- Add collaborator card button -->
+                <button class="collab-add-btn" id="collab-add-btn">
+                  <span class="collab-add-icon">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1V11M1 6H11" stroke="#404756" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  </span>
+                  Add collaborator
+                </button>
+
+                <div class="setup-actions">
+                  <button class="btn-back" data-panel-back>Back</button>
+                  <button class="btn-next" id="collab-save-btn">Save and exit</button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /setup-panel-area -->
+        </div>
+      </div>
+
+      <!-- ── View 2: App created success ── -->
+      <div class="modal-view" id="view-success">
+
+        <!-- Header (no close button) -->
+        <div class="modal-header">
+          <span class="modal-title">Create new app</span>
+        </div>
+
+        <div class="success-body">
+          <div class="success-content">
+
+            <img
+              class="success-illustration"
+              src="images/success_page.svg"
+              alt=""
+            />
+
+            <div class="success-text">
+              <p class="success-title">Your app has been created!</p>
+              <p class="success-subtitle">Welcome to our Xero Developer family</p>
+            </div>
+
+            <p class="success-prompt">Would you like to complete the rest of the setup now?</p>
+
+            <div class="setup-cards">
+              <div class="setup-card">
+                <img class="setup-card-img" src="images/app_information.svg" alt="" />
+                <div class="setup-card-text">
+                  <div class="setup-card-title">App information</div>
+                  <div class="setup-card-desc">Tell us about what your app does</div>
+                </div>
+              </div>
+              <div class="setup-card">
+                <img class="setup-card-img" src="images/customer_information.svg" alt="" />
+                <div class="setup-card-text">
+                  <div class="setup-card-title">Customer information</div>
+                  <div class="setup-card-desc">Tell us about who will be using your app</div>
+                </div>
+              </div>
+              <div class="setup-card">
+                <img class="setup-card-img" src="images/developer_information.svg" alt="" />
+                <div class="setup-card-text">
+                  <div class="setup-card-title">Developer information</div>
+                  <div class="setup-card-desc">Tell us about who will be building your app</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="success-actions">
+              <button class="btn-skip" id="btn-skip">Skip for now</button>
+              <button class="btn-continue" id="btn-continue">Continue setup</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── App Details full-page view ── -->
+  <div id="view-app-details">
+
+    <!-- Nav (mirrors main nav) -->
+    <nav class="app-details-nav">
+      <div class="nav-left">
+        <a href="#" class="nav-logo">
+          <div class="xero-x">x</div>
+          <span class="nav-logo-text">Developer</span>
+        </a>
+        <div class="nav-tabs">
+          <a href="#" class="nav-tab">Docs</a>
+          <a href="#" class="nav-tab">SDKs</a>
+          <a href="#" class="nav-tab">Explorer</a>
+          <a href="#" class="nav-tab selected">My Apps</a>
+          <a href="#" class="nav-tab">Community</a>
+          <a href="#" class="nav-tab">Partner</a>
+          <a href="#" class="nav-tab">Media</a>
+        </div>
+      </div>
+      <div class="nav-right">
+        <button class="nav-icon-btn" aria-label="Help">
+          <div class="icon-help">?</div>
+        </button>
+        <div class="account-avatar" title="My account">MI</div>
+      </div>
+    </nav>
+
+    <!-- Subnav / breadcrumb bar -->
+    <div class="app-details-subnav">
+      <div class="app-details-subnav-left">
+        <div class="app-details-breadcrumb">
+          <a href="#" class="bc-link" id="bc-apps-link">Apps</a>
+          <span class="bc-arrow"></span>
+          <span id="ad-breadcrumb-name">Demo app</span>
+          <span class="test-tag" id="ad-breadcrumb-test-tag" style="display:none">Test app</span>
+        </div>
+        <div class="app-details-page-title" id="ad-page-title">App details</div>
+      </div>
+      <div class="app-details-subnav-right">
+        <div id="subnav-default-actions" style="display:flex;align-items:center;gap:8px">
+          <button class="btn-save-grey">Save</button>
+          <button class="btn-overflow-sm" aria-label="More options">
+            <span class="dot-sm"></span>
+            <span class="dot-sm"></span>
+            <span class="dot-sm"></span>
+          </button>
+        </div>
+        <button class="btn-invite-collab" id="btn-invite-collaborator" style="display:none">Invite collaborator</button>
+      </div>
+    </div>
+
+    <!-- Body: left nav + scrollable main -->
+    <div class="app-details-body">
+
+      <!-- Left navigation -->
+      <nav class="app-details-left-nav">
+        <div class="ad-nav-item selected" id="ad-nav-app-details">App details</div>
+        <div class="ad-nav-item" id="ad-nav-configuration">Configuration</div>
+        <div class="ad-nav-item" id="ad-nav-collaborators">Collaborators</div>
+        <div class="ad-nav-item">Connection management</div>
+        <div class="ad-nav-item">Logs</div>
+        <div class="ad-nav-item">Webhooks</div>
+        <div class="ad-nav-item">Usage</div>
+        <div class="ad-nav-item">Billing</div>
+        <div class="ad-nav-item" id="ad-nav-manage-plan">Manage plan</div>
+      </nav>
+
+      <!-- Main scrollable area -->
+      <div class="app-details-main">
+        <div class="app-details-panel" id="app-details-panel">
+
+          <!-- Tab row -->
+          <div class="app-details-tabs">
+            <div class="ad-tab selected" data-tab-target="tab-panel-app-info">App information</div>
+            <div class="ad-tab" data-tab-target="tab-panel-customer-info">Customer information</div>
+            <div class="ad-tab" data-tab-target="tab-panel-developer-info">Developer information</div>
+          </div>
+
+          <!-- Tab 1: App information -->
+          <div class="ad-tab-panel active" id="tab-panel-app-info">
+            <div class="ad-section-header">
+              <span class="ad-section-title">App information</span>
+            </div>
+            <div class="ad-form-body">
+
+              <div class="ad-field">
+                <label class="field-label" for="ad-app-name">App name</label>
+                <div class="ad-name-with-prefix" id="ad-name-prefix-wrap">
+                  <span class="ad-name-prefix" id="ad-test-prefix" style="display:none"><strong>Test app</strong></span>
+                  <input type="text" id="ad-app-name" autocomplete="off" />
+                </div>
+              </div>
+
+              <div class="ad-field">
+                <label class="field-label">App ID</label>
+                <div class="ad-readonly-wrap">
+                  <span class="ad-readonly-value" id="ad-app-id">867a4452-8cfd-44cb-9124-20f71cffb4a3</span>
+                  <button class="btn-field-copy" onclick="adCopy('ad-app-id')">Copy</button>
+                </div>
+              </div>
+
+              <div class="ad-field">
+                <label class="field-label">App creation date</label>
+                <div class="ad-readonly-wrap">
+                  <span class="ad-readonly-value" id="ad-creation-date"></span>
+                  <button class="btn-field-copy" onclick="adCopy('ad-creation-date')">Copy</button>
+                </div>
+              </div>
+
+              <div class="ad-field">
+                <label class="field-label" for="ad-description">App description</label>
+                <textarea id="ad-description"></textarea>
+              </div>
+
+              <div class="ad-field">
+                <label class="field-label" for="ad-use-cases">What is this app used for?</label>
+                <input type="hidden" id="ad-use-cases">
+                <div class="ms-wrap" id="ms-ad-use-cases"><button type="button" class="ms-trigger"><span class="ms-display" data-placeholder="Select use case(s)">Select use case(s)</span><span class="ms-trigger-arrow"></span></button><div class="ms-panel"></div></div>
+              </div>
+
+              <div class="ad-field">
+                <label class="field-label" for="ad-privacy-url">Privacy policy URL (optional)</label>
+                <input type="url" id="ad-privacy-url" />
+              </div>
+
+              <div class="ad-field">
+                <label class="field-label" for="ad-terms-url">Terms and conditions URL (optional)</label>
+                <input type="url" id="ad-terms-url" />
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Tab 2: Customer information -->
+          <div class="ad-tab-panel" id="tab-panel-customer-info">
+            <div class="ad-section-header">
+              <span class="ad-section-title">Customer information</span>
+            </div>
+            <div class="ad-form-body">
+
+              <!-- Customer type — always visible -->
+              <div class="ad-field">
+                <div class="radio-group-label" style="font-weight:700;color:rgba(0,10,30,0.75)">Customer type</div>
+                <div class="radio-group-options">
+                  <label class="radio-option">
+                    <input type="radio" name="ad-customer-type" value="internal" id="ad-cust-internal" />
+                    <label for="ad-cust-internal">Internal customers</label>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="ad-customer-type" value="external" id="ad-cust-external" />
+                    <label for="ad-cust-external">External customers</label>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Internal fields -->
+              <div class="ad-variant-fields" id="ad-internal-fields">
+                <div class="ad-field">
+                  <label class="field-label" for="ad-company-name">Company name</label>
+                  <input type="text" id="ad-company-name" autocomplete="off" />
+                </div>
+                <div class="ad-field">
+                  <label class="field-label" for="ad-company-url-int">Company website URL</label>
+                  <input type="url" id="ad-company-url-int" />
+                </div>
+                <div class="ad-field">
+                  <div class="radio-group-label">Business type</div>
+                  <div class="checkbox-row">
+                    <input type="checkbox" id="ad-biz-accountant-int" name="ad-biz-accountant-int" />
+                    <label for="ad-biz-accountant-int">The company is an accountant or bookkeeper</label>
+                  </div>
+                </div>
+                <div class="ad-field">
+                  <label class="field-label" for="ad-region-int">Where are you based?</label>
+                  <input type="hidden" id="ad-region-int">
+                  <div class="ms-wrap" id="ms-ad-region-int"><button type="button" class="ms-trigger"><span class="ms-display" data-placeholder="Select countries">Select countries</span><span class="ms-trigger-arrow"></span></button><div class="ms-panel"></div></div>
+                </div>
+              </div>
+
+              <!-- External fields -->
+              <div class="ad-variant-fields hidden" id="ad-external-fields">
+                <div class="ad-field">
+                  <div class="radio-group-label">Business type</div>
+                  <div class="radio-group-options">
+                    <label class="radio-option">
+                      <input type="checkbox" id="ad-ext-small" name="ad-ext-small" />
+                      <label for="ad-ext-small">Small business</label>
+                    </label>
+                    <label class="radio-option">
+                      <input type="checkbox" id="ad-ext-accountant" name="ad-ext-accountant" />
+                      <label for="ad-ext-accountant">Accountant or bookkeeper</label>
+                    </label>
+                  </div>
+                </div>
+                <div class="ad-field">
+                  <label class="field-label" for="ad-region-ext">Where are they based?</label>
+                  <input type="hidden" id="ad-region-ext">
+                  <div class="ms-wrap" id="ms-ad-region-ext"><button type="button" class="ms-trigger"><span class="ms-display" data-placeholder="Select countries">Select countries</span><span class="ms-trigger-arrow"></span></button><div class="ms-panel"></div></div>
+                </div>
+                <div class="ad-field">
+                  <label class="field-label" for="ad-company-url-ext">Company website URL</label>
+                  <input type="url" id="ad-company-url-ext" />
+                </div>
+                <div class="ad-field">
+                  <div class="radio-group-label">Do you intend to commercialise this app?</div>
+                  <div class="radio-group-options">
+                    <label class="radio-option">
+                      <input type="radio" name="ad-commercialise" value="yes" id="ad-comm-yes" />
+                      <label for="ad-comm-yes">Yes</label>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="ad-commercialise" value="no" id="ad-comm-no" />
+                      <label for="ad-comm-no">No</label>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Tab 3: Developer information -->
+          <div class="ad-tab-panel" id="tab-panel-developer-info">
+            <div class="ad-section-header">
+              <span class="ad-section-title">Developer information</span>
+            </div>
+            <div class="ad-form-body">
+
+              <!-- Developer type — always visible -->
+              <div class="ad-field">
+                <div class="radio-group-label" style="font-weight:700;color:rgba(0,10,30,0.75)">Customer type</div>
+                <div class="radio-group-options">
+                  <label class="radio-option">
+                    <input type="radio" name="ad-dev-type" value="internal" id="ad-dev-internal" />
+                    <label for="ad-dev-internal">Internal developers</label>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="ad-dev-type" value="external" id="ad-dev-external" />
+                    <label for="ad-dev-external">External developers</label>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Internal developer fields -->
+              <div class="ad-variant-fields" id="ad-dev-internal-fields">
+                <div class="ad-field">
+                  <label class="field-label" for="ad-dev-region-int">Where is the developer based?</label>
+                  <input type="hidden" id="ad-dev-region-int">
+                  <div class="ms-wrap" id="ms-ad-dev-region-int"><button type="button" class="ms-trigger"><span class="ms-display" data-placeholder="Select countries">Select countries</span><span class="ms-trigger-arrow"></span></button><div class="ms-panel"></div></div>
+                </div>
+              </div>
+
+              <!-- External developer fields -->
+              <div class="ad-variant-fields hidden" id="ad-dev-external-fields">
+                <div class="ad-field">
+                  <label class="field-label" for="ad-dev-company-name">Developer company name</label>
+                  <input type="text" id="ad-dev-company-name" autocomplete="off" />
+                </div>
+                <div class="ad-field">
+                  <label class="field-label" for="ad-dev-region-ext">Where is the developer based?</label>
+                  <input type="hidden" id="ad-dev-region-ext">
+                  <div class="ms-wrap" id="ms-ad-dev-region-ext"><button type="button" class="ms-trigger"><span class="ms-display" data-placeholder="Select countries">Select countries</span><span class="ms-trigger-arrow"></span></button><div class="ms-panel"></div></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Manage plan page ── -->
+        <div id="manage-plan-content" class="hidden">
+
+          <!-- Progress banner -->
+          <div class="mp-progress-banner" id="mp-progress-banner">
+            <div class="mp-banner-left">
+              <div class="mp-banner-title-row">
+                <span class="mp-banner-title">Hey, you're almost there!</span>
+                <div class="mp-progress-track">
+                  <div class="mp-progress-fill" id="mp-progress-fill"></div>
+                </div>
+              </div>
+              <span class="mp-banner-subtitle">Complete set up to get access to the Core plan</span>
+            </div>
+            <button class="mp-complete-btn" id="mp-complete-btn">Complete set up</button>
+            <button class="mp-banner-dismiss" id="mp-banner-dismiss" aria-label="Dismiss">&#x00D7;</button>
+          </div>
+
+          <!-- Info banner -->
+          <div class="mp-info-banner">
+            You're on the <strong>Starter plan</strong> (X out of 5 connections). For more connections, upgrade to the Core plan.
+          </div>
+
+          <!-- Core plan section -->
+          <div>
+            <div class="mp-section-title">Upgrade to the next plan</div>
+            <div class="mp-plan-card">
+              <div class="mp-plan-left">
+                <div class="mp-plan-top">
+                  <div class="mp-plan-name">Core plan</div>
+                  <div class="mp-features-section">
+                    <div class="mp-features-heading">Start simple, stay flexible</div>
+                    <div class="mp-feature-list">
+                      <div class="mp-feature">
+                        <svg viewBox="0 0 12 9" fill="none" stroke="#2db78f"><path d="M1 4.5L4 7.5L11 1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Up to 50 connections
+                      </div>
+                      <div class="mp-feature">
+                        <svg viewBox="0 0 12 9" fill="none" stroke="#2db78f"><path d="M1 4.5L4 7.5L11 1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        10 GB of data egress*
+                      </div>
+                      <div class="mp-feature">
+                        <svg viewBox="0 0 12 9" fill="none" stroke="#2db78f"><path d="M1 4.5L4 7.5L11 1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Increased rate limits
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mp-plan-bottom">
+                  <div>
+                    <div class="mp-price-row">
+                      <span class="mp-price-amount">$25</span>
+                      <span class="mp-price-currency">USD</span>
+                      <span class="mp-price-period">per month</span>
+                    </div>
+                    <div class="mp-price-note">*Overage at $1.50 per GB</div>
+                  </div>
+                  <div class="mp-plan-buttons">
+                    <div class="mp-btn-buy-wrap">
+                      <button class="mp-btn-buy" id="mp-btn-buy" disabled>Buy</button>
+                      <div class="mp-tooltip">You need to complete set up to get access to the Core plan</div>
+                    </div>
+                    <button class="mp-btn-learn">Learn more</button>
+                  </div>
+                </div>
+              </div>
+              <img class="mp-plan-illustration" src="images/manage-plan.svg" alt="" />
+            </div>
+          </div>
+
+          <!-- Other options section -->
+          <div>
+            <div class="mp-section-title">Other options</div>
+            <div class="mp-options-card">
+              <div class="mp-options-grid">
+
+                <div class="mp-option">
+                  <div class="mp-option-content">
+                    <img class="mp-option-icon" src="images/mp-icon-briefcase.svg" alt="" />
+                    <div class="mp-option-title">Financial services partner</div>
+                    <div class="mp-option-desc">
+                      Connect your banking, payments, lending or insurance app to our APIs.
+                      <a href="#">See eligibility requirements</a>
+                    </div>
+                  </div>
+                  <button class="mp-option-btn">Apply</button>
+                </div>
+
+                <div class="mp-option">
+                  <div class="mp-option-content">
+                    <img class="mp-option-icon" src="images/mp-icon-star.svg" alt="" />
+                    <div class="mp-option-title">Advanced plan features</div>
+                    <div class="mp-option-desc">
+                      <ul>
+                        <li>Journals endpoint</li>
+                        <li>Xero Practice Manager API</li>
+                        <li>Bulk connections</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <button class="mp-option-btn">Request access</button>
+                </div>
+
+                <div class="mp-option">
+                  <div class="mp-option-content">
+                    <img class="mp-option-icon" src="images/mp-icon-cog.svg" alt="" />
+                    <div class="mp-option-title">Building for internal use</div>
+                    <div class="mp-option-desc">
+                      Accountants, franchises, and corporate groups building internal-only apps need to register their solutions with us
+                    </div>
+                  </div>
+                  <button class="mp-option-btn">Get in touch</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Configuration page ── -->
+        <div id="configuration-content" class="hidden">
+
+          <!-- Scopes changing banner -->
+          <div class="cfg-scopes-banner">
+            <div class="cfg-scopes-title">Scopes are changing</div>
+            <div class="cfg-scopes-text">
+              New granular scopes are replacing existing broad scopes. Apps created after 2 March 2026 will only have access to the new scopes. Apps created before this date will keep access to broad scopes until September 2027. <a href="#">See the scope documentation to learn more.</a>
+            </div>
+          </div>
+
+          <!-- Connection card -->
+          <div class="cfg-card">
+            <div class="cfg-card-header">
+              <div class="cfg-card-title">Connection</div>
+              <div class="cfg-connections-row">
+                1 of 5 connections
+                <span class="cfg-info-icon">i</span>
+              </div>
+            </div>
+
+            <div class="cfg-form">
+
+              <!-- Redirect URIs -->
+              <div class="cfg-field">
+                <label class="cfg-label" for="cfg-redirect-uri">Redirect URIs</label>
+                <input type="url" class="cfg-input" id="cfg-redirect-uri" />
+                <div>
+                  <a class="cfg-link" href="#">
+                    Learn about redirects
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L8.5 1.5M8.5 1.5H4.5M8.5 1.5V5.5" stroke="#0078c8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+                <button class="cfg-action-link">Add another URI</button>
+              </div>
+
+              <!-- Client id -->
+              <div class="cfg-field">
+                <label class="cfg-label">Client id</label>
+                <div class="ad-readonly-wrap">
+                  <span class="ad-readonly-value masked" id="cfg-client-id-display">C0&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;54</span>
+                  <span id="cfg-client-id-actual" style="display:none">C0867a4452-8cfd-44cb-9124-20f71cffb454</span>
+                  <button class="cfg-icon-btn" id="cfg-eye-btn" onclick="toggleClientId()" aria-label="Show client id">
+                    <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 1C4.5 1 1.5 5.5 1.5 5.5S4.5 10 8 10s6.5-4.5 6.5-4.5S11.5 1 8 1z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="5.5" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+                  </button>
+                  <button class="btn-field-copy" onclick="cfgCopy('cfg-client-id-actual')">Copy</button>
+                </div>
+              </div>
+
+              <!-- Client secret -->
+              <div class="cfg-field">
+                <label class="cfg-label">Client secret 1</label>
+                <div class="cfg-readonly-wrap">
+                  <span class="cfg-readonly-value" style="font-size:13px">Created at 2026-02-12T20:51:29.5010362Z UTC</span>
+                  <button class="cfg-icon-btn" aria-label="Delete secret">
+                    <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M1 3.5h10M4 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M2 3.5l.667 8a1 1 0 001 .917h4.666a1 1 0 001-.917L10 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
+                <button class="cfg-action-link">Generate another secret</button>
+              </div>
+
+              <div class="cfg-divider"></div>
+
+              <!-- Login URL -->
+              <div class="cfg-field">
+                <label class="cfg-label" for="cfg-login-url">Login URL for launcher (optional)</label>
+                <input type="url" class="cfg-input" id="cfg-login-url" />
+                <div class="cfg-helper-text">
+                  URL will be used by <strong>launcher</strong> to log in to app.
+                  <a href="#">Find out about launcher
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style="display:inline;vertical-align:middle;margin-left:2px"><path d="M1.5 8.5L8.5 1.5M8.5 1.5H4.5M8.5 1.5V5.5" stroke="#0078c8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Collaborators page ── -->
+        <div id="collaborators-content" class="hidden">
+
+          <div class="cp-info-card">
+            <div class="cp-illustration"></div>
+            <div>
+              <div class="cp-info-title">Manage access and ownership of this app</div>
+              <div class="cp-info-body">
+                Get the right people involved at the right time. Invite up to 20 collaborators. Invitations will be sent by secure email and need to be accepted within 5 days. See the <a href="#">collaborators guide <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style="display:inline;vertical-align:middle"><path d="M1.5 8.5L8.5 1.5M8.5 1.5H4.5M8.5 1.5V5.5" stroke="#0078c8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="cp-list-card" id="cp-collab-list"></div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const apps = [
+      {
+        initial: "F", color: "#e8a09a", name: "Foxglove Invoicing",
+        tag: "", connections: "5 max connections", isTest: false, isNew: true,
+        appData: {
+          integrationType: "web-app",
+          companyUrl: "https://foxglove.io",
+          redirectUri: "https://foxglove.io/auth/callback",
+          description: "Streamlines invoice creation and payment reconciliation for small businesses, connecting directly with Xero to keep books balanced in real time.",
+          useCase: "invoicing",
+          customerType: "external",
+          companyName: "",
+          companyUrlInt: "",
+          accountantInt: false,
+          regionInt: "",
+          bizSmall: true,
+          bizAccountant: false,
+          regionExt: "Australia",
+          companyUrlExt: "https://foxglove.io",
+          commercialise: "yes",
+          devType: "inhouse",
+          devRegionInt: "United Kingdom",
+          devCompanyName: "",
+          devRegionExt: "",
+        }
+      },
+    ];
+
+    function renderApps() {
+      const table = document.getElementById("apps-table");
+      const count = document.getElementById("apps-count");
+
+      table.innerHTML = apps.map((app, i) => `
+        <div class="app-row" data-app-index="${i}" style="cursor:pointer">
+          <div class="app-avatar" style="background: ${app.color}">${app.initial}</div>
+          <div class="app-name-group">
+            <span class="app-name">${app.name}</span>
+            ${app.isTest ? `<span class="test-tag">Test app</span>` : ""}
+            ${app.tag ? `<span class="app-tag">${app.tag}</span>` : ""}
+          </div>
+          <span class="app-connections">${app.connections}</span>
+        </div>
+      `).join("");
+
+      count.textContent = `Showing apps 1–${apps.length} of ${apps.length}`;
+
+      table.querySelectorAll(".app-row").forEach(row => {
+        row.addEventListener("click", () => {
+          const idx = Number(row.dataset.appIndex);
+          const app = apps[idx];
+          // Open App details from list data only — do not mutate onboarding/setup fields
+          // (previously applyParentAppData ran here and leaked Foxglove into the create flow).
+          openAppDetails(app.isTest || false, app);
+        });
+      });
+    }
+
+    // Modal open/close/navigate
+    const overlay    = document.getElementById("modal-overlay");
+    const viewForm   = document.getElementById("view-form");
+    const viewSuccess = document.getElementById("view-success");
+    const viewSetup  = document.getElementById("view-setup");
+    const allViews   = [viewForm, viewSuccess, viewSetup];
+
+    function showView(view) {
+      allViews.forEach(v => v.classList.remove("active"));
+      view.classList.add("active");
+    }
+
+    function resetForm() {
+      // Clear all inputs, selects, textareas in the form view
+      document.getElementById("create-app-form").reset();
+      // Hide conditional test-app dropdown
+      document.getElementById("test-app-extra").classList.remove("visible");
+      // Remove all error states
+      document.querySelectorAll("#view-form .has-error").forEach(el => el.classList.remove("has-error"));
+      selectedParentName = null;
+    }
+
+    function populateParentDropdown() {
+      const select = document.getElementById("test-app-parent");
+      const nonTestApps = apps.filter(a => !a.isTest);
+      select.innerHTML = '<option value="">None</option>' +
+        nonTestApps.map(a => `<option value="${a.name}">${a.name}</option>`).join("");
+    }
+
+    let selectedParentName = null;
+
+    function applyParentAppData(parentName) {
+      const parent = apps.find(a => a.name === parentName);
+      if (!parent || !parent.appData) return;
+      const d = parent.appData;
+      // Setup step 1 — parent data only; create form values are applied on top after this returns
+      document.getElementById("setup-app-name").value = parent.name;
+      document.getElementById("setup-redirect-uri").value = d.redirectUri || "";
+      document.getElementById("setup-description").value = d.description || "";
+      msSetValue("setup-use-case", d.useCase || "");
+      document.getElementById("desc-count").textContent = (d.description || "").length;
+
+      // Customer info — set type radio
+      const custType = d.customerType || "internal";
+      const custRadio = document.querySelector(`input[name="customer-type"][value="${custType}"]`);
+      if (custRadio) { custRadio.checked = true; custRadio.dispatchEvent(new Event("change")); }
+      // Internal fields
+      document.getElementById("customer-company-name").value = d.companyName || "";
+      document.getElementById("customer-company-url-int").value = d.companyUrlInt || d.companyUrl || "";
+      document.getElementById("customer-accountant-int").checked = !!d.accountantInt;
+      msSetValue("customer-region-int", d.regionInt || "");
+      // External fields
+      document.getElementById("customer-biz-small").checked = !!d.bizSmall;
+      document.getElementById("customer-biz-accountant").checked = !!d.bizAccountant;
+      msSetValue("customer-region-ext", d.regionExt || "");
+      document.getElementById("customer-company-url-ext").value = d.companyUrlExt || d.companyUrl || "";
+      const commRadio = document.querySelector(`input[name="customer-commercialise"][value="${d.commercialise || "yes"}"]`);
+      if (commRadio) commRadio.checked = true;
+
+      // Developer info — set type radio
+      const devVal = d.devType === "external" ? "external" : "inhouse";
+      const devRadio = document.querySelector(`input[name="dev-builder"][value="${devVal}"]`);
+      if (devRadio) { devRadio.checked = true; devRadio.dispatchEvent(new Event("change")); }
+      msSetValue("dev-region-inhouse", d.devRegionInt || "");
+      document.getElementById("dev-company-name").value = d.devCompanyName || "";
+      msSetValue("dev-region-external", d.devRegionExt || "");
+    }
+
+    function openModal() {
+      resetForm();
+      populateParentDropdown();
+      showView(viewForm);
+      overlay.classList.add("open");
+      document.body.style.overflow = "hidden";
+      document.getElementById("app-name").focus();
+    }
+
+    function closeModal() {
+      overlay.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    document.getElementById("new-app-btn").addEventListener("click", openModal);
+    document.getElementById("modal-close").addEventListener("click", closeModal);
+
+    // Close on Escape (only on the form view)
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("open") && viewForm.classList.contains("active")) {
+        closeModal();
+      }
+    });
+
+    // Conditional test-app dropdown
+    document.querySelectorAll('input[name="test-app"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        const extra = document.getElementById("test-app-extra");
+        extra.classList.toggle("visible", radio.value === "yes" && radio.checked);
+        // Clear parent selection when toggling back to No
+        if (radio.value === "no") document.getElementById("test-app-parent").value = "";
+      });
+    });
+
+    document.getElementById("test-app-parent").addEventListener("change", function() {
+      selectedParentName = this.value || null;
+    });
+
+    // Validation helpers
+    function setError(fieldId, message) {
+      const field = document.getElementById(fieldId);
+      field.classList.add("has-error");
+      const err = field.querySelector(".field-error");
+      if (err && message) err.textContent = message;
+      return false;
+    }
+
+    function clearError(fieldId) {
+      document.getElementById(fieldId).classList.remove("has-error");
+    }
+
+    function getRadioValue(name) {
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
+      return checked ? checked.value : null;
+    }
+
+    // Form submit → validate then show success screen
+    document.getElementById("create-app-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      let valid = true;
+
+      // Test app — must select something
+      const testApp = getRadioValue("test-app");
+      if (!testApp) {
+        setError("field-test-app", "Please select an option.");
+        valid = false;
+      } else {
+        clearError("field-test-app");
+      }
+
+      // App name — required
+      const appName = document.getElementById("app-name").value.trim();
+      if (!appName) {
+        setError("field-app-name", "App name is required.");
+        valid = false;
+      } else {
+        clearError("field-app-name");
+      }
+
+      // Company URL — required, must start with https://
+      const companyUrl = document.getElementById("company-url").value.trim();
+      if (!companyUrl) {
+        setError("field-company-url", "Company website URL is required.");
+        valid = false;
+      } else if (!companyUrl.startsWith("https://")) {
+        setError("field-company-url", "URL must start with https://");
+        valid = false;
+      } else {
+        clearError("field-company-url");
+      }
+
+      // Redirect URI — required, must start with https:// or http://localhost
+      const redirectUri = document.getElementById("redirect-uri").value.trim();
+      if (!redirectUri) {
+        setError("field-redirect-uri", "OAuth 2.0 redirect URI is required.");
+        valid = false;
+      } else if (!redirectUri.startsWith("https://") && !redirectUri.startsWith("http://localhost")) {
+        setError("field-redirect-uri", "URI must start with https:// unless it is a local host");
+        valid = false;
+      } else {
+        clearError("field-redirect-uri");
+      }
+
+      // AI training — must be "no"
+      const aiTraining = getRadioValue("ai-training");
+      if (!aiTraining) {
+        setError("field-ai-training", "Please select an option.");
+        valid = false;
+      } else if (aiTraining === "yes") {
+        setError("field-ai-training", "You cannot use Xero data to train or enhance AI models.");
+        valid = false;
+      } else {
+        clearError("field-ai-training");
+      }
+
+      // Security reqs — must be "yes"
+      const secReqs = getRadioValue("security-reqs");
+      if (!secReqs) {
+        setError("field-security-reqs", "Please select an option.");
+        valid = false;
+      } else if (secReqs === "no") {
+        setError("field-security-reqs", "You must agree to meet our minimum security requirements.");
+        valid = false;
+      } else {
+        clearError("field-security-reqs");
+      }
+
+      // Bots/RPA — must be "no"
+      const botsRpa = getRadioValue("bots-rpa");
+      if (!botsRpa) {
+        setError("field-bots-rpa", "Please select an option.");
+        valid = false;
+      } else if (botsRpa === "yes") {
+        setError("field-bots-rpa", "Use of bots, screenscraping, or RPA is not permitted.");
+        valid = false;
+      } else {
+        clearError("field-bots-rpa");
+      }
+
+      // Terms checkbox
+      if (!document.getElementById("terms").checked) {
+        setError("field-terms", "You must agree to the terms and conditions.");
+        valid = false;
+      } else {
+        clearError("field-terms");
+      }
+
+      if (!valid) {
+        // Scroll to first error
+        const firstError = document.querySelector("#view-form .has-error");
+        if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      // Add the new app to the home page list
+      const newAppName = document.getElementById("app-name").value.trim() || "Untitled app";
+      const isTest = getRadioValue("test-app") === "yes";
+      const initial = newAppName[0].toUpperCase();
+      const palette = ["#e8a09a","#8fb98f","#8faab9","#c4a8d4","#f0c080","#a8c4d4"];
+      const color = palette[apps.length % palette.length];
+      apps.push({ initial, color, name: newAppName, tag: "", connections: "5 max connections", isNew: true, isTest });
+      renderApps();
+
+      showView(viewSuccess);
+    });
+
+    // Success screen actions
+    document.getElementById("btn-skip").addEventListener("click", () => openAppDetails(getRadioValue("test-app") === "yes"));
+    document.getElementById("btn-continue").addEventListener("click", () => {
+      // Apply parent data first (lower priority)
+      if (selectedParentName) applyParentAppData(selectedParentName);
+
+      // Then override with whatever the user actually typed in the create form
+      const appName = document.getElementById("app-name").value.trim();
+      const redirectUri = document.getElementById("redirect-uri").value.trim();
+      const companyUrl = document.getElementById("company-url").value.trim();
+      if (appName) document.getElementById("setup-app-name").value = appName;
+      if (redirectUri) document.getElementById("setup-redirect-uri").value = redirectUri;
+      if (companyUrl) {
+        document.getElementById("customer-company-url-int").value = companyUrl;
+        document.getElementById("customer-company-url-ext").value = companyUrl;
+      }
+
+      // Evaluate completion so ticks are shown immediately for pre-filled fields
+      updateCompletionAndSidebar();
+      goToStep(0);
+      renderSidebar();
+      showView(viewSetup);
+    });
+
+    // ── Collaborators state ──
+    const AVATAR_COLORS = ["mint", "violet", "blue", "peach"];
+    const collaborators = [
+      { id: 1, name: "Dillon Smith", email: "dillon@foxglove.com", initials: "DS", role: "Owner", color: "mint", isOwner: true }
+    ];
+    let editingCollabId = null;
+    let editingCollabEl = null;
+
+    function renderCollaborators() {
+      const list = document.getElementById("collab-list");
+      if (!list) return;
+      if (collaborators.length === 0) {
+        list.innerHTML = "";
+        return;
+      }
+      list.innerHTML = collaborators.map(c => `
+        <div class="collab-row" data-collab-id="${c.id}">
+          <div class="collab-left">
+            <div class="collab-avatar collab-avatar--${c.color}">${c.initials}</div>
+          </div>
+          <div class="collab-main">
+            <div class="collab-name-row">
+              <span class="collab-name">${c.name}</span>
+              ${c.isOwner ? '<span class="collab-tag">Owner</span>' : ''}
+              ${c.pending ? '<span class="collab-tag--pending">Invite sent</span>' : ''}
+            </div>
+            <div class="collab-email"><strong>Email:</strong> ${c.email}</div>
+          </div>
+          <div class="collab-right">
+            <button class="collab-edit-btn" data-edit-id="${c.id}">Edit</button>
+            <button class="collab-remove-btn" data-remove-id="${c.id}" title="Remove">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1L10 10M10 1L1 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      `).join("");
+
+      // Re-attach listeners after re-render
+      list.querySelectorAll("[data-remove-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = parseInt(btn.dataset.removeId);
+          const idx = collaborators.findIndex(c => c.id === id);
+          if (idx !== -1) {
+            collaborators.splice(idx, 1);
+            renderCollaborators();
+            updateCompletionAndSidebar();
+          }
+        });
+      });
+
+      list.querySelectorAll("[data-edit-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          showCollabFormForEdit(parseInt(btn.dataset.editId));
+        });
+      });
+    }
+
+    // ── Setup step system ──
+    const STEPS = [
+      { label: "App information",       panelId: "panel-app-info" },
+      { label: "Customer information",  panelId: "panel-customer-info" },
+      { label: "Developer information", panelId: "panel-developer-info" },
+      { label: "Add collaborators",     panelId: "panel-collaborators" },
+    ];
+
+    let currentStepIndex = 0;
+    const completedSteps = new Set();
+
+    const TICK_SVG = `<svg viewBox="0 0 12 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1 4L4.5 7.5L11 1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+
+    function renderSidebar() {
+      const sidebar = document.getElementById("setup-sidebar");
+      sidebar.innerHTML = STEPS.map((step, i) => {
+        const isActive    = i === currentStepIndex;
+        const isCompleted = completedSteps.has(i);
+        return `
+          <div class="task-card ${isActive ? "active" : ""}" data-step="${i}">
+            <div class="task-tick ${isCompleted ? "completed" : ""}">${TICK_SVG}</div>
+            <span class="task-label">${step.label}</span>
+          </div>`;
+      }).join("");
+
+      // Sidebar click navigation
+      sidebar.querySelectorAll(".task-card").forEach(card => {
+        card.addEventListener("click", () => goToStep(parseInt(card.dataset.step)));
+      });
+    }
+
+    function goToStep(index) {
+      // Hide all panels, then show the target
+      STEPS.forEach(s => document.getElementById(s.panelId).classList.remove("active"));
+      currentStepIndex = index;
+      document.getElementById(STEPS[currentStepIndex].panelId).classList.add("active");
+      document.getElementById("setup-panel-area").scrollTop = 0;
+      if (index === 3) renderCollaborators();
+      renderSidebar();
+    }
+
+    // ── Step completion checkers ──
+    function val(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+    function checked(id) {
+      const el = document.getElementById(id);
+      return el ? el.checked : false;
+    }
+    function radioVal(name) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : "";
+    }
+
+    const stepComplete = [
+      // 0 — App information
+      () => val("setup-app-name") && val("setup-description") && val("setup-use-case") && val("setup-redirect-uri"),
+      // 1 — Customer information
+      () => {
+        const type = radioVal("customer-type");
+        if (!type) return false;
+        if (type === "internal") {
+          return val("customer-company-name") && val("customer-company-url-int") && val("customer-region-int");
+        } else {
+          return val("customer-region-ext") && val("customer-company-url-ext") && radioVal("customer-commercialise");
+        }
+      },
+      // 2 — Developer information
+      () => {
+        const type = radioVal("dev-builder");
+        if (!type) return false;
+        if (type === "inhouse") return !!val("dev-region-inhouse");
+        return !!val("dev-company-name") && !!val("dev-region-external");
+      },
+      // 3 — Add collaborators (always true: owner is always present)
+      () => collaborators.length > 0,
+    ];
+
+    function updateCompletionAndSidebar() {
+      STEPS.forEach((_, i) => {
+        if (stepComplete[i] && stepComplete[i]()) {
+          completedSteps.add(i);
+        } else {
+          completedSteps.delete(i);
+        }
+      });
+      renderSidebar();
+    }
+
+    function stepNext() {
+      if (currentStepIndex < STEPS.length - 1) {
+        goToStep(currentStepIndex + 1);
+      } else {
+        closeModal();
+      }
+    }
+
+    function stepBack() {
+      if (currentStepIndex > 0) {
+        goToStep(currentStepIndex - 1);
+      } else {
+        // First step back → success screen
+        showView(viewSuccess);
+      }
+    }
+
+    // Wire all Next/Back buttons via data attributes
+    document.getElementById("setup-panel-area").addEventListener("click", (e) => {
+      if (e.target.closest("[data-panel-next]")) stepNext();
+      if (e.target.closest("[data-panel-back]")) stepBack();
+    });
+
+    document.getElementById("btn-save-exit").addEventListener("click", () => openAppDetails(getRadioValue("test-app") === "yes"));
+
+    // App description character counter
+    document.getElementById("setup-description").addEventListener("input", function() {
+      document.getElementById("desc-count").textContent = this.value.length;
+    });
+
+    // Customer type toggle (Internal/External variant fields)
+    document.querySelectorAll('input[name="customer-type"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        const isExternal = radio.value === "external" && radio.checked;
+        document.getElementById("customer-internal-fields").classList.toggle("hidden", isExternal);
+        document.getElementById("customer-external-fields").classList.toggle("hidden", !isExternal);
+        updateCompletionAndSidebar();
+      });
+    });
+
+    // Dev builder type toggle
+    document.querySelectorAll('input[name="dev-builder"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        const isExternal = radio.value === "external" && radio.checked;
+        document.getElementById("dev-inhouse-fields").classList.toggle("hidden", isExternal);
+        document.getElementById("dev-external-fields").classList.toggle("hidden", !isExternal);
+        updateCompletionAndSidebar();
+      });
+    });
+
+    // Live completion checking — listen to all inputs/selects/textareas in setup panels
+    document.getElementById("setup-panel-area").addEventListener("input", updateCompletionAndSidebar);
+    document.getElementById("setup-panel-area").addEventListener("change", updateCompletionAndSidebar);
+
+    // ── Collaborators panel wiring ──
+    function showCollabForm() {
+      editingCollabId = null;
+      document.getElementById("collab-form-title").textContent = "Add collaborator";
+      document.getElementById("collab-invite-btn").textContent = "Add collaborator";
+      document.getElementById("collab-add-form").classList.remove("hidden");
+      document.getElementById("collab-add-btn").classList.add("hidden");
+      document.getElementById("collab-email-input").value = "";
+      document.getElementById("collab-role-select").value = "standard";
+      const errorEl = document.getElementById("collab-email-error");
+      errorEl.textContent = "";
+      errorEl.classList.add("hidden");
+      document.getElementById("collab-email-input").focus();
+    }
+
+    function showCollabFormForEdit(id) {
+      const collab = collaborators.find(c => c.id === id);
+      if (!collab) return;
+      editingCollabId = id;
+
+      // Move the form div to replace the target row
+      const formEl = document.getElementById("collab-add-form");
+      const row = document.querySelector(`[data-collab-id="${id}"]`);
+      if (row) {
+        row.parentNode.insertBefore(formEl, row);
+        row.style.display = "none";
+        editingCollabEl = row;
+      }
+
+      document.getElementById("collab-form-title").textContent = "Edit collaborator";
+      document.getElementById("collab-invite-btn").textContent = "Save changes";
+      formEl.classList.remove("hidden");
+      document.getElementById("collab-add-btn").classList.add("hidden");
+      document.getElementById("collab-email-input").value = collab.email;
+      document.getElementById("collab-role-select").value = collab.role.toLowerCase();
+      const errorEl = document.getElementById("collab-email-error");
+      errorEl.textContent = "";
+      errorEl.classList.add("hidden");
+      document.getElementById("collab-email-input").focus();
+    }
+
+    function hideCollabForm() {
+      editingCollabId = null;
+      const formEl = document.getElementById("collab-add-form");
+
+      if (editingCollabEl) {
+        // Restore the hidden row and move the form back after the list
+        editingCollabEl.style.display = "";
+        editingCollabEl = null;
+        const list = document.getElementById("collab-list");
+        list.parentNode.insertBefore(formEl, list.nextSibling);
+      }
+
+      formEl.classList.add("hidden");
+      document.getElementById("collab-add-btn").classList.remove("hidden");
+    }
+
+    document.getElementById("collab-add-btn").addEventListener("click", showCollabForm);
+    document.getElementById("collab-cancel-btn").addEventListener("click", hideCollabForm);
+
+    document.getElementById("collab-invite-btn").addEventListener("click", () => {
+      const emailInput = document.getElementById("collab-email-input");
+      const errorEl = document.getElementById("collab-email-error");
+      const email = emailInput.value.trim();
+
+      function showError(msg) {
+        errorEl.textContent = msg;
+        errorEl.classList.remove("hidden");
+      }
+
+      if (!email) { showError("Email address is required."); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError("Please enter a valid email address."); return; }
+
+      const role = document.getElementById("collab-role-select").value;
+      const roleLabel = role === "owner" ? "Owner" : "Standard";
+
+      if (editingCollabId !== null) {
+        if (collaborators.some(c => c.email === email && c.id !== editingCollabId)) {
+          showError("This email is already used by another collaborator."); return;
+        }
+        const idx = collaborators.findIndex(c => c.id === editingCollabId);
+        if (idx !== -1) {
+          const collab = collaborators[idx];
+          const name = email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+          collab.email = email;
+          collab.role = roleLabel;
+          collab.name = name;
+          collab.initials = name.split(" ").filter(Boolean).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+        }
+      } else {
+        if (collaborators.some(c => c.email === email)) { showError("This person has already been added."); return; }
+        const name = email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        const initials = name.split(" ").filter(Boolean).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+        const color = AVATAR_COLORS[collaborators.length % AVATAR_COLORS.length];
+        collaborators.push({ id: Date.now(), name, email, initials, role: roleLabel, color, isOwner: false, pending: true });
+      }
+
+      renderCollaborators();
+      hideCollabForm();
+      updateCompletionAndSidebar();
+    });
+
+
+    // Save button on collaborators panel goes to app details
+    document.getElementById("collab-save-btn").addEventListener("click", () => openAppDetails(getRadioValue("test-app") === "yes"));
+
+    // Render collaborators on page load (so owner row shows from the start)
+    renderCollaborators();
+
+    // ── Multi-select dropdowns ──
+    const COUNTRIES = [
+      "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda",
+      "Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain",
+      "Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia",
+      "Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso",
+      "Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic",
+      "Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia",
+      "Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica",
+      "Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea",
+      "Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon",
+      "Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea",
+      "Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India",
+      "Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan",
+      "Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia",
+      "Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg",
+      "Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands",
+      "Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia",
+      "Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal",
+      "Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea",
+      "North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama",
+      "Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar",
+      "Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia",
+      "Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe",
+      "Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore",
+      "Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea",
+      "South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland",
+      "Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo",
+      "Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu",
+      "Uganda","Ukraine","United Arab Emirates","United Kingdom","United States",
+      "Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen",
+      "Zambia","Zimbabwe"
+    ];
+
+    const USE_CASES = [
+      { value: "invoicing", label: "Invoicing & billing" },
+      { value: "payroll", label: "Payroll" },
+      { value: "expenses", label: "Expenses" },
+      { value: "reporting", label: "Reporting & analytics" },
+      { value: "banking", label: "Banking & financial data" },
+      { value: "crm", label: "CRM & sales" },
+      { value: "inventory", label: "Inventory management" },
+      { value: "ecommerce", label: "E-commerce" },
+      { value: "tax", label: "Tax & compliance" },
+      { value: "projects", label: "Projects & time tracking" },
+      { value: "payments", label: "Payments & point of sale" },
+      { value: "other", label: "Other" },
+    ];
+
+    function msFloatPinContext(wrap) {
+      return wrap.closest("#view-app-details, #view-setup");
+    }
+
+    function msPinFloatingPanel(wrap) {
+      if (!msFloatPinContext(wrap)) return;
+      const panel = wrap.querySelector(".ms-panel");
+      const trigger = wrap.querySelector(".ms-trigger");
+      if (!panel || !trigger) return;
+      const r = trigger.getBoundingClientRect();
+      const pad = 8;
+      const spaceBelow = window.innerHeight - r.bottom - pad;
+      const maxH = Math.min(220, Math.max(80, spaceBelow));
+      panel.style.position = "fixed";
+      panel.style.left = r.left + "px";
+      panel.style.top = r.bottom + "px";
+      panel.style.width = r.width + "px";
+      panel.style.right = "auto";
+      panel.style.bottom = "auto";
+      panel.style.maxHeight = maxH + "px";
+      panel.style.zIndex = "600";
+      wrap.dataset.msFloated = "1";
+    }
+
+    function msUnpinFloatingPanel(wrap) {
+      if (wrap.dataset.msFloated !== "1") return;
+      const panel = wrap.querySelector(".ms-panel");
+      if (!panel) return;
+      panel.style.position = "";
+      panel.style.left = "";
+      panel.style.top = "";
+      panel.style.width = "";
+      panel.style.right = "";
+      panel.style.bottom = "";
+      panel.style.maxHeight = "";
+      panel.style.zIndex = "";
+      delete wrap.dataset.msFloated;
+    }
+
+    function msRefreshAllFloatingPanels() {
+      document.querySelectorAll('.ms-wrap[data-ms-floated="1"].ms-open').forEach(msPinFloatingPanel);
+    }
+
+    function msInit(fieldId, options) {
+      const wrap = document.getElementById("ms-" + fieldId);
+      const hidden = document.getElementById(fieldId);
+      if (!wrap || !hidden) return;
+      const panel = wrap.querySelector(".ms-panel");
+      panel.innerHTML = options.map(opt => {
+        const v = typeof opt === "string" ? opt : opt.value;
+        const l = typeof opt === "string" ? opt : opt.label;
+        return `<label class="ms-option"><input type="checkbox" value="${v}"><span>${l}</span></label>`;
+      }).join("");
+      const trigger = wrap.querySelector(".ms-trigger");
+      trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = wrap.classList.contains("ms-open");
+        closeAllMultiSelects();
+        if (!isOpen) {
+          wrap.classList.add("ms-open");
+          requestAnimationFrame(() => msPinFloatingPanel(wrap));
+        }
+      });
+      // Prevent clicks inside the panel from bubbling to document (which closes all selects)
+      panel.addEventListener("click", (e) => e.stopPropagation());
+      panel.addEventListener("change", () => msUpdate(fieldId));
+    }
+
+    function msUpdate(fieldId) {
+      const wrap = document.getElementById("ms-" + fieldId);
+      const hidden = document.getElementById(fieldId);
+      if (!wrap || !hidden) return;
+      const selected = [...wrap.querySelectorAll(".ms-panel input[type=checkbox]:checked")];
+      const csv = selected.map(cb => cb.value).join(",");
+      hidden.value = csv;
+      msRefreshDisplay(fieldId);
+      hidden.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    function msSetValue(fieldId, csv) {
+      const wrap = document.getElementById("ms-" + fieldId);
+      const hidden = document.getElementById(fieldId);
+      if (!wrap || !hidden) return;
+      hidden.value = csv || "";
+      const values = csv ? csv.split(",") : [];
+      wrap.querySelectorAll(".ms-panel input[type=checkbox]").forEach(cb => {
+        cb.checked = values.includes(cb.value);
+      });
+      msRefreshDisplay(fieldId);
+    }
+
+    function msRefreshDisplay(fieldId) {
+      const wrap = document.getElementById("ms-" + fieldId);
+      const hidden = document.getElementById(fieldId);
+      if (!wrap || !hidden) return;
+      const display = wrap.querySelector(".ms-display");
+      if (!display) return;
+      const csv = hidden.value;
+      if (!csv) {
+        display.textContent = display.dataset.placeholder || "Select…";
+        display.classList.remove("has-value");
+      } else {
+        const labels = [...wrap.querySelectorAll(".ms-panel input[type=checkbox]:checked")]
+          .map(cb => cb.closest("label").textContent.trim());
+        display.textContent = labels.join(", ");
+        display.classList.add("has-value");
+      }
+    }
+
+    function closeAllMultiSelects() {
+      document.querySelectorAll(".ms-wrap.ms-open").forEach(w => {
+        msUnpinFloatingPanel(w);
+        w.classList.remove("ms-open");
+      });
+    }
+
+    document.addEventListener("click", closeAllMultiSelects);
+    window.addEventListener("scroll", msRefreshAllFloatingPanels, true);
+    window.addEventListener("resize", msRefreshAllFloatingPanels);
+    const appDetailsMainEl = document.querySelector(".app-details-main");
+    if (appDetailsMainEl) appDetailsMainEl.addEventListener("scroll", msRefreshAllFloatingPanels);
+    const setupMainEl = document.querySelector(".setup-main");
+    if (setupMainEl) setupMainEl.addEventListener("scroll", msRefreshAllFloatingPanels);
+
+    // Initialise all multi-select components
+    const countryOpts = COUNTRIES.map(c => ({ value: c, label: c }));
+    msInit("setup-use-case", USE_CASES);
+    msInit("customer-region-int", countryOpts);
+    msInit("customer-region-ext", countryOpts);
+    msInit("dev-region-inhouse", countryOpts);
+    msInit("dev-region-external", countryOpts);
+    msInit("ad-use-cases", USE_CASES);
+    msInit("ad-region-int", countryOpts);
+    msInit("ad-region-ext", countryOpts);
+    msInit("ad-dev-region-int", countryOpts);
+    msInit("ad-dev-region-ext", countryOpts);
+
+    renderApps();
+
+    // ── App Details view ──
+    const viewAppDetails = document.getElementById("view-app-details");
+
+    /** Fill App details + config from a row app’s stored appData (does not touch onboarding/setup DOM). */
+    function populateAdFieldsFromStoredAppData(app) {
+      const d = app.appData;
+      const appName = app.name || "";
+      document.getElementById("ad-app-name").value = appName;
+      document.getElementById("ad-breadcrumb-name").textContent = appName || "Demo app";
+      document.getElementById("ad-test-prefix").style.display = app.isTest ? "" : "none";
+      document.getElementById("ad-breadcrumb-test-tag").style.display = app.isTest ? "" : "none";
+      if (!d) {
+        document.getElementById("ad-description").value = "";
+        msSetValue("ad-use-cases", "");
+        document.getElementById("cfg-redirect-uri").value =
+          document.getElementById("redirect-uri").value.trim()
+          || document.getElementById("setup-redirect-uri").value.trim();
+        return;
+      }
+      document.getElementById("ad-description").value = (d.description || "").trim();
+      msSetValue("ad-use-cases", d.useCase || "");
+
+      const customerType = d.customerType === "external" ? "external" : "internal";
+      const isExternal = customerType === "external";
+      const adCustRadio = document.querySelector(
+        `input[name="ad-customer-type"][value="${customerType}"]`
+      );
+      if (adCustRadio) adCustRadio.checked = true;
+      else document.getElementById("ad-cust-internal").checked = true;
+      document.getElementById("ad-internal-fields").classList.toggle("hidden", isExternal);
+      document.getElementById("ad-external-fields").classList.toggle("hidden", !isExternal);
+
+      document.getElementById("ad-company-name").value = d.companyName || "";
+      document.getElementById("ad-company-url-int").value = (d.companyUrlInt || d.companyUrl || "").trim();
+      document.getElementById("ad-biz-accountant-int").checked = !!d.accountantInt;
+      msSetValue("ad-region-int", d.regionInt || "");
+      document.getElementById("ad-ext-small").checked = !!d.bizSmall;
+      document.getElementById("ad-ext-accountant").checked = !!d.bizAccountant;
+      msSetValue("ad-region-ext", d.regionExt || "");
+      document.getElementById("ad-company-url-ext").value = (d.companyUrlExt || d.companyUrl || "").trim();
+      const comm = d.commercialise === "no" ? "no" : "yes";
+      const adCommEl = document.querySelector(`input[name="ad-commercialise"][value="${comm}"]`);
+      if (adCommEl) adCommEl.checked = true;
+
+      const adDevType = d.devType === "external" ? "external" : "internal";
+      const isDevExternal = adDevType === "external";
+      const adDevRadio = document.querySelector(`input[name="ad-dev-type"][value="${adDevType}"]`);
+      if (adDevRadio) adDevRadio.checked = true;
+      else document.getElementById("ad-dev-internal").checked = true;
+      document.getElementById("ad-dev-internal-fields").classList.toggle("hidden", isDevExternal);
+      document.getElementById("ad-dev-external-fields").classList.toggle("hidden", !isDevExternal);
+      msSetValue("ad-dev-region-int", d.devRegionInt || "");
+      document.getElementById("ad-dev-company-name").value = d.devCompanyName || "";
+      msSetValue("ad-dev-region-ext", d.devRegionExt || "");
+
+      document.getElementById("cfg-redirect-uri").value = (d.redirectUri || "").trim();
+    }
+
+    /**
+     * @param {boolean} isTest — when not opening from a list row, whether the new app is a test app
+     * @param {object} [listApp] — app object from `apps` when opened from the table (uses appData for details)
+     */
+    function openAppDetails(isTest, listApp) {
+      if (listApp && listApp.appData) {
+        populateAdFieldsFromStoredAppData(listApp);
+      } else {
+        const showTest = listApp ? !!listApp.isTest : isTest;
+        const appName = (listApp && listApp.name)
+          ? listApp.name
+          : (document.getElementById("app-name").value.trim()
+            || document.getElementById("setup-app-name").value.trim());
+        document.getElementById("ad-app-name").value = appName;
+        document.getElementById("ad-breadcrumb-name").textContent = appName || "Demo app";
+
+        document.getElementById("ad-test-prefix").style.display = showTest ? "" : "none";
+        document.getElementById("ad-breadcrumb-test-tag").style.display = showTest ? "" : "none";
+
+        document.getElementById("ad-description").value =
+          document.getElementById("setup-description").value.trim();
+
+        msSetValue("ad-use-cases", document.getElementById("setup-use-case").value);
+
+        const customerType = radioVal("customer-type");
+        const isExternal = customerType === "external";
+        const adCustRadio = document.querySelector(
+          `input[name="ad-customer-type"][value="${customerType || "internal"}"]`
+        );
+        if (adCustRadio) adCustRadio.checked = true;
+        else document.getElementById("ad-cust-internal").checked = true;
+        document.getElementById("ad-internal-fields").classList.toggle("hidden", isExternal);
+        document.getElementById("ad-external-fields").classList.toggle("hidden", !isExternal);
+        document.getElementById("ad-company-name").value = val("customer-company-name");
+        document.getElementById("ad-company-url-int").value =
+          val("customer-company-url-int") || val("company-url");
+        document.getElementById("ad-biz-accountant-int").checked = checked("customer-accountant-int");
+        msSetValue("ad-region-int", val("customer-region-int"));
+        document.getElementById("ad-ext-small").checked = checked("customer-biz-small");
+        document.getElementById("ad-ext-accountant").checked = checked("customer-biz-accountant");
+        msSetValue("ad-region-ext", val("customer-region-ext"));
+        document.getElementById("ad-company-url-ext").value =
+          val("customer-company-url-ext") || val("company-url");
+        const adComm = radioVal("customer-commercialise");
+        if (adComm) {
+          const adCommEl = document.querySelector(`input[name="ad-commercialise"][value="${adComm}"]`);
+          if (adCommEl) adCommEl.checked = true;
+        }
+
+        const devBuilder = radioVal("dev-builder");
+        const adDevType = devBuilder === "external" ? "external" : "internal";
+        const adDevRadio = document.querySelector(`input[name="ad-dev-type"][value="${adDevType}"]`);
+        if (adDevRadio) adDevRadio.checked = true;
+        else document.getElementById("ad-dev-internal").checked = true;
+        const isDevExternal = adDevType === "external";
+        document.getElementById("ad-dev-internal-fields").classList.toggle("hidden", isDevExternal);
+        document.getElementById("ad-dev-external-fields").classList.toggle("hidden", !isDevExternal);
+        msSetValue("ad-dev-region-int", val("dev-region-inhouse"));
+        document.getElementById("ad-dev-company-name").value = val("dev-company-name");
+        msSetValue("ad-dev-region-ext", val("dev-region-external"));
+
+        document.getElementById("cfg-redirect-uri").value =
+          document.getElementById("redirect-uri").value.trim()
+          || document.getElementById("setup-redirect-uri").value.trim();
+      }
+
+      // Set app creation date to today
+      const today = new Date();
+      document.getElementById("ad-creation-date").textContent =
+        today.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+      // Close modal overlay
+      overlay.classList.remove("open");
+      document.body.style.overflow = "hidden";
+
+      // Reset to first tab
+      document.querySelectorAll(".ad-tab").forEach(t => t.classList.remove("selected"));
+      document.querySelectorAll(".ad-tab-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(".ad-tab[data-tab-target='tab-panel-app-info']").classList.add("selected");
+      document.getElementById("tab-panel-app-info").classList.add("active");
+
+      // Reset nav to App details
+      document.querySelectorAll(".ad-nav-item").forEach(el => el.classList.remove("selected"));
+      document.getElementById("ad-nav-app-details").classList.add("selected");
+      document.getElementById("app-details-panel").style.display = "";
+      document.getElementById("manage-plan-content").classList.add("hidden");
+      document.getElementById("configuration-content").classList.add("hidden");
+      document.getElementById("collaborators-content").classList.add("hidden");
+      document.getElementById("ad-page-title").textContent = "App details";
+      document.getElementById("subnav-default-actions").style.display = "flex";
+      document.getElementById("btn-invite-collaborator").style.display = "none";
+
+      // Show the view
+      viewAppDetails.style.display = "flex";
+    }
+
+    // Breadcrumb "Apps" → back to home
+    document.getElementById("bc-apps-link").addEventListener("click", (e) => {
+      e.preventDefault();
+      viewAppDetails.style.display = "none";
+      document.body.style.overflow = "";
+    });
+
+    // Tab switching inside app details
+    document.querySelectorAll(".ad-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        closeAllMultiSelects();
+        document.querySelectorAll(".ad-tab").forEach(t => t.classList.remove("selected"));
+        document.querySelectorAll(".ad-tab-panel").forEach(p => p.classList.remove("active"));
+        tab.classList.add("selected");
+        document.getElementById(tab.dataset.tabTarget).classList.add("active");
+      });
+    });
+
+    // Customer type toggle in app details tab
+    document.querySelectorAll('input[name="ad-customer-type"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        closeAllMultiSelects();
+        const isExternal = radio.value === "external" && radio.checked;
+        document.getElementById("ad-internal-fields").classList.toggle("hidden", isExternal);
+        document.getElementById("ad-external-fields").classList.toggle("hidden", !isExternal);
+      });
+    });
+
+    // Developer type toggle in app details tab
+    document.querySelectorAll('input[name="ad-dev-type"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        closeAllMultiSelects();
+        const isExternal = radio.value === "external" && radio.checked;
+        document.getElementById("ad-dev-internal-fields").classList.toggle("hidden", isExternal);
+        document.getElementById("ad-dev-external-fields").classList.toggle("hidden", !isExternal);
+      });
+    });
+
+    // Copy-to-clipboard helper for readonly fields
+    function adCopy(elementId) {
+      const el = document.getElementById(elementId);
+      const text = el.textContent || el.value;
+      navigator.clipboard.writeText(text).catch(() => {});
+    }
+
+    // ── Manage plan ──
+
+    function updateManagePlanBanner() {
+      const completedCount = [0, 1, 2, 3].filter(i => stepComplete[i]()).length;
+      const pct = (completedCount / 4) * 100;
+      document.getElementById("mp-progress-fill").style.width = pct + "%";
+      document.getElementById("mp-progress-banner").style.display = completedCount === 4 ? "none" : "";
+    }
+
+    function openSetupFromManagePlan() {
+      viewAppDetails.style.display = "none";
+      document.body.style.overflow = "";
+
+      // Sync customer type radio: app details → setup flow
+      const adCustType = radioVal("ad-customer-type");
+      if (adCustType) {
+        const custRadio = document.querySelector(`input[name="customer-type"][value="${adCustType}"]`);
+        if (custRadio && !custRadio.checked) {
+          custRadio.checked = true;
+          const isExt = adCustType === "external";
+          document.getElementById("customer-internal-fields").classList.toggle("hidden", isExt);
+          document.getElementById("customer-external-fields").classList.toggle("hidden", !isExt);
+        }
+      }
+
+      // Sync accountant checkbox: app details → setup flow
+      document.getElementById("customer-accountant-int").checked =
+        document.getElementById("ad-biz-accountant-int").checked;
+
+      // Sync developer type: app details "internal"/"external" → setup "inhouse"/"external"
+      const adDevType = radioVal("ad-dev-type");
+      if (adDevType) {
+        const setupDevVal = adDevType === "internal" ? "inhouse" : "external";
+        const devRadio = document.querySelector(`input[name="dev-builder"][value="${setupDevVal}"]`);
+        if (devRadio && !devRadio.checked) {
+          devRadio.checked = true;
+          const isDevExt = setupDevVal === "external";
+          document.getElementById("dev-inhouse-fields").classList.toggle("hidden", isDevExt);
+          document.getElementById("dev-external-fields").classList.toggle("hidden", !isDevExt);
+        }
+      }
+
+      updateCompletionAndSidebar();
+      const firstIncomplete = [0, 1, 2, 3].find(i => !stepComplete[i]());
+      goToStep(firstIncomplete !== undefined ? firstIncomplete : 0);
+      renderSidebar();
+      showView(viewSetup);
+      overlay.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    // ── Left nav switching helper ──
+    const SECONDARY_PANELS = ["manage-plan-content", "configuration-content", "collaborators-content"];
+
+    function selectNav(navId, title, showPanel) {
+      document.querySelectorAll(".ad-nav-item").forEach(el => el.classList.remove("selected"));
+      document.getElementById(navId).classList.add("selected");
+      document.getElementById("ad-page-title").textContent = title;
+      // Hide all secondary panels
+      SECONDARY_PANELS.forEach(id => document.getElementById(id).classList.add("hidden"));
+      // Show/hide the main app details panel
+      document.getElementById("app-details-panel").style.display = showPanel ? "" : "none";
+      // Reset subnav buttons
+      document.getElementById("subnav-default-actions").style.display = showPanel || navId !== "ad-nav-collaborators" ? "flex" : "none";
+      document.getElementById("btn-invite-collaborator").style.display = navId === "ad-nav-collaborators" ? "" : "none";
+    }
+
+    document.getElementById("ad-nav-manage-plan").addEventListener("click", () => {
+      selectNav("ad-nav-manage-plan", "Manage plan", false);
+      document.getElementById("manage-plan-content").classList.remove("hidden");
+      updateManagePlanBanner();
+    });
+
+    document.getElementById("ad-nav-app-details").addEventListener("click", () => {
+      selectNav("ad-nav-app-details", "App details", true);
+    });
+
+    // Configuration nav
+    document.getElementById("ad-nav-configuration").addEventListener("click", () => {
+      selectNav("ad-nav-configuration", "Configuration", false);
+      document.getElementById("configuration-content").classList.remove("hidden");
+    });
+
+    // Collaborators nav
+    function renderCollaboratorsPage() {
+      const list = document.getElementById("cp-collab-list");
+      if (!list) return;
+      list.innerHTML = collaborators.map(c => `
+        <div class="cp-row" data-collab-id="${c.id}">
+          <div class="cp-avatar collab-avatar--${c.color}">${c.initials}</div>
+          <div class="cp-identity">
+            <span class="cp-name">${c.name}</span>
+            <span class="cp-email">${c.email}</span>
+            ${c.pending ? '<span class="cp-pending-tag">Invite sent</span>' : ''}
+          </div>
+          <span class="cp-role">${c.role}</span>
+          <button class="cp-overflow" data-collab-id="${c.id}" aria-label="More options">
+            <span class="dot-sm"></span><span class="dot-sm"></span><span class="dot-sm"></span>
+          </button>
+          <div class="cp-dropdown" id="cp-dropdown-${c.id}">
+            <button class="cp-dropdown-item" data-action="edit" data-collab-id="${c.id}">Edit</button>
+            ${c.isOwner ? '' : `<button class="cp-dropdown-item destructive" data-action="delete" data-collab-id="${c.id}">Delete</button>`}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("ad-nav-collaborators").addEventListener("click", () => {
+      selectNav("ad-nav-collaborators", "Collaborators", false);
+      document.getElementById("collaborators-content").classList.remove("hidden");
+      renderCollaboratorsPage();
+    });
+
+
+    // Client id show/hide toggle
+    let clientIdVisible = false;
+    function toggleClientId() {
+      clientIdVisible = !clientIdVisible;
+      const display = document.getElementById("cfg-client-id-display");
+      const actual = document.getElementById("cfg-client-id-actual");
+      if (clientIdVisible) {
+        display.textContent = actual.textContent;
+        display.classList.remove("masked");
+        display.style.letterSpacing = "";
+      } else {
+        display.innerHTML = "C0&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;54";
+        display.classList.add("masked");
+      }
+    }
+
+    function cfgCopy(elementId) {
+      const el = document.getElementById(elementId);
+      navigator.clipboard.writeText(el.textContent).catch(() => {});
+    }
+
+    document.getElementById("mp-complete-btn").addEventListener("click", openSetupFromManagePlan);
+
+    document.getElementById("mp-banner-dismiss").addEventListener("click", () => {
+      document.getElementById("mp-progress-banner").style.display = "none";
+    });
+
+    // ── Bidirectional field sync ──
+    // Any field in a group that changes updates all others in the group.
+    function setupFieldSync(ids, eventType) {
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener(eventType, function() {
+          const v = this.value;
+          ids.forEach(tid => {
+            if (tid === id) return;
+            if (document.getElementById("ms-" + tid)) {
+              msSetValue(tid, v);
+            } else {
+              const t = document.getElementById(tid);
+              if (t && t.value !== v) t.value = v;
+            }
+          });
+        });
+      });
+    }
+
+    // Text inputs
+    setupFieldSync(["app-name", "setup-app-name", "ad-app-name"], "input");
+    setupFieldSync(["redirect-uri", "setup-redirect-uri", "cfg-redirect-uri"], "input");
+    setupFieldSync([
+      "company-url",
+      "customer-company-url-int", "customer-company-url-ext",
+      "ad-company-url-int",       "ad-company-url-ext"
+    ], "input");
+    setupFieldSync(["customer-company-name", "ad-company-name"], "input");
+    setupFieldSync(["dev-company-name", "ad-dev-company-name"], "input");
+
+    // Select dropdowns
+    setupFieldSync(["setup-use-case", "ad-use-cases"], "change");
+    setupFieldSync(["customer-region-int", "ad-region-int"], "change");
+    setupFieldSync(["customer-region-ext", "ad-region-ext"], "change");
+    setupFieldSync(["dev-region-inhouse", "ad-dev-region-int"], "change");
+    setupFieldSync(["dev-region-external", "ad-dev-region-ext"], "change");
+
+    // Description — sync both ways, keeping the char counter live
+    document.getElementById("setup-description").addEventListener("input", function() {
+      document.getElementById("ad-description").value = this.value;
+    });
+    document.getElementById("ad-description").addEventListener("input", function() {
+      document.getElementById("setup-description").value = this.value;
+      document.getElementById("desc-count").textContent = this.value.length;
+    });
+
+    // App name — also update the breadcrumb from any name field
+    ["app-name", "setup-app-name", "ad-app-name"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("input", function() {
+        document.getElementById("ad-breadcrumb-name").textContent = this.value.trim() || "Demo app";
+      });
+    });
+  </script>
+
+  <!-- Invite collaborator modal -->
+  <div class="ic-modal-backdrop hidden" id="ic-modal-backdrop">
+    <div class="ic-modal" role="dialog" aria-modal="true" aria-labelledby="ic-modal-title">
+      <div class="ic-modal-header">
+        <span class="ic-modal-title" id="ic-modal-title">Invite new collaborator</span>
+        <button class="ic-modal-close" id="ic-modal-close" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="ic-modal-body">
+        <p class="ic-subtitle">Invite will be sent by email. Invitation needs to be accepted within 5 days</p>
+        <div class="ic-info-box">All collaborators will have edit access to billing information on App Store apps. Only invite people who you know and trust.</div>
+        <div class="ic-field-group">
+          <label class="ic-label" for="ic-email-input">Email address</label>
+          <div class="ic-input-wrap">
+            <input type="email" id="ic-email-input" placeholder="invitee@example.com" autocomplete="off" />
+            <span class="ic-input-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            </span>
+          </div>
+          <div class="ic-error hidden" id="ic-email-error-modal"></div>
+        </div>
+        <div class="ic-field-group">
+          <label class="ic-label" for="ic-role-select">
+            Role
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8a9099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </label>
+          <div class="ic-input-wrap">
+            <select id="ic-role-select">
+              <option value="standard">Standard</option>
+              <option value="owner">Owner</option>
+            </select>
+            <span class="ic-select-arrow"></span>
+          </div>
+        </div>
+      </div>
+      <div class="ic-modal-footer">
+        <button class="ic-btn-send" id="ic-btn-send">Send email invitation</button>
+        <button class="ic-btn-cancel" id="ic-btn-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirmation modal -->
+  <div class="del-modal-backdrop hidden" id="del-modal-backdrop">
+    <div class="del-modal" role="dialog" aria-modal="true">
+      <div class="del-modal-header">
+        <span class="del-modal-title">Remove collaborator</span>
+        <button class="del-modal-close" id="del-modal-close" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="del-modal-body" id="del-modal-msg"></div>
+      <div class="del-modal-footer">
+        <button class="del-btn-confirm" id="del-btn-confirm">Remove</button>
+        <button class="del-btn-cancel" id="del-btn-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const icBackdrop = document.getElementById("ic-modal-backdrop");
+      const icEmailInput = document.getElementById("ic-email-input");
+      const icRoleSelect = document.getElementById("ic-role-select");
+      const icError = document.getElementById("ic-email-error-modal");
+      const icTitle = document.getElementById("ic-modal-title");
+      const icSendBtn = document.getElementById("ic-btn-send");
+      let icEditingId = null;
+
+      function openInviteModal(collab) {
+        icError.classList.add("hidden");
+        if (collab) {
+          icEditingId = collab.id;
+          icTitle.textContent = "Edit collaborator";
+          icSendBtn.textContent = "Save changes";
+          icEmailInput.value = collab.email;
+          icRoleSelect.value = collab.role === "Owner" ? "owner" : "standard";
+        } else {
+          icEditingId = null;
+          icTitle.textContent = "Invite new collaborator";
+          icSendBtn.textContent = "Send email invitation";
+          icEmailInput.value = "";
+          icRoleSelect.value = "standard";
+        }
+        icBackdrop.classList.remove("hidden");
+      }
+
+      function closeInviteModal() {
+        icBackdrop.classList.add("hidden");
+        icEditingId = null;
+      }
+
+      document.getElementById("btn-invite-collaborator").addEventListener("click", () => openInviteModal(null));
+      document.getElementById("ic-modal-close").addEventListener("click", closeInviteModal);
+      document.getElementById("ic-btn-cancel").addEventListener("click", closeInviteModal);
+      icBackdrop.addEventListener("click", (e) => { if (e.target === icBackdrop) closeInviteModal(); });
+
+      icSendBtn.addEventListener("click", () => {
+        const email = icEmailInput.value.trim();
+        if (!email) {
+          icError.textContent = "Email address is required.";
+          icError.classList.remove("hidden");
+          return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          icError.textContent = "Please enter a valid email address.";
+          icError.classList.remove("hidden");
+          return;
+        }
+        const role = icRoleSelect.value === "owner" ? "Owner" : "Standard";
+        if (icEditingId !== null) {
+          if (collaborators.some(c => c.email === email && c.id !== icEditingId)) {
+            icError.textContent = "This email is already used by another collaborator.";
+            icError.classList.remove("hidden");
+            return;
+          }
+          const idx = collaborators.findIndex(c => c.id === icEditingId);
+          if (idx !== -1) {
+            const collab = collaborators[idx];
+            const name = email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+            collab.email = email;
+            collab.name = name;
+            collab.initials = name.split(" ").filter(Boolean).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+            collab.role = role;
+          }
+        } else {
+          if (collaborators.some(c => c.email === email)) {
+            icError.textContent = "This person has already been added.";
+            icError.classList.remove("hidden");
+            return;
+          }
+          const name = email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+          const initials = name.split(" ").filter(Boolean).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+          const color = AVATAR_COLORS[collaborators.length % AVATAR_COLORS.length];
+          collaborators.push({ id: Date.now(), name, email, initials, role, color, isOwner: false, pending: true });
+        }
+        renderCollaborators();
+        renderCollaboratorsPage();
+        closeInviteModal();
+      });
+
+      // ── Dropdown menu ──
+      function closeAllDropdowns() {
+        document.querySelectorAll(".cp-dropdown.open").forEach(d => d.classList.remove("open"));
+      }
+
+      document.getElementById("cp-collab-list").addEventListener("click", (e) => {
+        // Overflow button toggle
+        const overflowBtn = e.target.closest(".cp-overflow");
+        if (overflowBtn) {
+          e.stopPropagation();
+          const id = overflowBtn.dataset.collabId;
+          const dropdown = document.getElementById("cp-dropdown-" + id);
+          const isOpen = dropdown.classList.contains("open");
+          closeAllDropdowns();
+          if (!isOpen) dropdown.classList.add("open");
+          return;
+        }
+
+        // Dropdown item actions
+        const item = e.target.closest(".cp-dropdown-item");
+        if (item) {
+          const action = item.dataset.action;
+          const id = Number(item.dataset.collabId);
+          closeAllDropdowns();
+          if (action === "edit") {
+            const collab = collaborators.find(c => c.id === id);
+            if (collab) openInviteModal(collab);
+          } else if (action === "delete") {
+            openDeleteModal(id);
+          }
+        }
+      });
+
+      // Close dropdown on outside click
+      document.addEventListener("click", closeAllDropdowns);
+
+      // ── Delete confirmation modal ──
+      const delBackdrop = document.getElementById("del-modal-backdrop");
+      const delMsg = document.getElementById("del-modal-msg");
+      let deletingId = null;
+
+      function openDeleteModal(id) {
+        const collab = collaborators.find(c => c.id === id);
+        if (!collab) return;
+        deletingId = id;
+        delMsg.textContent = `Are you sure you want to remove ${collab.name} as a collaborator? They will lose access to this app.`;
+        delBackdrop.classList.remove("hidden");
+      }
+
+      function closeDeleteModal() {
+        delBackdrop.classList.add("hidden");
+        deletingId = null;
+      }
+
+      document.getElementById("del-modal-close").addEventListener("click", closeDeleteModal);
+      document.getElementById("del-btn-cancel").addEventListener("click", closeDeleteModal);
+      delBackdrop.addEventListener("click", (e) => { if (e.target === delBackdrop) closeDeleteModal(); });
+
+      document.getElementById("del-btn-confirm").addEventListener("click", () => {
+        if (deletingId === null) return;
+        const idx = collaborators.findIndex(c => c.id === deletingId);
+        if (idx !== -1) collaborators.splice(idx, 1);
+        renderCollaborators();
+        renderCollaboratorsPage();
+        closeDeleteModal();
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

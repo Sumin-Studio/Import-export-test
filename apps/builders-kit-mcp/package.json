@@ -1,0 +1,17 @@
+{
+  "name": "builders-kit-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "An HTTP MCP server for the Builders Kit. Deploys as Vercel serverless functions.",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.2.0",
+    "typescript": "^5.5.0"
+  }
+}

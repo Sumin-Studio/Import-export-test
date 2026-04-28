@@ -1,0 +1,11 @@
+{
+  "name": "xdl-web",
+  "version": "1.0.0",
+  "displayName": "XDL (Xero Design Language)",
+  "description": "Xero's product design system. Light theme, trust-focused accounting software UI.",
+  "source": "figma:4YLjes8hJHKjWhHuwxYwG8",
+  "tier": "custom",
+  "tokenCount": 65,
+  "componentCount": 12,
+  "aesthetic": "Light, professional, data-dense accounting UI"
+}

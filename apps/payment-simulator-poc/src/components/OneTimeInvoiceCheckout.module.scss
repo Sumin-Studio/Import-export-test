@@ -1,0 +1,610 @@
+// POC layout — global XUI styles come from CDN; invoice details use @xero/xui Sass tokens (mybills LineItems / SubTotal)
+@import "@xero/xui/sass/vars";
+@import "@xero/xui/sass/mixins";
+
+/* Inline-size container for nav visibility — matches when .columns can show two flex rows */
+.preview {
+  --poc-preview-browser-bar-height: 40px;
+
+  container-name: invoice-preview;
+  container-type: inline-size;
+  background: #f2f3f4;
+  border-radius: 8px;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 0 0 0 rgba(0, 0, 0, 0.05);
+  max-width: 956px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+/*
+ * Contact merchant: XUIModal defaults to viewport-fixed mask + portal; we render inline under
+ * `.preview` and clip the mask below the fake browser bar so it stays inside the preview frame.
+ * Reset inline `top` from XUI’s viewport centering so the dialog centers in this region only.
+ */
+.previewContactModalMask {
+  position: absolute !important;
+  top: var(--poc-preview-browser-bar-height) !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+
+  :global(.xui-modal) {
+    align-self: center !important;
+    top: 0 !important;
+  }
+}
+
+.browserBar {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--poc-preview-browser-bar-height);
+  padding: 0 16px;
+  gap: 12px;
+  background: #424f60;
+  border-radius: 3px 3px 0 0;
+}
+
+.browserBarTrafficLights {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* macOS-style window controls (close / minimize / zoom) */
+.browserBarDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+
+  &:nth-child(1) {
+    background: #ff5f57;
+  }
+
+  &:nth-child(2) {
+    background: #ffbd2e;
+  }
+
+  &:nth-child(3) {
+    background: #28c840;
+  }
+}
+
+.browserBarCenter {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+}
+
+/* Matches traffic-lights width (3×12px + 2×8px) so the URL pill stays centred */
+.browserBarEndSpacer {
+  width: 52px;
+  flex-shrink: 0;
+}
+
+.secureBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+  background: #1e3145;
+  color: #e1e2e5;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 16px;
+  border-radius: 20px;
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.topNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 16px 0;
+
+  :global(.xui-button) {
+    display: flex;
+    gap: 12px;
+  }
+}
+
+/*
+ * Hide top nav when the preview is too narrow for two columns (flex 320px + gap + 320px),
+ * accounting for .columns horizontal padding (16px × 2). Browsers without @container
+ * keep the nav visible.
+ */
+@container invoice-preview (max-width: 695px) {
+  .topNav {
+    display: none;
+  }
+}
+
+/* Outstanding bills caret: permanently rotated 90° clockwise (point right) */
+.outstandingBillsCaret {
+  display: inline-flex;
+  transform: rotate(90deg);
+  margin-right: 6px;
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  padding: 20px 16px 20px;
+}
+
+.column {
+  flex: 1 1 320px;
+  max-width: 390px;
+}
+
+.invoicePanel,
+.paymentPanel {
+  background: #fff;
+  border: 1px solid rgba(0, 10, 30, 0.2);
+  border-radius: 3px;
+}
+
+.invoicePanel {
+  overflow: hidden;
+}
+
+/* Full-width strip at top of invoice card when document type is repeating (matches product preview). */
+.invoiceRecurringBanner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 10px 16px;
+  background: #eef5fb;
+  border-bottom: 1px solid rgba(0, 10, 30, 0.08);
+}
+
+.invoiceRecurringBannerText {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e3145;
+}
+
+.invoiceHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px 16px;
+  text-align: center;
+
+  :global(p.xui-heading-small) {
+    font-size: 15px;
+  }
+
+  :global(span.xui-heading-xlarge) {
+    font-size: 30px;
+  }
+
+  :global(span.xui-heading-small) {
+    font-size: 15px;
+  }
+
+  :global(p.xui-text-minor) {
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .dueLabel {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .merchantInfo {
+    height: fit-content;
+  }
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 200px;
+  height: 60px;
+  margin: 0 auto;
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.logoPillGreen {
+  width: 15px;
+  height: 40px;
+  background: #13b5ea;
+  border-radius: 7px;
+}
+
+.logoPillBlue {
+  width: 18px;
+  height: 60px;
+  background: #1a3b5c;
+  border-radius: 9px;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #ccced2;
+  margin: 0;
+  width: 100%;
+}
+
+.detailsGrid {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 40px;
+  width: 100%;
+
+  :global(span.xui-text-minor),
+  :global(span.xui-text-emphasis) {
+    font-size: 13px;
+  }
+}
+
+.detailsLabels,
+.detailsValues {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detailsLabels {
+  color: rgba(0, 10, 30, 1);
+}
+
+.detailsValues {
+  text-align: right;
+
+  :global(span.xui-text-minor) {
+    color: rgba(0, 10, 30, 1);
+  }
+}
+
+.viewDetailsRow {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 8px;
+}
+
+.orDivider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 4px 0;
+}
+
+.orLine {
+  flex: 1;
+  border: 0;
+  border-top: 1px solid #e6e7e9;
+  margin: 0;
+}
+
+.orText {
+  font-size: 13px;
+  color: #000a1e;
+  padding: 0 10px;
+  background: #fff;
+}
+
+.gpayButton {
+  width: 100%;
+  background: #000 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.paymentBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 16px 16px;
+}
+
+.paymentTileEmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-sizing: border-box;
+  min-height: 220px;
+  padding: 20px 12px 24px;
+  text-align: center;
+}
+
+.paymentTileEmptyStateImageWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 280px;
+  background: transparent;
+}
+
+.paymentTileEmptyStateText {
+  margin: 0;
+  max-width: 280px;
+  line-height: 1.4;
+}
+
+.paymentTileEmptyStateImage {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  margin: 0;
+  object-fit: contain;
+  object-position: center;
+  background-color: transparent;
+}
+
+.cardRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cardRow > * {
+  flex: 1 1 140px;
+}
+
+.stripeTrust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #59606d;
+  font-weight: 700;
+  padding-top: 4px;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px 20px;
+  color: #424f60;
+  font-size: 13px;
+
+  .footerLogo {
+    width: 50px;
+    height: 14px;
+    display: block;
+  }
+}
+
+/* Screen-reader-only table caption (same as mybills / XUI `xui-u-hidden-visually`) */
+.visuallyHiddenCaption {
+  @include xui-utility-hidden-visually;
+}
+
+/* Invoice line items + totals — aligned with mybills LineItems + SubTotal */
+.invoiceDetails {
+  border-top: 1px solid $xui-color-grey-6;
+  margin-top: -$xui-s-2xsmall;
+  padding: 20px 40px;
+}
+
+.lineItemsBlock {
+  box-shadow: $xui-shadow-border-bottom;
+  margin-bottom: $xui-s-small;
+}
+
+.lineItemsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $xui-font-size-small;
+  color: $xui-color-grey-2;
+  line-height: $xui-line-height-standard;
+
+  thead {
+    border-bottom: 1px solid $xui-color-grey-6;
+  }
+
+  tbody tr + tr {
+    border-top: 1px solid $xui-color-grey-6;
+  }
+}
+
+.tableHead {
+  @include xui-padding-bottom($xui-s-xsmall);
+  vertical-align: bottom;
+}
+
+.tableHeadDesc {
+  padding-left: $xui-s-2xsmall;
+  text-align: left;
+}
+
+.tableHeadQty {
+  text-align: right;
+  width: 3rem;
+}
+
+.tableHeadAmount {
+  text-align: right;
+  width: 5.5rem;
+}
+
+.tableHeadLabel {
+  color: $xui-color-grey-1;
+  font-size: $xui-font-size-small;
+  font-weight: $xui-font-weight-emphasis;
+}
+
+.lineDescCell {
+  @include xui-padding-vertical($xui-s-xsmall);
+  padding-left: $xui-s-2xsmall;
+  vertical-align: top;
+  display: flex;
+  flex-direction: column;
+  gap: $xui-s-2xsmall;
+}
+
+.lineItemCode {
+  color: $xui-color-grey-3;
+}
+
+.qtyCell {
+  @include xui-padding-vertical($xui-s-xsmall);
+  padding-right: $xui-s-2xsmall;
+  text-align: right;
+  white-space: nowrap;
+  font-size: $xui-font-size-small;
+  color: $xui-color-grey-2;
+  vertical-align: top;
+}
+
+.amountCell {
+  @include xui-padding-vertical($xui-s-xsmall);
+  padding-right: $xui-s-2xsmall;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-size: $xui-font-size-small;
+  color: $xui-color-grey-2;
+  vertical-align: top;
+}
+
+.summaryTotals {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $xui-font-size-small;
+  color: $xui-color-grey-2;
+}
+
+.summaryRow {
+  border-bottom: 1px solid $xui-color-grey-6;
+
+  td {
+    @include xui-padding-vertical($xui-s-xsmall);
+  }
+}
+
+.summaryLabel {
+  padding-left: $xui-s-2xsmall;
+  text-align: left;
+  padding-right: $xui-s-small;
+}
+
+.summaryTotalRow {
+  border-bottom: none;
+
+  td {
+    @include xui-padding-top($xui-s-small);
+    border-top: 1px solid $xui-color-grey-6;
+    vertical-align: bottom;
+  }
+}
+
+.summaryTotalAmount {
+  padding-right: $xui-s-2xsmall;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.checkoutWrapper {
+  width: 100%;
+  max-width: 100%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  /*
+   * Space below content for the fixed promo when scrolling.
+   * PreviewWithSidePanel sets --poc-checkout-scroll-gutter: 0 and uses .previewArea padding-bottom instead
+   * so vertical centring lines up with the visible band above the banner.
+   */
+  padding-bottom: var(
+    --poc-checkout-scroll-gutter,
+    var(--poc-promo-banner-offset, calc(72px + env(safe-area-inset-bottom, 0px)))
+  );
+}
+
+.disclaimer {
+  margin: 16px auto 0;
+  text-align: center;
+  font-size: 13px;
+  color: #424f60;
+  max-width: 956px;
+}
+
+.promoBanner {
+  position: fixed;
+  bottom: 0;
+  /* Full width when alone; beside side panel, starts at panel’s right edge (PreviewWithSidePanel --poc-side-panel-width) */
+  left: var(--poc-side-panel-width, 0);
+  right: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 12px 20px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  background: #1e3145;
+  border-radius: 0;
+  width: auto;
+  max-width: none;
+  /* Below XUI dropdowns (z-index ~750); above page content */
+  z-index: 100;
+}
+
+.promoBannerInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 956px;
+  margin: 0 auto;
+
+  .promoBannerText {
+    flex: 0 1 auto;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+  }
+
+  :global(.xui-button) {
+    background: #fff;
+    color: #1e3145;
+    border: none;
+  }
+}
+

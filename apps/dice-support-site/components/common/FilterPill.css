@@ -1,0 +1,214 @@
+/**
+ * Filter Pill Component
+ *
+ * Pills indicate a filter selection has been made.
+ * Can include: avatar, label, value, and close button.
+ *
+ * Sizes:
+ * - Default (40px height, 8px radius)
+ * - Small (32px height, 4px radius)
+ */
+
+/* ===== Filter Pill Container ===== */
+.filter-pill {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 var(--s-2xsmall);
+  height: 40px;
+  background: var(--color-neutral-grey-7);
+  border-radius: var(--radius-md);
+  gap: 0;
+}
+
+/* Small variant */
+.filter-pill--sm {
+  height: 32px;
+  padding: var(--s-2xsmall);
+  border-radius: var(--radius-sm);
+}
+
+/* ===== Avatar ===== */
+.filter-pill__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-right: var(--s-2xsmall);
+  background: #F29095;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-pill--sm .filter-pill__avatar {
+  width: 24px;
+  height: 24px;
+}
+
+/* Round avatar variant */
+.filter-pill__avatar--round {
+  border-radius: var(--radius-max);
+}
+
+/* Avatar initials */
+.filter-pill__avatar-initials {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-semibold);
+  font-size: 13px;
+  line-height: 145%;
+  color: #650715;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.filter-pill--sm .filter-pill__avatar-initials {
+  font-size: 11px;
+  line-height: 100%;
+}
+
+/* Avatar image */
+.filter-pill__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===== Content Area ===== */
+.filter-pill__content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 var(--s-2xsmall);
+  gap: var(--s-xsmall);
+}
+
+/* ===== Label (semibold) ===== */
+.filter-pill__label {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-semibold);
+  font-size: 15px;
+  line-height: 145%;
+  color: var(--color-text-primary);
+}
+
+.filter-pill--sm .filter-pill__label {
+  font-size: 13px;
+}
+
+/* ===== Value (regular, underlined by default) ===== */
+.filter-pill__value {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-deemphasis);
+  font-size: 15px;
+  line-height: 145%;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+}
+
+.filter-pill--sm .filter-pill__value {
+  font-size: 13px;
+}
+
+/* Non-underlined value variant */
+.filter-pill__value--plain {
+  text-decoration: none;
+}
+
+/* ===== Close/Dismiss Button ===== */
+.filter-pill__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-primary);
+  transition: background 0.15s ease;
+}
+
+.filter-pill--sm .filter-pill__close {
+  width: 24px;
+  height: 24px;
+}
+
+.filter-pill__close:hover {
+  background: var(--color-neutral-grey-6);
+}
+
+.filter-pill__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== Variants ===== */
+
+/* Avatar only (no label, just avatar + value) */
+.filter-pill--avatar-only .filter-pill__label {
+  display: none;
+}
+
+/* Text only (no avatar) */
+.filter-pill--text-only .filter-pill__avatar {
+  display: none;
+}
+
+/* No close button */
+.filter-pill--no-close .filter-pill__close {
+  display: none;
+}
+
+/* ===== Interactive States ===== */
+.filter-pill:hover {
+  background: var(--color-neutral-grey-6);
+}
+
+/* Clickable pill (whole pill is interactive) */
+.filter-pill--clickable {
+  cursor: pointer;
+}
+
+.filter-pill--clickable:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-blue-light);
+}
+
+/* ===== Color Variants for Avatar ===== */
+.filter-pill__avatar--blue {
+  background: var(--color-blue-light);
+}
+
+.filter-pill__avatar--blue .filter-pill__avatar-initials {
+  color: var(--color-blue);
+}
+
+.filter-pill__avatar--green {
+  background: #D4EDDA;
+}
+
+.filter-pill__avatar--green .filter-pill__avatar-initials {
+  color: #155724;
+}
+
+.filter-pill__avatar--orange {
+  background: #FFE5D0;
+}
+
+.filter-pill__avatar--orange .filter-pill__avatar-initials {
+  color: #8B4513;
+}
+
+.filter-pill__avatar--purple {
+  background: #E8DAEF;
+}
+
+.filter-pill__avatar--purple .filter-pill__avatar-initials {
+  color: #4A235A;
+}

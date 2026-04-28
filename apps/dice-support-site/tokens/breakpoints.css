@@ -1,0 +1,12 @@
+/* Breakpoints
+ * Converted from xui-tokens source JSON — do not edit directly.
+ * Source: xui-tokens-main/tokens
+ */
+
+:root {
+  --breakpoint-small: 600px;
+  --breakpoint-medium: 800px;
+  --breakpoint-large: 1000px;
+  --breakpoint-xlarge: 1200px;
+  --breakpoint-2xlarge: 1600px;
+}

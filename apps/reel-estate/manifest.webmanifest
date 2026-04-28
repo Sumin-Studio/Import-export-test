@@ -1,0 +1,28 @@
+{
+  "id": "/",
+  "name": "Reel estate — screen recorder",
+  "short_name": "Reel estate",
+  "description": "Browser screen recorder with optional mic, webcam, live preview, WebM or MP4. Internal design tool.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f7f7",
+  "theme_color": "#00b9e9",
+  "lang": "en",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+# Personal notes (per-person private notes, not shared)
+personal-notes/
+
+# Environment files
+.env
+.env.local
+.env*.local
+
+# Next.js build output
+.next/
+out/
+.vercel/
+
+# Python
+__pycache__/
+*.pyc
+
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/settings.json
+.vscode/launch.json
+*.sublime-project
+*.sublime-workspace
+
+# Cursor (user-specific state — rules are committed)
+.cursor/chat/
+.cursor/context/
+
+# Lockfiles (generated, not committed)
+bun.lock
+
+.vercel

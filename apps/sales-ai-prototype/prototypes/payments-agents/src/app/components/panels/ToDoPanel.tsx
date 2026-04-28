@@ -1,0 +1,49 @@
+"use client";
+
+import { Search } from "@/app/components/ui/icons";
+import { useNavigation } from "@/app/contexts/NavigationContext";
+
+export default function ToDoPanel() {
+  const { isScrolled } = useNavigation();
+
+  return (
+    <div className="p-6">
+      <div className="flex items-center space-x-3 mb-6">
+        <Search className="w-5 h-5 text-gray-600" />
+        <h2 className="text-lg font-semibold text-gray-900">To Do</h2>
+      </div>
+
+      <div className="space-y-4">
+        <input
+          type="text"
+          placeholder="Search anything..."
+          className="w-full"
+        />
+
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium text-gray-700">Recent Searches</h3>
+          <div className="space-y-1">
+            {["Project Alpha", "User Management", "Analytics Dashboard"].map(
+              (item, index) => (
+                <div
+                  key={index}
+                  className="p-2 text-sm text-gray-600 hover:bg-gray-50 rounded cursor-pointer"
+                >
+                  {item}
+                </div>
+              )
+            )}
+          </div>
+        </div>
+
+        {isScrolled && (
+          <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-700">
+              Scroll detected - showing compact view
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

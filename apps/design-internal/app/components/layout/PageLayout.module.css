@@ -1,0 +1,47 @@
+.pageLayout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.sidebar {
+  flex: 0 0 260px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow-y: auto;
+  align-self: flex-start;
+  position: sticky;
+  top: calc(48px + var(--space-lg));
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .pageLayout {
+    flex-direction: column;
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
+
+  .sidebar {
+    flex: none;
+    width: 100%;
+    position: static;
+    order: -1;
+  }
+
+  .body {
+    width: 100%;
+  }
+}

@@ -1,0 +1,11 @@
+---
+description: Off-canvas and fixed overlay panels in the payments-agents prototype shell (RobbShell, SlidingPanel).
+globs: prototypes/payments-agents/**/*.tsx,src/components/prototype-shell/**/*.tsx
+alwaysApply: false
+---
+
+# Prototype shell panels
+
+- **SlidingPanel** and similar `fixed` + high `z-index` drawers sit **above** `#content` in the stacking order. When a panel is visually moved off-screen with `translate-x-[calc(100%+20px)]`, it must still **not intercept pointer events** or every dropdown, button, and link under the shell will fail (mousedown never reaches `main`).
+- **Required pattern when closed:** add `pointer-events-none` on the panel root; when open, use `pointer-events-auto` (explicit is fine).
+- **RobbShell `main`** uses `overflow-x-hidden` to tame layout; absolutely positioned dropdowns that stay in-flow can be clipped. Prefer portaling wide menus (see comment in `NewInvoiceMount` near item column menus) or adjust overflow only when a specific screen needs it.

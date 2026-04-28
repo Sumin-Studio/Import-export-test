@@ -1,0 +1,93 @@
+@import "@xero/xui/sass/vars";
+@import "@xero/xui/sass/mixins";
+
+/* Above invoice panel on narrow mobile — matches mybills mobile contact placement */
+.mobileContactRow {
+  box-sizing: border-box;
+  margin-bottom: $xui-s-small;
+  width: 100%;
+}
+
+/* Below invoice panel — desktop split vs tablet/mobile full-width options */
+.actionHost {
+  margin-top: $xui-s-small;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* mybills ActionTile: joined buttons — contact loses right radius, options loses left */
+.desktopRow {
+  width: 100%;
+  box-sizing: border-box;
+
+  :global([class*="xui-column"]) {
+    min-width: 0;
+  }
+}
+
+.contactButtonJoined {
+  border-bottom-right-radius: 0 !important;
+  border-right-width: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.optionsButtonJoined {
+  border-bottom-left-radius: 0 !important;
+  border-top-left-radius: 0 !important;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.optionsButtonSingle {
+  width: 100%;
+
+  :global(.xui-button) {
+    border-color: #ccced2;
+    font-size: $xui-font-size-small;
+    margin: 0;
+    width: 100%;
+  }
+}
+
+.dropdownWrapper {
+  z-index: 750;
+}
+
+.modalFooter {
+  text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.modalHint {
+  color: $xui-color-grey-2;
+  font-size: $xui-font-size-small;
+  margin: 0 0 $xui-s-small;
+}
+
+.modalFieldLabel {
+  display: block;
+  font-size: $xui-font-size-small;
+  font-weight: $xui-font-weight-emphasis;
+  margin-bottom: $xui-s-2xsmall;
+}
+
+.modalTextarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 88px;
+  padding: $xui-s-xsmall $xui-s-small;
+  border: 1px solid $xui-color-grey-6;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: $xui-font-size-small;
+  resize: vertical;
+
+  &:focus {
+    outline: 2px solid $xui-color-blue;
+    outline-offset: 1px;
+  }
+}

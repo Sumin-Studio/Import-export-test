@@ -1,0 +1,181 @@
+// Adapted from mybills PaymentTile — plain CSS to avoid @xero/xui Sass deprecation warnings.
+
+// Demo-only mock Apple Pay button (NOT for public use — see MockApplePayButton.tsx)
+// Inverse style: black background, white text/icon (matches "Pay with Apple Pay" layout)
+.pspoc-MockApplePayButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 140px;
+  min-height: 40px;
+  padding: 0 4px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    opacity: 0.85;
+  }
+
+  &__prefix {
+    font-weight: 400;
+  }
+
+  &__pay {
+    font-weight: 400;
+  }
+
+  /* ExpressCheckoutCycle: open-source-style light sweep (gradient + background-position), not hover */
+  &--lightSweep {
+    background: linear-gradient(
+      135deg,
+      #000 0%,
+      #000 40%,
+      #fff 50%,
+      #000 60%,
+      #000 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 300% 100%;
+    background-position: 0 0;
+    animation: pspoc-mock-wallet-light 1s ease forwards;
+  }
+
+  &--noInteraction {
+    pointer-events: none;
+    cursor: default;
+
+    &:hover,
+    &:active {
+      opacity: 1;
+    }
+  }
+}
+
+// Demo-only mock Google Pay button (NOT for public use — see MockGooglePayButton.tsx)
+// Matches Apple Pay dimensions for smooth cycling; dark style per Google Pay guidelines
+.pspoc-MockGooglePayButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 140px;
+  min-height: 40px;
+  padding: 0 4px;
+  background: #000;
+  color: #fff;
+  border: 1px solid #3c4043;
+  border-radius: 5px;
+  font-family: "Google Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    opacity: 0.85;
+  }
+
+  &__prefix {
+    font-weight: 400;
+  }
+
+  &__pay {
+    font-weight: 400;
+  }
+
+  &--lightSweep {
+    background: linear-gradient(
+      135deg,
+      #000 0%,
+      #000 40%,
+      #fff 50%,
+      #000 60%,
+      #000 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 300% 100%;
+    background-position: 0 0;
+    animation: pspoc-mock-wallet-light 1s ease forwards;
+  }
+
+  &--noInteraction {
+    pointer-events: none;
+    cursor: default;
+
+    &:hover,
+    &:active {
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes pspoc-mock-wallet-light {
+  0% {
+    background-position: -600px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pspoc-MockApplePayButton--lightSweep,
+  .pspoc-MockGooglePayButton--lightSweep {
+    animation: none;
+  }
+}
+
+.pspoc-NewPaymentTile {
+  .express-checkout-divider-container {
+    margin-bottom: 20px;
+  }
+
+  .divider {
+    border: 0;
+    border-top: 1px solid rgba(0, 10, 30, 0.2);
+    width: 80%;
+  }
+
+  @media (min-width: 600px) {
+    .divider {
+      width: 100%;
+    }
+  }
+
+
+  .divider-text {
+    color: #30313d;
+    font-size: 13px;
+    line-height: 16px;
+
+    span {
+      margin-left: 8px;
+      margin-right: 8px;
+    }
+  }
+
+  .trust-badge-microcopy {
+    color: #6b6c7a;
+    font-size: 13px;
+    line-height: 20px;
+  }
+}

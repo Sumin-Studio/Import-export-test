@@ -1,0 +1,130 @@
+@import "tailwindcss";
+/* react-grid-layout CSS styles are defined below to avoid importing from package during SSR */
+
+@theme {
+  /* XDL web base sans (production) — Helvetica Neue in stack; matches main hub `--font-product-sans` */
+  --font-body: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+  --font-weight-semibold: 500;
+  --font-weight-bold: 500;
+  --font-weight-extrabold: 500;
+
+  --breakpoint-nav-883: 883px;
+  --breakpoint-nav-1049: 1169px;
+  --breakpoint-nav-1168: 1288px;
+  --breakpoint-nav-1100: 1220px;
+  --breakpoint-nav-1200: 1320px;
+  --breakpoint-nav-1245: 1245px;
+  --breakpoint-nav-1403: 1403px;
+  --breakpoint-nav-1440: 1440px;
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 800px;
+  --breakpoint-lg: 1000px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-2xl: 1600px;
+  --breakpoint-3xl: 1900px;
+
+  --color-brand-primary: rgb(0 120 200);
+  --color-brand-secondary: rgb(0, 60, 100);
+  --color-action-primary: rgb(0 120 200);
+  --color-action-secondary: rgb(0 73 122);
+  --color-action-tertiary: rgb(231 246 254);
+  --color-action-quaternary: rgb(142 211 249);
+  --color-positive: rgb(0 138 62);
+  --color-negative: rgb(220 50 70);
+  --color-content-primary: rgb(0 10 30);
+  --color-content-secondary: rgb(89 96 109);
+  --color-content-tertiary: rgb(0 42 70);
+  --color-background-primary: rgb(242 243 244);
+  --color-background-secondary: rgb(252 252 252);
+  --color-background-tertiary: rgb(230 231 233);
+  --color-border-primary: rgb(204 206 210);
+  --color-border-secondary: rgb(230 231 233);
+  --color-xui-blue: rgb(0 120 200);
+}
+
+@utility container {
+  max-width: 440px;
+  @media (min-width: 1000px) {
+    max-width: 900px;
+  }
+  @media (min-width: 1440px) {
+    max-width: 1360px;
+  }
+  @media (min-width: 1900px) {
+    max-width: 1820px;
+  }
+}
+button {
+  @apply cursor-pointer;
+}
+
+select {
+  @apply cursor-pointer appearance-none bg-no-repeat outline-none;
+  background-position: right 10px center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' fill='none'%3E%3Cpath fill='%23000A1E' fill-rule='evenodd' d='M0 0L5 5L10 0H0Z' clip-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+.jax-input {
+  border-radius: 20px;
+  opacity: 0.6;
+  background: linear-gradient(112deg, #1759ff 14.43%, #2babf8 85.57%);
+  filter: blur(8px);
+}
+
+.tooltip {
+  @apply !bg-content-primary/100 !rounded-[3px] !px-2 !py-1 !text-[13px] !leading-[20px] !text-white shadow-[0px_0px_0px_0px_rgba(255,255,255,0.34),0px_3px_6px_0px_rgba(0,10,30,0.20)] group-data-[active]:!opacity-0;
+}
+
+.react-tooltip__show {
+  @apply !opacity-100;
+}
+
+@layer utilities {
+  @keyframes border-pulse {
+    0% {
+      border-color: #ccced2;
+    }
+    100% {
+      border-color: #e6e7e9;
+    }
+  }
+
+  .border-pulse {
+    animation: border-pulse 0.7s ease-in alternate infinite;
+  }
+
+  @keyframes cursor-blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .cursor-blink {
+    animation: cursor-blink 0.55s step-end infinite;
+  }
+
+  @keyframes jax-chart-enter {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .jax-chart-enter {
+    animation: jax-chart-enter 0.35s ease-out forwards;
+  }
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: #e7e6e8 !important;
+  opacity: 1 !important;
+  @apply rounded-xl;
+}

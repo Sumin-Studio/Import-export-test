@@ -1,0 +1,27 @@
+import type { ReactElement } from "react";
+
+interface IconProps {
+  className?: string;
+}
+
+/** Invoice / bill document (source: invoice.svg). */
+export default function Invoice({ className }: IconProps): ReactElement {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      height="32"
+      role="presentation"
+      viewBox="0 0 32 32"
+      width="32"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        clipRule="evenodd"
+        d="M11 8H18L22 12V21.9091C22 22.4545 21.5 23 21 23H11C10.5 23 10 22.4545 10 21.9091L10.01 9.09091C10 8.54545 10.5 8 11 8ZM11 22H21V13L17 9H11V22ZM16 19H19V20H16V19ZM17 9L21 13H17V9ZM13 15H19V16H13V15ZM13 17H19V18H13V17Z"
+        fill="currentColor"
+        fillRule="evenodd"
+      />
+    </svg>
+  );
+}

@@ -1,0 +1,86 @@
+{
+  "lookupTables": [
+    {
+      "id": "lookup1",
+      "name": "Design gap",
+      "csvFile": "lookup-table-1.csv",
+      "rowInput": "automation_level",
+      "columnInput": "current_ai_maturity"
+    },
+    {
+      "id": "lookup2",
+      "name": "AI Maturity Gap",
+      "csvFile": "lookup-table-2.csv",
+      "rowInput": "desired_ai_maturity",
+      "columnInput": "current_ai_maturity"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "primary_jtbd",
+      "name": "Primary JTBD",
+      "type": "text",
+      "placeholder": "Enter the primary Job To Be Done...",
+      "info": {
+        "title": "Primary JTBD",
+        "content": "Information about Primary JTBD will go here. This is placeholder content that you can replace with your detailed explanation."
+      }
+    },
+    {
+      "id": "automation_type",
+      "name": "Desired automation type",
+      "type": "dropdown",
+      "options": [
+        "Acquisition automation",
+        "Analysis automation",
+        "Decision automation",
+        "Action automation"
+      ],
+      "info": {
+        "title": "Desired Automation Type",
+        "content": "<p>There are four types of automation that systems can provide:</p><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Acquisition automation</h4><p style='margin-bottom: 8px;'><strong>Description:</strong> Acquisition automation means the system gathers data by itself, like human sensing.</p><p style='margin-bottom: 16px; padding-left: 16px; border-left: 3px solid #e5e7eb;'><strong>Example:</strong><br>Humans: we notice things through our senses (vision, hearing, touch, etc)<br>Systems: they can sense automatically.<br>e.g Sensors automatically collect temperature, pressure or movement data.</p></div><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Analysis automation</h4><p style='margin-bottom: 8px;'><strong>Description:</strong> Analysis automation means the system analyses data automatically, like human thinking and interpreting.</p><p style='margin-bottom: 16px; padding-left: 16px; border-left: 3px solid #e5e7eb;'><strong>Example:</strong><br>Humans: we process what we've sensed, spotting patterns, remembering similar situations, and making sense of information.<br>Systems: they can also interpret what they collect.<br>e.g Calculating averages, detecting a spike, spotting trends.</p></div><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Decision automation</h4><p style='margin-bottom: 8px;'><strong>Description:</strong> Decision automation means the system makes the decision, like human choice-making.</p><p style='margin-bottom: 16px; padding-left: 16px; border-left: 3px solid #e5e7eb;'><strong>Example:</strong><br>Humans: we decide what should happen next after interpreting information.<br>Systems: they can also choose an action based on what the data suggests.<br>e.g Deciding that a machine needs cooling because the temperature is too high.</p></div><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Action automation</h4><p style='margin-bottom: 8px;'><strong>Description:</strong> Action automation means the system executes the chosen action, like human physical response.</p><p style='margin-bottom: 16px; padding-left: 16px; border-left: 3px solid #e5e7eb;'><strong>Example:</strong><br>Humans: once we decide, we act (move, press a button, switch something off, etc)<br>Systems: they can also carry out the action themselves.</p></div>"
+      }
+    },
+    {
+      "id": "automation_level",
+      "name": "Desired automation level",
+      "type": "dropdown",
+      "options": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      "info": {
+        "title": "Desired Automation Level",
+        "content": "<p>The automation level describes the degree of autonomy the system has in decision-making and action-taking:</p><ol style='margin-top: 20px; padding-left: 24px; line-height: 1.8;'><li>The system offers no assistance: the human must take all decisions and actions</li><li>The system offers a complete set of decisions or action alternatives.</li><li>The system narrows the selection of alternative actions down to a few.</li><li>The system suggests one alternative action</li><li>The system makes a decision to perform automatic execution if the human approves</li><li>The system allows the human a restricted time to veto before automatic execution</li><li>The system executes automatically then necessarily informs the human.</li><li>The system informs the human only if asked.</li><li>The system informs the human only if it, the computer, decides to.</li><li>The system decides everything, acts autonomously, ignoring the human.</li></ol>"
+      }
+    },
+    {
+      "id": "current_ai_maturity",
+      "name": "Current user AI maturity",
+      "type": "dropdown",
+      "options": [
+        "Learning to drive",
+        "Supervised driving",
+        "Co-pilot",
+        "Autonomous driving"
+      ],
+      "info": {
+        "title": "Current User AI Maturity",
+        "content": "<p>AI maturity represents the level of sophistication in how users interact with AI systems:</p><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Learning to drive</h4><p style='margin-bottom: 4px;'><strong>AI control:</strong> Low</p><p style='margin-bottom: 4px;'><strong>Customer experience:</strong> Orientating & appreciation<br>User understands basic capabilities and boundaries. Focus on simple, accurate tasks where danger/risk is minimal.</p><p style='margin-bottom: 16px;'><strong>Example feature type:</strong> e.g Simple summarisation, basic data clean up.</p></div><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Supervised driving</h4><p style='margin-bottom: 4px;'><strong>AI control:</strong> Moderate</p><p style='margin-bottom: 4px;'><strong>Customer experience:</strong> Human in the loop<br>AI proposes a starting point; the user corrects, refines, or approves it. This is a critical stage for personalisation and building calibrated trust.</p><p style='margin-bottom: 16px;'><strong>Example feature type:</strong> e.g Draft generation (w/ user edits), complex sorting (user reviews before next action).</p></div><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Co-pilot</h4><p style='margin-bottom: 4px;'><strong>AI control:</strong> High</p><p style='margin-bottom: 4px;'><strong>Customer experience:</strong> AI suggests, human decides<br>AI operates proactively, suggesting complex actions or insights. The user's role is to accept or reject the high quality suggestion.</p><p style='margin-bottom: 16px;'><strong>Example feature type:</strong> e.g Advanced workflow automation suggestions, predictive data insights.</p></div><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Autonomous driving</h4><p style='margin-bottom: 4px;'><strong>AI control:</strong> Full</p><p style='margin-bottom: 4px;'><strong>Customer experience:</strong> Unsupervised mode<br>AI makes suggestions and executes decisions or performs complex, multi-step actions on the user's behalf. Requires near-perfect trust from the user.</p><p style='margin-bottom: 16px;'><strong>Example feature type:</strong> e.g Fully automated report generation, tax obligation population and submission.</p></div>"
+      }
+    },
+    {
+      "id": "desired_ai_maturity",
+      "name": "Desired AI maturity (business)",
+      "type": "dropdown",
+      "options": [
+        "Learning to drive",
+        "Supervised driving",
+        "Co-pilot",
+        "Autonomous driving"
+      ],
+      "info": {
+        "title": "Desired AI Maturity (Business)",
+        "content": "<p>AI maturity represents the level of sophistication in how users interact with AI systems:</p><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Learning to drive</h4><p style='margin-bottom: 4px;'><strong>AI control:</strong> Low</p><p style='margin-bottom: 4px;'><strong>Customer experience:</strong> Orientating & appreciation<br>User understands basic capabilities and boundaries. Focus on simple, accurate tasks where danger/risk is minimal.</p><p style='margin-bottom: 16px;'><strong>Example feature type:</strong> e.g Simple summarisation, basic data clean up.</p></div><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Supervised driving</h4><p style='margin-bottom: 4px;'><strong>AI control:</strong> Moderate</p><p style='margin-bottom: 4px;'><strong>Customer experience:</strong> Human in the loop<br>AI proposes a starting point; the user corrects, refines, or approves it. This is a critical stage for personalisation and building calibrated trust.</p><p style='margin-bottom: 16px;'><strong>Example feature type:</strong> e.g Draft generation (w/ user edits), complex sorting (user reviews before next action).</p></div><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Co-pilot</h4><p style='margin-bottom: 4px;'><strong>AI control:</strong> High</p><p style='margin-bottom: 4px;'><strong>Customer experience:</strong> AI suggests, human decides<br>AI operates proactively, suggesting complex actions or insights. The user's role is to accept or reject the high quality suggestion.</p><p style='margin-bottom: 16px;'><strong>Example feature type:</strong> e.g Advanced workflow automation suggestions, predictive data insights.</p></div><div style='margin-top: 20px;'><h4 style='margin-bottom: 8px; color: #2563eb;'>Autonomous driving</h4><p style='margin-bottom: 4px;'><strong>AI control:</strong> Full</p><p style='margin-bottom: 4px;'><strong>Customer experience:</strong> Unsupervised mode<br>AI makes suggestions and executes decisions or performs complex, multi-step actions on the user's behalf. Requires near-perfect trust from the user.</p><p style='margin-bottom: 16px;'><strong>Example feature type:</strong> e.g Fully automated report generation, tax obligation population and submission.</p></div>"
+      }
+    }
+  ]
+}
+

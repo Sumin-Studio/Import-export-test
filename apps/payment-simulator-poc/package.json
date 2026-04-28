@@ -1,0 +1,40 @@
+{
+  "name": "payment-simulator-poc",
+  "version": "0.1.0",
+  "private": true,
+  "description": "POC: small business payment / checkout simulator (XUI + Next.js, aligned with mybills)",
+  "scripts": {
+    "postinstall": "patch-package",
+    "dev": "next dev",
+    "dev:clean": "rm -rf .next && next dev -p 3000",
+    "dev:3002": "next dev -p 3002",
+    "dev:pick-port": "node scripts/next-dev.mjs",
+    "dev:turbopack": "next dev --turbopack",
+    "dev:webpack": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "verify": "npm run lint && npm run build"
+  },
+  "dependencies": {
+    "@stripe/react-stripe-js": "3.7.0",
+    "@stripe/stripe-js": "7.3.0",
+    "@xero/xui": "23.1.0",
+    "@xero/xui-icon": "6.9.0",
+    "next": "15.5.14",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "stripe": "17.7.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.3",
+    "@types/node": "^22.15.29",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "eslint": "^9.30.1",
+    "eslint-config-next": "15.5.9",
+    "patch-package": "8.0.1",
+    "sass": "^1.89.2",
+    "typescript": "^5.8.3"
+  }
+}

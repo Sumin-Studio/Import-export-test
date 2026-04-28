@@ -1,0 +1,88 @@
+/* Color Primitives
+ * Converted from xui-tokens source JSON — do not edit directly.
+ * Source: xui-tokens-main/tokens
+ */
+
+:root {
+  --color-black: #000a1e;
+  --color-black-muted: rgba(0, 10, 30, 0.75);
+  --color-black-faint: rgba(0, 10, 30, 0.65);
+  --color-white: #fff;
+  --color-white-alpha-2: rgba(255, 255, 255, 0.75);
+  --color-white-alpha-3: rgba(255, 255, 255, 0.65);
+  --color-white-alpha-4: rgba(255, 255, 255, 0.5);
+  --color-white-alpha-5: rgba(255, 255, 255, 0.35);
+  --color-white-alpha-6: rgba(255, 255, 255, 0.2);
+  --color-white-alpha-7: rgba(255, 255, 255, 0.1);
+  --color-white-alpha-8: rgba(255, 255, 255, 0.05);
+  --color-white-muted: rgba(255, 255, 255, 0.75);
+  --color-white-faint: rgba(255, 255, 255, 0.65);
+  --color-grey-1: #000a1e;
+  --color-grey-2: #bfc2c7;
+  --color-grey-3: #a6a9b0;
+  --color-grey-4: #80848e;
+  --color-grey-5: #59606d;
+  --color-grey-6: #333b4b;
+  --color-grey-7: #1a2234;
+  --color-grey-8: #0d1629;
+  --color-grey-alpha-1: rgba(0, 10, 30, 1);
+  --color-grey-alpha-2: rgba(0, 10, 30, 0.75);
+  --color-grey-alpha-3: rgba(0, 10, 30, 0.65);
+  --color-grey-alpha-4: rgba(0, 10, 30, 0.5);
+  --color-grey-alpha-5: rgba(0, 10, 30, 0.35);
+  --color-grey-alpha-6: rgba(0, 10, 30, 0.2);
+  --color-grey-alpha-7: rgba(0, 10, 30, 0.1);
+  --color-grey-alpha-8: rgba(0, 10, 30, 0.05);
+  --color-red: #dc3246;
+  --color-red-xlight: #e87a87;
+  --color-red-light: #ee98a2;
+  --color-red-dark: #6e1923;
+  --color-red-xdark: #8f202e;
+  --color-orange: #fa8200;
+  --color-orange-xlight: #fcae59;
+  --color-orange-light: #fcc080;
+  --color-orange-dark: #7d4100;
+  --color-orange-xdark: #a25400;
+  --color-yellow: #faaa00;
+  --color-yellow-xlight: #fcc859;
+  --color-yellow-light: #fcd480;
+  --color-yellow-dark: #7d5500;
+  --color-yellow-xdark: #a26e00;
+  --color-green: #00823c;
+  --color-green-xlight: #59ae80;
+  --color-green-light: #80c09e;
+  --color-green-dark: #00411e;
+  --color-green-xdark: #005427;
+  --color-mint: #50dcaa;
+  --color-mint-xlight: #8de8c8;
+  --color-mint-light: #a8eed4;
+  --color-mint-dark: #286e55;
+  --color-mint-xdark: #348f6e;
+  --color-turquoise: #3cdcfa;
+  --color-turquoise-xlight: #80e8fc;
+  --color-turquoise-light: #9eeefc;
+  --color-turquoise-dark: #1e6e7d;
+  --color-turquoise-xdark: #278fa2;
+  --color-blue: #0078c8;
+  --color-blue-3xlight: #0d7fcb;
+  --color-blue-2xlight: #268cd0;
+  --color-blue-xlight: #59a7db;
+  --color-blue-light: #80bce4;
+  --color-blue-dark: #003c64;
+  --color-blue-xdark: #004e82;
+  --color-violet: #5a5ae6;
+  --color-violet-xlight: #9494ef;
+  --color-violet-light: #acacf2;
+  --color-violet-dark: #2d2d73;
+  --color-violet-xdark: #3a3a96;
+  --color-grape: #b446c8;
+  --color-grape-xlight: #ce87db;
+  --color-grape-light: #daa2e4;
+  --color-grape-dark: #5a2364;
+  --color-grape-xdark: #752e82;
+  --color-pink: #ff6496;
+  --color-pink-xlight: #ff9abb;
+  --color-pink-light: #ffb2ca;
+  --color-pink-dark: #80324b;
+  --color-pink-xdark: #a64162;
+}

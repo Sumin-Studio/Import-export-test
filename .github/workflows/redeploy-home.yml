@@ -1,0 +1,171 @@
+# =============================================================================
+# Redeploy Home (design-internal)
+# =============================================================================
+# This workflow redeploys the home app (design-internal).
+#
+# Triggers:
+# - workflow_call: Called automatically by deploy.yml after new apps are
+#   deployed, so design-internal picks up the updated apps.json metadata.
+# - workflow_dispatch: Manual fallback if the automated deploy has failed.
+#   Please open an issue to document what went wrong.
+#
+# HOW IT WORKS:
+# 1. Reads the design-internal app from apps.json to get its vercelProjectId
+# 2. Links the Vercel project using the retrieved project ID
+# 3. Clears the Root Directory setting for the project
+# 4. Copies apps.json into the design-internal app directory for the build
+# 5. Deploys the design-internal app to Vercel (production)
+# =============================================================================
+
+name: Redeploy Home 🕹
+
+on:
+  workflow_call: # Called by deploy.yml after new-app deploys finish
+  workflow_dispatch: # Manual trigger — go to Actions tab and click "Run workflow"
+
+concurrency:
+  group: redeploy-home
+  cancel-in-progress: false
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Read project ID
+        id: project
+        run: |
+          PROJECT_ID=$(jq -r '."design-internal".vercelProjectId' apps.json)
+          if [ "$PROJECT_ID" = "null" ] || [ -z "$PROJECT_ID" ]; then
+            echo "::error::design-internal has no vercelProjectId in apps.json"
+            exit 1
+          fi
+          echo "id=$PROJECT_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Link Vercel project
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_PROJECT_ID: ${{ steps.project.outputs.id }}
+        run: |
+          cd apps/design-internal
+          vercel link --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
+
+      - name: Clear Root Directory setting
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_PROJECT_ID: ${{ steps.project.outputs.id }}
+        run: |
+          curl -s -X PATCH \
+            "https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID?teamId=$VERCEL_TEAM_ID" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"rootDirectory": null}'
+
+      - name: Copy apps.json into build
+        run: |
+          cp apps.json apps/design-internal/apps.json
+          echo "Copied apps.json into design-internal for build"
+
+      - name: Create GitHub Deployment
+        id: deployment
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            const { data: deployment } = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: 'production – design-internal',
+              auto_merge: false,
+              required_contexts: [],
+              transient_environment: false,
+              production_environment: true,
+              description: 'Production deploy for design-internal',
+            });
+            core.setOutput('id', deployment.id);
+
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.id,
+              state: 'in_progress',
+              description: 'Deploying to Vercel...',
+            });
+
+      - name: Deploy to Vercel (production)
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_PROJECT_ID: ${{ steps.project.outputs.id }}
+        run: |
+          set -euo pipefail
+          cd apps/design-internal
+
+          OUTPUT=$(vercel deploy \
+            --token "$VERCEL_TOKEN" \
+            --yes \
+            --prod 2>&1) || {
+            echo "::error::Vercel deploy failed with output:"
+            echo "$OUTPUT"
+            exit 1
+          }
+
+          echo "Full output:"
+          echo "$OUTPUT"
+
+          DEPLOYMENT_URL=$(echo "$OUTPUT" | grep -oE 'https://[^ ]+\.vercel\.app[^ ]*' | head -1)
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "::error::Could not extract deployment URL from output"
+            exit 1
+          fi
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+          echo "Deployed to: $DEPLOYMENT_URL"
+
+      - name: Update GitHub Deployment — success
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: ${{ steps.deployment.outputs.id }},
+              state: 'success',
+              environment_url: '${{ steps.deploy.outputs.url }}',
+              description: 'Deployed to Vercel',
+            });
+
+      - name: Update GitHub Deployment — failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: ${{ steps.deployment.outputs.id }},
+              state: 'failure',
+              description: 'Vercel deployment failed',
+            });
+

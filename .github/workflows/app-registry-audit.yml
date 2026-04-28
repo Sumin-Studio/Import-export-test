@@ -1,0 +1,263 @@
+# =============================================================================
+# MANUAL WORKFLOW — DO NOT RUN AUTOMATICALLY
+# =============================================================================
+# This workflow audits the app registry (apps.json) against the filesystem and
+# Vercel, categorizing every app into a clear status.
+#
+# HOW IT WORKS:
+# Step 1 — Folder Check:
+#   Reads all apps from apps.json that are NOT already tagged "deleted".
+#   If an app has no corresponding folder in /apps/, it is auto-tagged as
+#   "deleted" in apps.json and the change is committed.
+#
+# Step 2 — Vercel Comparison:
+#   Compares every app in apps.json against live Vercel projects and produces
+#   four lists:
+#     • Ready, not deployed       — in apps.json, NOT deleted, no Vercel project
+#     • Ready, has project        — in apps.json, NOT deleted, has Vercel project
+#     • Deleted, review and remove — tagged "deleted", but Vercel project exists
+#     • Deleted                   — tagged "deleted", no Vercel project
+#
+# Run this periodically to keep the registry clean and spot orphaned Vercel
+# projects that should be manually removed.
+# =============================================================================
+
+name: 🕹 Manual - Audit App Registry
+
+on:
+  workflow_dispatch: # Manual trigger only — go to Actions tab and click "Run workflow"
+
+jobs:
+  audit-registry:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ================================================================
+      # STEP 1 — Folder Check
+      # Detect apps in apps.json whose folder no longer exists and
+      # auto-tag them as "deleted".
+      # ================================================================
+      - name: "Step 1: Check folders and mark missing apps as deleted"
+        id: folder-check
+        run: |
+          set -euo pipefail
+
+          echo "=========================================="
+          echo "Step 1 — Folder Check"
+          echo "=========================================="
+          echo ""
+          echo "Checking that every non-deleted app in apps.json has a folder..."
+          echo ""
+
+          CHANGED="false"
+          declare -a NEWLY_DELETED=()
+
+          APPS=$(jq -r 'keys[]' apps.json)
+
+          for app in $APPS; do
+            # Skip already-deleted apps
+            if jq -e --arg a "$app" '.[$a].tags // [] | index("deleted")' apps.json > /dev/null 2>&1; then
+              continue
+            fi
+
+            # Skip external entries (no folder in this repo)
+            if jq -e --arg a "$app" '.[$a].tags // [] | index("external")' apps.json > /dev/null 2>&1; then
+              echo "⏭️  $app: External (no folder check)"
+              continue
+            fi
+
+            if [ ! -d "apps/$app" ]; then
+              echo "⚠️  $app: Folder missing — marking as deleted"
+
+              # Add "deleted" tag
+              jq --arg a "$app" '
+                .[$a].tags = ((.[$a].tags // []) + ["deleted"] | unique)
+              ' apps.json > apps.json.tmp && mv apps.json.tmp apps.json
+
+              NEWLY_DELETED+=("$app")
+              CHANGED="true"
+            else
+              echo "✅ $app: Folder exists"
+            fi
+          done
+
+          echo ""
+          echo "=========================================="
+          echo "Folder Check Summary"
+          echo "=========================================="
+          echo ""
+
+          if [ ${#NEWLY_DELETED[@]} -gt 0 ]; then
+            echo "Newly marked as deleted: ${#NEWLY_DELETED[@]}"
+            for app in "${NEWLY_DELETED[@]}"; do
+              echo "  - $app"
+            done
+          else
+            echo "All non-deleted apps have matching folders. No changes needed."
+          fi
+
+          echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
+
+      - name: Commit deleted-tag updates
+        if: steps.folder-check.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add apps.json
+          git commit -m "chore: auto-tag apps with missing folders as deleted"
+          git push
+
+      # ================================================================
+      # STEP 2 — Vercel Comparison
+      # Compare apps.json entries against live Vercel projects and
+      # categorize each app.
+      # ================================================================
+      - name: "Step 2: Compare apps.json with Vercel projects"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+        run: |
+          set -euo pipefail
+
+          echo "=========================================="
+          echo "Step 2 — Vercel Comparison"
+          echo "=========================================="
+          echo ""
+
+          # Category arrays
+          declare -a READY_NOT_DEPLOYED=()
+          declare -a READY_HAS_PROJECT=()
+          declare -a DELETED_REVIEW_REMOVE=()
+          declare -a DELETED_CLEAN=()
+          declare -a FAILED_APPS=()
+
+          APPS=$(jq -r 'keys[]' apps.json)
+
+          for app in $APPS; do
+            IS_DELETED="false"
+            if jq -e --arg a "$app" '.[$a].tags // [] | index("deleted")' apps.json > /dev/null 2>&1; then
+              IS_DELETED="true"
+            fi
+
+            PROJECT_ID=$(jq -r --arg a "$app" '.[$a].vercelProjectId // "null"' apps.json)
+
+            # --- Apps without a Vercel project ID ---
+            if [ "$PROJECT_ID" = "null" ] || [ -z "$PROJECT_ID" ]; then
+              if [ "$IS_DELETED" = "true" ]; then
+                echo "🗑️  $app: Deleted, no Vercel project"
+                DELETED_CLEAN+=("$app")
+              else
+                echo "🆕 $app: Ready, not deployed (no Vercel project)"
+                READY_NOT_DEPLOYED+=("$app")
+              fi
+              continue
+            fi
+
+            # --- Apps with a Vercel project ID — verify it exists ---
+            RESPONSE=$(curl -s -w "\n%{http_code}" \
+              "https://api.vercel.com/v9/projects/$PROJECT_ID?teamId=$VERCEL_TEAM_ID" \
+              -H "Authorization: Bearer $VERCEL_TOKEN")
+
+            HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+
+            if [ "$HTTP_CODE" -eq 404 ]; then
+              # Project no longer exists on Vercel
+              if [ "$IS_DELETED" = "true" ]; then
+                echo "🗑️  $app: Deleted, Vercel project not found"
+                DELETED_CLEAN+=("$app")
+              else
+                echo "🆕 $app: Ready, but Vercel project not found (may need redeploy)"
+                READY_NOT_DEPLOYED+=("$app")
+              fi
+              continue
+            fi
+
+            if [ "$HTTP_CODE" -ge 400 ]; then
+              echo "❌ $app: Failed to query Vercel (HTTP $HTTP_CODE)"
+              FAILED_APPS+=("$app")
+              continue
+            fi
+
+            # Project exists on Vercel
+            if [ "$IS_DELETED" = "true" ]; then
+              echo "⚠️  $app: Deleted in registry, but Vercel project still exists — review and remove"
+              DELETED_REVIEW_REMOVE+=("$app")
+            else
+              echo "✅ $app: Ready, has Vercel project"
+              READY_HAS_PROJECT+=("$app")
+            fi
+          done
+
+          # --- Final Report ---
+          echo ""
+          echo "=========================================="
+          echo "Audit Report"
+          echo "=========================================="
+
+          echo ""
+          echo "--- Ready, has project (${#READY_HAS_PROJECT[@]}) ---"
+          if [ ${#READY_HAS_PROJECT[@]} -gt 0 ]; then
+            for app in "${READY_HAS_PROJECT[@]}"; do
+              echo "  ✅ $app"
+            done
+          else
+            echo "  (none)"
+          fi
+
+          echo ""
+          echo "--- Ready, not deployed (${#READY_NOT_DEPLOYED[@]}) ---"
+          if [ ${#READY_NOT_DEPLOYED[@]} -gt 0 ]; then
+            for app in "${READY_NOT_DEPLOYED[@]}"; do
+              echo "  🆕 $app"
+            done
+          else
+            echo "  (none)"
+          fi
+
+          echo ""
+          echo "--- Deleted, review and remove (${#DELETED_REVIEW_REMOVE[@]}) ---"
+          if [ ${#DELETED_REVIEW_REMOVE[@]} -gt 0 ]; then
+            for app in "${DELETED_REVIEW_REMOVE[@]}"; do
+              echo "  ⚠️  $app — Vercel project should be manually deleted"
+            done
+            echo ""
+            echo "  ℹ️  Ask an admin to delete these Vercel projects from the dashboard."
+          else
+            echo "  (none)"
+          fi
+
+          echo ""
+          echo "--- Deleted (${#DELETED_CLEAN[@]}) ---"
+          if [ ${#DELETED_CLEAN[@]} -gt 0 ]; then
+            for app in "${DELETED_CLEAN[@]}"; do
+              echo "  🗑️  $app"
+            done
+          else
+            echo "  (none)"
+          fi
+
+          if [ ${#FAILED_APPS[@]} -gt 0 ]; then
+            echo ""
+            echo "--- Failed to check (${#FAILED_APPS[@]}) ---"
+            for app in "${FAILED_APPS[@]}"; do
+              echo "  ❌ $app"
+            done
+            echo ""
+            echo "::warning::${#FAILED_APPS[@]} app(s) could not be verified against Vercel."
+          fi
+
+          echo ""
+          echo "=========================================="
+          echo "Done"
+          echo "=========================================="
+
+          # Warn if there are apps that need manual Vercel cleanup
+          if [ ${#DELETED_REVIEW_REMOVE[@]} -gt 0 ]; then
+            echo "::warning::${#DELETED_REVIEW_REMOVE[@]} deleted app(s) still have Vercel projects that should be removed."
+          fi

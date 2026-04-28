@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Frame of mind (local)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg: #f5f7f7; --surface: #ffffff; --border: #dfe3e6; --text: #1a1a1a; --muted: #7a7e85; --accent: #00b9e9; --accent-dim: #0099c7; --success: #0d7d4d; --error: #c73636; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: "DM Sans", system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 3rem; }
+    h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 2rem; }
+    main { width: 100%; max-width: 520px; }
+    .dropzone { border: 2px dashed var(--border); border-radius: 12px; padding: 2.5rem 1.5rem; text-align: center; cursor: pointer; background: var(--surface); margin-bottom: 1.5rem; }
+    .dropzone:hover, .dropzone.dragover { border-color: var(--accent); background: rgba(0,185,233,0.06); }
+    .dropzone input { display: none; }
+    .dropzone .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .dropzone p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+    .settings { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+    .settings h2 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 0 0 1rem 0; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.9rem; }
+    .row:last-child { margin-bottom: 0; }
+    label { font-size: 0.9rem; }
+    input[type="number"], select { font-family: "JetBrains Mono", monospace; font-size: 0.85rem; padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); width: 100px; }
+    input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+    .range-wrap { display: flex; align-items: center; gap: 0.75rem; }
+    input[type="range"] { flex: 1; height: 6px; -webkit-appearance: none; background: var(--border); border-radius: 3px; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+    .range-value { font-family: "JetBrains Mono", monospace; font-size: 0.85rem; color: var(--muted); min-width: 3ch; }
+    .btn { width: 100%; padding: 0.85rem 1.25rem; font-family: inherit; font-size: 1rem; font-weight: 600; border: none; border-radius: 10px; cursor: pointer; background: var(--accent); color: #ffffff; }
+    .btn:hover:not(:disabled) { background: var(--accent-dim); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .result { margin-top: 1.5rem; padding: 1rem; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); }
+    .result img { max-width: 100%; border-radius: 8px; display: block; margin: 0 auto 0.75rem; }
+    .result .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .result .actions a, .result .actions button { font-family: inherit; font-size: 0.85rem; padding: 0.5rem 0.9rem; border-radius: 8px; text-decoration: none; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; }
+    .message { padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.9rem; margin-top: 1rem; }
+    .message.error { background: rgba(199,54,54,0.12); color: var(--error); }
+    .message.success { background: rgba(13,125,77,0.12); color: var(--success); }
+    .hidden { display: none !important; }
+    .header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .header h1 { margin-bottom: 0.25rem; }
+    .header .subtitle { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <h1>Frame of mind</h1>
+      <p class="subtitle">Local server: drop a video, convert with ffmpeg.</p>
+    </div>
+  </header>
+  <main>
+    <div class="dropzone" id="dropzone" role="button" tabindex="0">
+      <input type="file" id="file" accept="video/*" />
+      <div class="icon">🎬</div>
+      <p>Drag and drop a video here, or click to choose</p>
+    </div>
+    <section class="settings">
+      <h2>Settings</h2>
+      <div class="row"><label for="width">Max width (px)</label><div class="range-wrap"><input type="range" id="width" min="160" max="1280" step="80" value="480" /><span class="range-value" id="widthValue">480</span></div></div>
+      <div class="row"><label for="fps">FPS</label><input type="number" id="fps" min="5" max="30" value="12" /></div>
+      <div class="row"><label for="quality">Quality</label><select id="quality"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+      <div class="row"><label for="loop">Loop GIF</label><input type="checkbox" id="loop" checked /></div>
+      <div class="row"><label for="startTime">Start time (s)</label><input type="number" id="startTime" min="0" step="0.5" value="0" /></div>
+      <div class="row"><label for="duration">Duration (s)</label><input type="number" id="duration" min="0" step="0.5" placeholder="full" /></div>
+    </section>
+    <button type="button" class="btn btn-primary" id="convert" disabled>Convert to GIF</button>
+    <div class="result hidden" id="result"><img id="preview" alt="GIF preview" /><div class="actions"><a id="download" href="#" download>Download GIF</a><button type="button" id="copyLink">Copy image</button></div></div>
+    <div class="message hidden" id="message"></div>
+  </main>
+  <script>
+    console.log("[Frame of mind local] Script loaded (server conversion at http://localhost:3000)");
+    window.addEventListener("unhandledrejection", function(e) { console.error("[Frame of mind local] Unhandled rejection:", e.reason); });
+    window.addEventListener("error", function(e) { console.error("[Frame of mind local] Error:", e.message, e.error); });
+    const dropzone = document.getElementById("dropzone");
+    const fileInput = document.getElementById("file");
+    const convertBtn = document.getElementById("convert");
+    const result = document.getElementById("result");
+    const preview = document.getElementById("preview");
+    const downloadLink = document.getElementById("download");
+    const copyBtn = document.getElementById("copyLink");
+    const messageEl = document.getElementById("message");
+    let selectedFile = null;
+    function showMessage(text, type) { messageEl.textContent = text; messageEl.className = "message " + type; messageEl.classList.remove("hidden"); }
+    function hideMessage() { messageEl.classList.add("hidden"); }
+    dropzone.addEventListener("click", () => fileInput.click());
+    dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("dragover"); });
+    dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+    dropzone.addEventListener("drop", (e) => { e.preventDefault(); dropzone.classList.remove("dragover"); const file = e.dataTransfer?.files?.[0]; if (file && file.type.startsWith("video/")) { selectedFile = file; convertBtn.disabled = false; showMessage("Ready: " + file.name, "success"); } else { showMessage("Please drop a video file.", "error"); } });
+    fileInput.addEventListener("change", () => { const file = fileInput.files?.[0]; if (file) { selectedFile = file; convertBtn.disabled = false; showMessage("Ready: " + file.name, "success"); } });
+    document.getElementById("width").addEventListener("input", (e) => { document.getElementById("widthValue").textContent = e.target.value; });
+    convertBtn.addEventListener("click", async () => {
+      if (!selectedFile) return;
+      hideMessage();
+      convertBtn.disabled = true;
+      convertBtn.textContent = "Converting…";
+      console.log("[Frame of mind local] Convert clicked", selectedFile.name, selectedFile.size);
+      const formData = new FormData();
+      formData.set("video", selectedFile);
+      formData.set("width", document.getElementById("width").value);
+      formData.set("fps", document.getElementById("fps").value);
+      formData.set("loop", document.getElementById("loop").checked ? "true" : "false");
+      formData.set("quality", document.getElementById("quality").value);
+      formData.set("startTime", document.getElementById("startTime").value || "0");
+      const dur = document.getElementById("duration").value;
+      if (dur) formData.set("duration", dur);
+      try {
+        console.log("[Frame of mind local] POST /convert");
+        const res = await fetch("/convert", { method: "POST", body: formData });
+        console.log("[Frame of mind local] Response", res.status, res.statusText);
+        if (!res.ok) {
+          const text = await res.text();
+          let data = {};
+          try { data = JSON.parse(text); } catch (_) {}
+          console.error("[Frame of mind local] Server error body:", text);
+          throw new Error(data.error || text || "Server error " + res.status);
+        }
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const name = selectedFile.name.replace(/\.[^.]+$/, "") + ".gif";
+        preview.src = url;
+        downloadLink.href = url;
+        downloadLink.download = name;
+        result.classList.remove("hidden");
+        showMessage("GIF ready.", "success");
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error("[Frame of mind local] Conversion error:", err);
+        showMessage(msg || "Conversion failed", "error");
+      }
+      finally { convertBtn.disabled = false; convertBtn.textContent = "Convert to GIF"; }
+    });
+    copyBtn.addEventListener("click", async () => {
+      if (!preview.src) return;
+      try { const res = await fetch(preview.src); const blob = await res.blob(); await navigator.clipboard.write([new ClipboardItem({ "image/gif": blob })]); showMessage("GIF copied.", "success"); }
+      catch { showMessage("Copy failed. Use Download instead.", "error"); }
+    });
+  </script>
+</body>
+</html>

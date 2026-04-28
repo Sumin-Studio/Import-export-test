@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow UI Kit - Design System</title>
+
+  <!-- Design System Tokens -->
+  <link rel="stylesheet" href="../tokens/index.css">
+
+  <!-- Components -->
+  <link rel="stylesheet" href="../components/chat/ChatBubble.css">
+  <link rel="stylesheet" href="../components/chat/OutputEval.css">
+  <link rel="stylesheet" href="../components/chat/SurveyFeedback.css">
+  <link rel="stylesheet" href="../components/chat/FunctionSeparator.css">
+  <link rel="stylesheet" href="../components/chat/EmptyState.css">
+  <link rel="stylesheet" href="../components/input/Composer.css">
+  <link rel="stylesheet" href="../components/common/Card.css">
+  <link rel="stylesheet" href="../components/common/Topic.css">
+  <link rel="stylesheet" href="../components/common/FilterPill.css">
+
+  <style>
+    /* ===== Docs Layout ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-family-primary);
+      font-size: var(--font-size-medium);
+      line-height: var(--line-height-medium);
+      color: var(--color-text-standard);
+      background: var(--color-bg-secondary);
+    }
+
+    /* ===== Layout Container ===== */
+    .docs-layout {
+      display: grid;
+      grid-template-columns: 338px 1fr;
+      min-height: 100vh;
+    }
+
+    @media (max-width: 900px) {
+      .docs-layout {
+        grid-template-columns: 1fr;
+      }
+      .docs-sidebar {
+        display: none;
+      }
+    }
+
+    /* ===== Sidebar ===== */
+    .docs-sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      background: var(--color-bg-primary);
+      border-right: var(--border-light);
+      padding: var(--spacing-lg);
+      z-index: 10;
+    }
+
+    .docs-sidebar__title {
+      font-size: var(--font-size-large);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-md);
+      border-bottom: var(--border-light);
+    }
+
+    /* ===== Status Filter ===== */
+    .docs-filter {
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-lg);
+      border-bottom: var(--border-light);
+    }
+
+    .docs-filter__label {
+      font-size: var(--font-size-xsmall);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--spacing-xs);
+      display: block;
+    }
+
+    .docs-filter__select {
+      width: 100%;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-family: var(--font-family-primary);
+      font-size: var(--font-size-medium);
+      border: var(--border-light);
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-primary);
+      color: var(--color-text-standard);
+      cursor: pointer;
+    }
+
+    .docs-filter__select:focus {
+      outline: none;
+      border-color: var(--color-blue);
+    }
+
+    .docs-sidebar__section {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .docs-sidebar__section-title {
+      font-size: var(--font-size-xsmall);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .docs-sidebar__nav {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    .docs-sidebar__link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-sm) var(--spacing-sm);
+      min-height: 40px;
+      color: var(--color-text-standard);
+      text-decoration: none;
+      font-size: var(--font-size-medium);
+      border-radius: var(--radius-sm);
+      transition: background 0.15s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .docs-sidebar__link:hover {
+      background: var(--color-bg-secondary);
+    }
+
+    .docs-sidebar__link.is-active {
+      background: var(--color-blue-light);
+      color: var(--color-blue);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .docs-sidebar__link.is-hidden {
+      display: none;
+    }
+
+    /* Sidebar status indicators */
+    .docs-sidebar__status {
+      font-size: 9px;
+      font-weight: var(--font-weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .docs-sidebar__status--ready {
+      background: #D4EDDA;
+      color: #155724;
+    }
+
+    .docs-sidebar__status--concept {
+      background: #FFF3CD;
+      color: #856404;
+    }
+
+    .docs-sidebar__status--refinement {
+      background: #E8DAEF;
+      color: #4A235A;
+    }
+
+    /* ===== Main Content ===== */
+    .docs-main {
+      padding: var(--spacing-xl);
+    }
+
+    /* Component Section */
+    .component-section {
+      margin-bottom: var(--spacing-xl);
+      background: var(--color-bg-primary);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: var(--border-light);
+      scroll-margin-top: var(--spacing-lg);
+    }
+
+    .component-section.is-hidden {
+      display: none;
+    }
+
+    .component-section__header {
+      padding: var(--spacing-md) var(--spacing-lg);
+      background: var(--color-bg-secondary);
+      border-bottom: var(--border-light);
+    }
+
+    .component-section__title {
+      font-size: var(--font-size-large);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    /* ===== Status Tags ===== */
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 var(--spacing-sm);
+      font-size: 11px;
+      font-weight: var(--font-weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: var(--radius-sm);
+    }
+
+    .status-tag--ready {
+      background: #D4EDDA;
+      color: #155724;
+    }
+
+    .status-tag--concept {
+      background: #FFF3CD;
+      color: #856404;
+    }
+
+    .status-tag--refinement {
+      background: #E8DAEF;
+      color: #4A235A;
+    }
+
+    .component-section__body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 300px;
+    }
+
+    @media (max-width: 1200px) {
+      .component-section__body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Preview pane */
+    .component-preview {
+      padding: var(--spacing-lg);
+      background: var(--color-bg-secondary);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .component-preview__inner {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    /* Details pane */
+    .component-details {
+      padding: var(--spacing-lg);
+      border-left: var(--border-light);
+      overflow: auto;
+    }
+
+    @media (max-width: 1200px) {
+      .component-details {
+        border-left: none;
+        border-top: var(--border-light);
+      }
+    }
+
+    .component-details__section {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .component-details__section:last-child {
+      margin-bottom: 0;
+    }
+
+    .component-details__label {
+      font-size: var(--font-size-small);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .component-details__text {
+      color: var(--color-text-standard);
+      line-height: var(--line-height-relaxed);
+    }
+
+    /* Code block */
+    .code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: var(--spacing-md);
+      border-radius: var(--radius-sm);
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Interactive states for demos */
+    .demo-interactive {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="docs-layout">
+
+    <!-- Sidebar -->
+    <aside class="docs-sidebar">
+      <h1 class="docs-sidebar__title">Flow UI Kit</h1>
+
+      <!-- Status Filter -->
+      <div class="docs-filter">
+        <label class="docs-filter__label" for="status-filter">Filter by Status</label>
+        <select class="docs-filter__select" id="status-filter">
+          <option value="all">All Components</option>
+          <option value="ready">Ready</option>
+          <option value="concept">Concept</option>
+          <option value="refinement">Design Refinement</option>
+        </select>
+      </div>
+
+      <div class="docs-sidebar__section">
+        <div class="docs-sidebar__section-title">Chat Components</div>
+        <nav class="docs-sidebar__nav">
+          <a href="#chat-bubble" class="docs-sidebar__link" data-status="ready">
+            Chat Bubble
+            <span class="docs-sidebar__status docs-sidebar__status--ready">Ready</span>
+          </a>
+          <a href="#output-eval" class="docs-sidebar__link" data-status="refinement">
+            Output Evaluation
+            <span class="docs-sidebar__status docs-sidebar__status--refinement">Refinement</span>
+          </a>
+          <a href="#survey-feedback" class="docs-sidebar__link" data-status="refinement">
+            Survey Feedback
+            <span class="docs-sidebar__status docs-sidebar__status--refinement">Refinement</span>
+          </a>
+          <a href="#function-separator" class="docs-sidebar__link" data-status="refinement">
+            Function Separator
+            <span class="docs-sidebar__status docs-sidebar__status--refinement">Refinement</span>
+          </a>
+          <a href="#empty-state" class="docs-sidebar__link" data-status="refinement">
+            Start screen
+            <span class="docs-sidebar__status docs-sidebar__status--refinement">Refinement</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="docs-sidebar__section">
+        <div class="docs-sidebar__section-title">Input Components</div>
+        <nav class="docs-sidebar__nav">
+          <a href="#composer" class="docs-sidebar__link" data-status="refinement">
+            Composer
+            <span class="docs-sidebar__status docs-sidebar__status--refinement">Refinement</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="docs-sidebar__section">
+        <div class="docs-sidebar__section-title">Common Components</div>
+        <nav class="docs-sidebar__nav">
+          <a href="#card" class="docs-sidebar__link" data-status="refinement">
+            Card
+            <span class="docs-sidebar__status docs-sidebar__status--refinement">Refinement</span>
+          </a>
+          <a href="#topic" class="docs-sidebar__link" data-status="refinement">
+            Topic
+            <span class="docs-sidebar__status docs-sidebar__status--refinement">Refinement</span>
+          </a>
+          <a href="#filter-pill" class="docs-sidebar__link" data-status="concept">
+            Filter Pill
+            <span class="docs-sidebar__status docs-sidebar__status--concept">Concept</span>
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="docs-main">
+
+      <!-- ===== CHAT BUBBLE ===== -->
+      <section class="component-section" id="chat-bubble" data-status="ready">
+        <header class="component-section__header">
+          <h2 class="component-section__title">Chat Bubble</h2>
+          <span class="status-tag status-tag--ready">Ready</span>
+        </header>
+        <div class="component-section__body">
+          <div class="component-preview">
+            <div class="component-preview__inner">
+              <div class="messages-list">
+                <div class="message message--user">
+                  <div class="chat-bubble chat-bubble--user">How do I send an invoice?</div>
+                </div>
+                <div class="message message--system">
+                  <div class="chat-bubble chat-bubble--system">To send your first invoice, go to <strong>Business > Invoices</strong> and click <strong>New Invoice</strong>. You can also save as draft if you're not ready to send yet.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="component-details">
+            <div class="component-details__section">
+              <div class="component-details__label">Purpose</div>
+              <p class="component-details__text">User and system message bubbles for conversational UI. User messages are blue with white text, aligned right. System messages are plain text, aligned left.</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">Fullscreen Mode</div>
+              <p class="component-details__text">In fullscreen mode, the content column is <strong>800px</strong> max centered. User messages are constrained to <strong>480px max-width</strong>, while system messages <strong>expand to fill the column</strong>.</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">HTML</div>
+              <pre class="code-block">&lt;div class="message message--user"&gt;
+  &lt;div class="chat-bubble chat-bubble--user"&gt;
+    User message here
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="message message--system"&gt;
+  &lt;div class="chat-bubble chat-bubble--system"&gt;
+    System response here
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">CSS</div>
+              <pre class="code-block">components/chat/ChatBubble.css</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== OUTPUT EVALUATION ===== -->
+      <section class="component-section" id="output-eval" data-status="refinement">
+        <header class="component-section__header">
+          <h2 class="component-section__title">Output Evaluation</h2>
+          <span class="status-tag status-tag--refinement">Design Refinement</span>
+        </header>
+        <div class="component-section__body">
+          <div class="component-preview">
+            <div class="component-preview__inner">
+              <div class="output-eval" id="demo-output-eval">
+                <div class="output-eval__actions">
+                  <button class="output-eval__btn output-eval__btn--copy" aria-label="Copy">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                  </button>
+                  <button class="output-eval__btn output-eval__btn--up demo-interactive" aria-label="Helpful" data-action="demo-up">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                      <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                    </svg>
+                  </button>
+                  <button class="output-eval__btn output-eval__btn--down demo-interactive" aria-label="Not helpful" data-action="demo-down">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/>
+                      <path d="M17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/>
+                    </svg>
+                  </button>
+                </div>
+                <div class="output-eval__feedback-positive" id="demo-positive">
+                  <div class="output-eval__feedback-header">
+                    <span class="output-eval__feedback-title">What did you like?</span>
+                    <button class="output-eval__feedback-close demo-interactive" data-action="demo-close-positive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="output-eval__categories">
+                    <button class="output-eval__category">Clear and easy to follow</button>
+                    <button class="output-eval__category">Solved my problem</button>
+                    <button class="output-eval__category">Accurate information</button>
+                  </div>
+                </div>
+                <div class="output-eval__feedback" id="demo-negative">
+                  <div class="output-eval__feedback-header">
+                    <span class="output-eval__feedback-title">Tell us more:</span>
+                    <button class="output-eval__feedback-close demo-interactive" data-action="demo-close-negative">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="output-eval__categories">
+                    <button class="output-eval__category">Inappropriate</button>
+                    <button class="output-eval__category">Unclear</button>
+                    <button class="output-eval__category">Inaccurate</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="component-details">
+            <div class="component-details__section">
+              <div class="component-details__label">Purpose</div>
+              <p class="component-details__text">Feedback UI for rating AI responses. Copy button, thumbs up/down with expandable feedback panels.</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">HTML</div>
+              <pre class="code-block">&lt;div class="output-eval"&gt;
+  &lt;div class="output-eval__actions"&gt;
+    &lt;button class="output-eval__btn output-eval__btn--copy"&gt;...&lt;/button&gt;
+    &lt;button class="output-eval__btn output-eval__btn--up"&gt;...&lt;/button&gt;
+    &lt;button class="output-eval__btn output-eval__btn--down"&gt;...&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class="output-eval__feedback-positive"&gt;...&lt;/div&gt;
+  &lt;div class="output-eval__feedback"&gt;...&lt;/div&gt;
+&lt;/div&gt;</pre>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">CSS</div>
+              <pre class="code-block">components/chat/OutputEval.css</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SURVEY FEEDBACK ===== -->
+      <section class="component-section" id="survey-feedback" data-status="refinement">
+        <header class="component-section__header">
+          <h2 class="component-section__title">Survey Feedback</h2>
+          <span class="status-tag status-tag--refinement">Design Refinement</span>
+        </header>
+        <div class="component-section__body">
+          <div class="component-preview">
+            <div class="component-preview__inner">
+              <div class="survey-feedback">
+                <div class="survey-feedback__heading">Some quick feedback</div>
+                <div class="survey-feedback__card">
+                  <div class="survey-feedback__form">
+                    <div class="survey-feedback__question">How easy did we make it for you to get chat support?</div>
+                    <div class="survey-feedback__scale">
+                      <div class="survey-feedback__options">
+                        <button class="survey-feedback__option">1</button>
+                        <button class="survey-feedback__option">2</button>
+                        <button class="survey-feedback__option">3</button>
+                        <button class="survey-feedback__option">4</button>
+                        <button class="survey-feedback__option">5</button>
+                      </div>
+                      <div class="survey-feedback__anchors">
+                        <span class="survey-feedback__anchor">Very difficult</span>
+                        <span class="survey-feedback__anchor">Very easy</span>
+                      </div>
+                    </div>
+                    <div class="survey-feedback__explain">
+                      <label class="survey-feedback__explain-label"><span>Optional:</span> Can you explain why you chose this score?</label>
+                      <textarea class="survey-feedback__textarea" placeholder="Enter your response"></textarea>
+                    </div>
+                    <button class="survey-feedback__submit">Send feedback</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="component-details">
+            <div class="component-details__section">
+              <div class="component-details__label">Purpose</div>
+              <p class="component-details__text">Likert scale survey for Customer Effort Score (CES) or Customer Satisfaction (CSAT). Shows at end of conversation.</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">Variants</div>
+              <p class="component-details__text"><strong>CES:</strong> "Very difficult" / "Very easy"<br><strong>CSAT:</strong> "Very dissatisfied" / "Very satisfied"</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">CSS</div>
+              <pre class="code-block">components/chat/SurveyFeedback.css</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== FUNCTION SEPARATOR ===== -->
+      <section class="component-section" id="function-separator" data-status="refinement">
+        <header class="component-section__header">
+          <h2 class="component-section__title">Function Separator</h2>
+          <span class="status-tag status-tag--refinement">Design Refinement</span>
+        </header>
+        <div class="component-section__body">
+          <div class="component-preview">
+            <div class="component-preview__inner">
+              <div class="function-separator">
+                <div class="function-separator__line"></div>
+                <span class="function-separator__label">New</span>
+                <div class="function-separator__line"></div>
+              </div>
+            </div>
+          </div>
+          <div class="component-details">
+            <div class="component-details__section">
+              <div class="component-details__label">Purpose</div>
+              <p class="component-details__text">Horizontal divider with centered label pill. Use to indicate new sessions, time skips, or topic changes.</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">HTML</div>
+              <pre class="code-block">&lt;div class="function-separator"&gt;
+  &lt;div class="function-separator__line"&gt;&lt;/div&gt;
+  &lt;span class="function-separator__label"&gt;New&lt;/span&gt;
+  &lt;div class="function-separator__line"&gt;&lt;/div&gt;
+&lt;/div&gt;</pre>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">CSS</div>
+              <pre class="code-block">components/chat/FunctionSeparator.css</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== EMPTY STATE ===== -->
+      <section class="component-section" id="empty-state" data-status="refinement">
+        <header class="component-section__header">
+          <h2 class="component-section__title">Start screen</h2>
+          <span class="status-tag status-tag--refinement">Design Refinement</span>
+        </header>
+        <div class="component-section__body">
+          <div class="component-preview">
+            <div class="component-preview__inner">
+              <div class="empty-state">
+                <div class="empty-state__intro">
+                  <div class="empty-state__greeting">Hi there,</div>
+                  <div class="empty-state__heading">What can I help you with?</div>
+                </div>
+                <div class="empty-state__suggestions">
+                  <button class="empty-state__suggestion">How do I send an invoice?</button>
+                  <button class="empty-state__suggestion">My bank feed is broken</button>
+                  <button class="empty-state__suggestion">I need to talk to someone</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="component-details">
+            <div class="component-details__section">
+              <div class="component-details__label">Purpose</div>
+              <p class="component-details__text">Welcome state for new or resumed conversations. Includes a friendly greeting and quick suggestion pills.</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">HTML</div>
+              <pre class="code-block">&lt;div class="empty-state"&gt;
+  &lt;div class="empty-state__intro"&gt;
+    &lt;div class="empty-state__greeting"&gt;Hi there,&lt;/div&gt;
+    &lt;div class="empty-state__heading"&gt;What can I help you with?&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="empty-state__suggestions"&gt;
+    &lt;button class="empty-state__suggestion"&gt;...&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">CSS</div>
+              <pre class="code-block">components/chat/EmptyState.css</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== COMPOSER ===== -->
+      <section class="component-section" id="composer" data-status="refinement">
+        <header class="component-section__header">
+          <h2 class="component-section__title">Composer</h2>
+          <span class="status-tag status-tag--refinement">Design Refinement</span>
+        </header>
+        <div class="component-section__body">
+          <div class="component-preview">
+            <div class="component-preview__inner">
+              <div class="composer" id="demo-composer">
+                <div class="composer__wrapper">
+                  <div class="composer__input-row">
+                    <textarea class="composer__input" placeholder="Enter message" rows="1"></textarea>
+                  </div>
+                  <div class="composer__actions">
+                    <button class="composer__btn composer__btn--add" aria-label="Add attachment">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                      </svg>
+                    </button>
+                    <button class="composer__btn composer__btn--send" aria-label="Send" id="demo-send-btn">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 19V5M5 12l7-7 7 7"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <p class="composer__disclaimer">Uses AI. Double-check outputs.</p>
+              </div>
+            </div>
+          </div>
+          <div class="component-details">
+            <div class="component-details__section">
+              <div class="component-details__label">Purpose</div>
+              <p class="component-details__text">Message input field for chat. Three states: default (grey border), active (blue glow on focus), typing (blue send button).</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">Elements</div>
+              <p class="component-details__text"><strong>Textarea:</strong> Auto-resizing input<br><strong>Add button:</strong> + icon for attachments<br><strong>Send button:</strong> Fills blue when active</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">CSS</div>
+              <pre class="code-block">components/input/Composer.css</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CARD ===== -->
+      <section class="component-section" id="card" data-status="refinement">
+        <header class="component-section__header">
+          <h2 class="component-section__title">Card</h2>
+          <span class="status-tag status-tag--refinement">Design Refinement</span>
+        </header>
+        <div class="component-section__body">
+          <div class="component-preview">
+            <div class="component-preview__inner" style="max-width: 100%;">
+              <div class="card-grid" style="max-width: 500px;">
+                <a href="#" class="card">
+                  <div class="card__title">Getting Started</div>
+                  <div class="card__description">Set up your account and learn the basics.</div>
+                </a>
+                <a href="#" class="card">
+                  <div class="card__title">Guides</div>
+                  <div class="card__description">Step-by-step tutorials for common tasks.</div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="component-details">
+            <div class="component-details__section">
+              <div class="component-details__label">Purpose</div>
+              <p class="component-details__text">Clickable cards for linking to pages or sections. Used for navigation grids, feature highlights, or content previews.</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">Layout</div>
+              <p class="component-details__text"><strong>Grid:</strong> 2 columns by default. Use <code>.card-grid--expandable</code> to auto-fit more columns on wider screens.</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">CSS</div>
+              <pre class="code-block">components/common/Card.css</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TOPIC ===== -->
+      <section class="component-section" id="topic" data-status="refinement">
+        <header class="component-section__header">
+          <h2 class="component-section__title">Topic</h2>
+          <span class="status-tag status-tag--refinement">Design Refinement</span>
+        </header>
+        <div class="component-section__body">
+          <div class="component-preview">
+            <div class="component-preview__inner">
+              <div class="topic-list">
+                <a href="#" class="topic">Invoicing</a>
+                <a href="#" class="topic">Bank feeds</a>
+                <a href="#" class="topic topic--active">Reconciliation</a>
+                <a href="#" class="topic--link">
+                  All topics
+                  <svg class="topic__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-left:4px;">
+                    <path d="M9 18l6-6-6-6"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="component-details">
+            <div class="component-details__section">
+              <div class="component-details__label">Purpose</div>
+              <p class="component-details__text">Clickable topic pills for filtering or navigation. Links to tag collection pages or filters content.</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">Variants</div>
+              <p class="component-details__text"><strong>Default:</strong> White background, light border, underlined text<br><strong>Active:</strong> Blue fill with <code>.is-active</code><br><strong>Link:</strong> Text-only with arrow</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">CSS</div>
+              <pre class="code-block">components/common/Topic.css</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== FILTER PILL ===== -->
+      <section class="component-section" id="filter-pill" data-status="concept">
+        <header class="component-section__header">
+          <h2 class="component-section__title">Filter Pill</h2>
+          <span class="status-tag status-tag--concept">Concept</span>
+        </header>
+        <div class="component-section__body">
+          <div class="component-preview">
+            <div class="component-preview__inner">
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="filter-pill">
+                  <div class="filter-pill__avatar">
+                    <span class="filter-pill__avatar-initials">JD</span>
+                  </div>
+                  <div class="filter-pill__content">
+                    <span class="filter-pill__label">Name</span>
+                    <span class="filter-pill__value">John</span>
+                  </div>
+                  <button class="filter-pill__close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+                <div class="filter-pill filter-pill--sm">
+                  <div class="filter-pill__avatar filter-pill__avatar--round">
+                    <span class="filter-pill__avatar-initials">AB</span>
+                  </div>
+                  <div class="filter-pill__content">
+                    <span class="filter-pill__label">Status</span>
+                    <span class="filter-pill__value">Active</span>
+                  </div>
+                  <button class="filter-pill__close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="component-details">
+            <div class="component-details__section">
+              <div class="component-details__label">Purpose</div>
+              <p class="component-details__text">Pills indicating a filter selection has been made. Can include avatar, label, value, and close button.</p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">Sizes</div>
+              <p class="component-details__text"><strong>Default:</strong> 40px height, 8px radius<br><strong>Small:</strong> 32px height, 4px radius with <code>.filter-pill--sm</code></p>
+            </div>
+            <div class="component-details__section">
+              <div class="component-details__label">CSS</div>
+              <pre class="code-block">components/common/FilterPill.css</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Demo Interactivity -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Status Filter
+      const statusFilter = document.getElementById('status-filter');
+      const navLinks = document.querySelectorAll('.docs-sidebar__link');
+      const sections = document.querySelectorAll('.component-section');
+
+      statusFilter?.addEventListener('change', (e) => {
+        const filterValue = e.target.value;
+
+        // Filter sidebar links
+        navLinks.forEach(link => {
+          const status = link.dataset.status;
+          if (filterValue === 'all' || status === filterValue) {
+            link.classList.remove('is-hidden');
+          } else {
+            link.classList.add('is-hidden');
+          }
+        });
+
+        // Filter sections
+        sections.forEach(section => {
+          const status = section.dataset.status;
+          if (filterValue === 'all' || status === filterValue) {
+            section.classList.remove('is-hidden');
+          } else {
+            section.classList.add('is-hidden');
+          }
+        });
+      });
+
+      // Output Eval demo
+      const demoUp = document.querySelector('[data-action="demo-up"]');
+      const demoDown = document.querySelector('[data-action="demo-down"]');
+      const demoPositive = document.getElementById('demo-positive');
+      const demoNegative = document.getElementById('demo-negative');
+      const closePositive = document.querySelector('[data-action="demo-close-positive"]');
+      const closeNegative = document.querySelector('[data-action="demo-close-negative"]');
+
+      demoUp?.addEventListener('click', () => {
+        demoUp.classList.add('output-eval__btn--active');
+        demoDown.classList.remove('output-eval__btn--active');
+        demoPositive.classList.add('is-open');
+        demoNegative.classList.remove('is-open');
+      });
+
+      demoDown?.addEventListener('click', () => {
+        demoDown.classList.add('output-eval__btn--active');
+        demoUp.classList.remove('output-eval__btn--active');
+        demoNegative.classList.add('is-open');
+        demoPositive.classList.remove('is-open');
+      });
+
+      closePositive?.addEventListener('click', () => {
+        demoPositive.classList.remove('is-open');
+      });
+
+      closeNegative?.addEventListener('click', () => {
+        demoNegative.classList.remove('is-open');
+      });
+
+      // Category selection
+      document.querySelectorAll('.output-eval__category').forEach(cat => {
+        cat.addEventListener('click', () => cat.classList.toggle('is-selected'));
+      });
+
+      // Survey option selection
+      document.querySelectorAll('.survey-feedback__option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('.survey-feedback__option').forEach(o => o.classList.remove('is-selected'));
+          opt.classList.add('is-selected');
+        });
+      });
+
+      // Composer demo - toggle send button active state
+      const demoComposerInput = document.querySelector('#demo-composer .composer__input');
+      const demoSendBtn = document.getElementById('demo-send-btn');
+
+      demoComposerInput?.addEventListener('input', () => {
+        if (demoComposerInput.value.trim()) {
+          demoSendBtn.classList.add('is-active');
+        } else {
+          demoSendBtn.classList.remove('is-active');
+        }
+      });
+
+      // Active nav link highlighting
+      let isNavigating = false;
+
+      const observer = new IntersectionObserver((entries) => {
+        // Skip observer updates during programmatic navigation
+        if (isNavigating) return;
+
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            navLinks.forEach(link => link.classList.remove('is-active'));
+            const activeLink = document.querySelector(`.docs-sidebar__link[href="#${entry.target.id}"]`);
+            activeLink?.classList.add('is-active');
+          }
+        });
+      }, { threshold: 0.3 });
+
+      sections.forEach(section => observer.observe(section));
+
+      // Handle nav link clicks - disable observer during scroll animation
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          isNavigating = true;
+
+          // Immediately update the active state
+          navLinks.forEach(l => l.classList.remove('is-active'));
+          link.classList.add('is-active');
+
+          // Re-enable observer after scroll completes
+          setTimeout(() => {
+            isNavigating = false;
+          }, 600);
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

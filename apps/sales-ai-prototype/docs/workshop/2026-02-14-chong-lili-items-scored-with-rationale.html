@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chong & Lili's items — predicted scores and rationale</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+    body {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      background: #f8f8f8;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: #555;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .defs {
+      font-size: 0.85rem;
+      color: #555;
+      margin-bottom: 1.25rem;
+      padding: 0.75rem 1rem;
+      background: #fff;
+      border-radius: 6px;
+      border-left: 4px solid #2d2d2d;
+    }
+    .defs strong { color: #333; }
+    .wrapper {
+      overflow-x: auto;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+    th, td {
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+    th {
+      background: #2d2d2d;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    th:nth-child(3), th:nth-child(4), th:nth-child(5) { text-align: center; }
+    td:nth-child(3), td:nth-child(4), td:nth-child(5) {
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    tbody tr:hover { background: #fafafa; }
+    tbody tr:last-child td { border-bottom: none; }
+    .rationale { font-size: 0.85rem; color: #444; line-height: 1.45; max-width: 280px; }
+    .focus {
+      margin-top: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border-left: 4px solid #c62828;
+    }
+    .focus h2 { font-size: 1rem; margin-top: 0; margin-bottom: 0.5rem; }
+    .focus ul { margin: 0; padding-left: 1.25rem; }
+    .focus li { margin-bottom: 0.35rem; }
+  </style>
+</head>
+<body>
+  <h1>Chong & Lili's items — predicted scores and rationale</h1>
+  <p class="subtitle">Source: Bill Workflow Agent — Areas of opportunity (Google Sheet). Scale: 1 = low → 5 = high. Opinion only — use to spark debate.</p>
+  <div class="defs">
+    <strong>Severity:</strong> How much of an issue? (customer pain, strategic impact) &nbsp;|&nbsp;
+    <strong>Feasibility:</strong> How hard to fix? (1 = blocked, 5 = we can do it) &nbsp;|&nbsp;
+    <strong>Benefit of AI:</strong> Agent vs just fix? (5 = strong agent opportunity; 1 = fix with rules/UI)
+  </div>
+
+  <div class="wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Area of opportunity</th>
+          <th>Sev</th>
+          <th>Feas</th>
+          <th>AI</th>
+          <th>Severity rationale</th>
+          <th>Feasibility rationale</th>
+          <th>Benefit of AI rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>No cash-aware payment planning or prioritization</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td class="rationale">High strategic pain: no proposal of which bills to pay, when, why, or cash impact; no view of reserve or projected position. Directly undermines “ready to pay” and cash confidence.</td>
+          <td class="rationale">Needs data (cash, terms, due dates) and UX; some logic can be built without Melio APIs (planning surface). Agent that proposes a plan is the differentiator.</td>
+          <td class="rationale">Strong agent fit: “AI proposal” of what to pay and when is the value. Without agent = just a dashboard; with agent = proactive plan for review.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Late bill entry undermines cash flow forecasting</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td class="rationale">25% created after paid; ~half paid ~1 week late. Distorts forecasting and planning. Core to “laborious → autonomous” and adoption story.</td>
+          <td class="rationale">Entry automation (OCR, matching, learn preferences) is buildable; ties to zero bill entry. Melio doesn’t block entry.</td>
+          <td class="rationale">Agent can learn defaults, match suppliers, suggest coding; but “fix” is also better UX and system that learns. High AI benefit for learning.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Time and cognitive load for high-volume bill processors</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td class="rationale">11–100 bills/month for 15%; real time and cognitive load. Direct efficiency and capacity story.</td>
+          <td class="rationale">Bulk operations, defaults, and “system learns” are largely in our control. Approval chasing and planning help.</td>
+          <td class="rationale">Agent excels: reduce load by proposing batches, auto-coding, chasing approvers, suggesting payment timing. Clear agent opportunity.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Late payments and due-date miss</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td class="rationale">Half of bills paid late, ~1 week after due; risk, supplier friction, missed discounts. Widely cited.</td>
+          <td class="rationale">Scheduling and reminders need data + notifications; payment execution touches Melio. Planning and nudges are feasible.</td>
+          <td class="rationale">Agent can suggest “pay by X” and chase; also “just fix” with better due-date visibility and reminders. Agent adds proactive nudging.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Cash flow uncertainty and “caught short”</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td class="rationale">44% “caught short”; 35% say top challenge is having enough to pay bills. Core SMB pain.</td>
+          <td class="rationale">Needs cash position and simple guardrails; data and UX, not Melio-dependent for visibility.</td>
+          <td class="rationale">Agent can surface “pay this vs that” and buffer impact; also fix with clear cash position and guardrails. AI helps prioritization.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>No clear cash position or simple guardrail before payment</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td class="rationale">Users don’t see current/projected cash, major outflows, or impact of a payment run. No “paying this leaves $X buffer.”</td>
+          <td class="rationale">Largely product + data: balance, projections, one guardrail view. No agent required for v1.</td>
+          <td class="rationale">“Just fix” first: show position and a simple check. Agent later for “should you pay this now?” recommendations.</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Manual, repetitive configuration (system doesn’t learn)</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td class="rationale">VOC: “Customers expect the system to learn and automate against their preferences.” Repeated entry of accounts, contacts, terms.</td>
+          <td class="rationale">We control product and data; learning defaults and applying them is buildable.</td>
+          <td class="rationale">Strong agent fit: “learn and automate against preferences” is agentic by definition. Natural language rules (e.g. “all Amazon → 310-COGS”) are AI.</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Chasing approvers / approval bottlenecks</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td class="rationale">Chasing managers; overdue approvals; no smart reminders or escalation. ~120k orgs view “awaiting approval” monthly.</td>
+          <td class="rationale">Notifications, escalation rules, and in-product chase are in our scope. Payroll-chasing pattern exists.</td>
+          <td class="rationale">Agent is the natural fit: proactive reminders, escalation, “who to chase,” in-context nudge. High agent alignment.</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Fragmented / single-step approval</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#ffcdd2;color:#000">2</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td class="rationale">No multi-step, conditions, or rules; approval before payment details. “Two signatories,” Ramp envy.</td>
+          <td class="rationale">Baseline gap: needs event streaming, rules DB, Melio integration for multi-step execution. Hard in short term.</td>
+          <td class="rationale">Fix is “build the workflow” first; AI can then route and suggest. AI benefit comes after baseline.</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Fraud and error risk with no risk signal layer in approval</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td class="rationale">Real losses ($500k example); unusual amounts, duplicates, overpayment; no anomaly detection. Bills = where most fraud can happen.</td>
+          <td class="rationale">Anomaly detection and signals are buildable; surfacing in approval flow needs approval UX. Option C (Confluence) = AI-powered approval automation.</td>
+          <td class="rationale">Agent excels: “risk signal layer” = AI/ML for anomaly, duplicate, vendor change. Human approver + AI context. Strong agent fit.</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Post-payment mess (reconciliation, verification)</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td class="rationale">Reconciliation “currently broken”; remittance advice and payment verification missing or weak. Clean-up painful.</td>
+          <td class="rationale">We own reconciliation and verification flows; product and integrations. Not primarily an agent problem.</td>
+          <td class="rationale">“Just fix” reconciliation and verification first; agent could chase missing remittance or match payments later.</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Low bill pay adoption (effort > value)</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td style="background:#ffcdd2;color:#000">2</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td class="rationale">Only 10% create bills; 1% use bill payments. Strategic adoption gap.</td>
+          <td class="rationale">Fixing adoption touches journey, GTM, and value prop; Melio and baseline gaps make narrow PoC hard to tie to adoption.</td>
+          <td class="rationale">AI can reduce effort (entry, approval, planning) and thus improve value; but “fix” is broad product/GTM. Agent supports, doesn’t own adoption.</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>No visibility into when/how bills will be paid</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td class="rationale">Users want clear “when and how” and chance to intervene. “Set and forget” without losing control.</td>
+          <td class="rationale">Visibility and control are product; scheduling and status can be improved without Melio APIs for planning.</td>
+          <td class="rationale">Agent can “tell you the plan” and “let you intervene”; combines visibility with proactive communication.</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>Bulk operations and repetitive edits</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td class="rationale">No bulk approve or bulk edit; lots of bill-by-bill work.</td>
+          <td class="rationale">Straightforward product: bulk actions, multi-select, batch apply.</td>
+          <td class="rationale">Agent can suggest batches and apply in one go; also “just fix” with bulk UI. Agent adds intelligence to what to batch.</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>Melio / US flow constraints (feasibility ceiling)</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#fff;color:#000;border:1px solid #ddd">1</td>
+          <td style="background:#ffcdd2;color:#000">2</td>
+          <td class="rationale">Embedded, disconnected experience; no APIs for agentic “paying bills.” Limits US automation.</td>
+          <td class="rationale">Constraint, not something we “solve” in PoC. Design within it; API-free ideas vs future.</td>
+          <td class="rationale">Without APIs, agent can’t “pay” in Melio flow; agent fits planning, approval, chasing—not execution in US.</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>Early-pay discount value invisible</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td class="rationale">No discount value, annualized return, or “early pay ROI” lens.</td>
+          <td class="rationale">Calculation and display are product + data.</td>
+          <td class="rationale">Agent can “suggest take this discount” and explain ROI; combines visibility with recommendation.</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>Payment rail / PSP choice opaque</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td class="rationale">Users don’t know cheapest vs fastest vs best for float; no optimization or PSP routing.</td>
+          <td class="rationale">Routing and optimization depend on PSP/Melio capabilities and data. Partly out of our hands.</td>
+          <td class="rationale">Could be “just fix” (explain options) or agent (recommend rail). Medium either way.</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>No cash scenario or stress testing</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td class="rationale">Can’t ask “what if I delay top 5 / AR slips / FX moves?”</td>
+          <td class="rationale">Scenario modeling needs data and product; no Melio dependency.</td>
+          <td class="rationale">Agent can run scenarios and summarize “if you delay these, here’s the impact.” Good agent use case.</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>Guardrailed auto-approval missing</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td class="rationale">Auto-approval is all-or-nothing. No “auto-approve when low risk” with clear audit.</td>
+          <td class="rationale">Needs rules engine, risk signals, and approval baseline. Feasibility tied to #9 and #10.</td>
+          <td class="rationale">Agent is the natural owner: “when low risk (trusted vendor, in range, no anomaly, buffer OK)” = agent + rules.</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>Obligation detection / no “financial memory”</td>
+          <td style="background:#e57373;color:#000">4</td>
+          <td style="background:#ef9a9a;color:#000">3</td>
+          <td style="background:#c62828;color:#fff">5</td>
+          <td class="rationale">Invoices/obligations not detected from email, bank, subscriptions, SMS/photo. Things get missed or entered late.</td>
+          <td class="rationale">Requires ingestion, matching, and “memory”; significant build.</td>
+          <td class="rationale">Strong agent fit: “financial memory” and proactive detection are agentic. High AI benefit.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="focus">
+    <h2>Chong & Lili focus: top agent-aligned, feasible</h2>
+    <p><strong>Highest Sev + Feas + AI (agent vs just fix):</strong></p>
+    <ul>
+      <li><strong>Chasing approvers (#8)</strong> — Sev 4, Feas 4, AI 5. Clear agent fit; reminders, escalation, in-product chase.</li>
+      <li><strong>Manual, repetitive configuration (#7)</strong> — Sev 4, Feas 4, AI 5. “System learns” = agent; natural language rules and defaults.</li>
+      <li><strong>Time and cognitive load (#3)</strong> — Sev 4, Feas 4, AI 5. Agent reduces load via batching, proposals, chasing.</li>
+    </ul>
+    <p><strong>High severity but harder or “fix first”:</strong></p>
+    <ul>
+      <li><strong>Fraud and error risk (#10)</strong> — Sev 5, AI 5, but Feas 3 (needs risk layer + approval UX).</li>
+      <li><strong>Low bill pay adoption (#12)</strong> — Sev 5, but Feas 2, AI 3; broad GTM/journey fix.</li>
+      <li><strong>Melio / US flow (#15)</strong> — Feas 1; constraint to design within, not solve in PoC.</li>
+    </ul>
+  </div>
+</body>
+</html>

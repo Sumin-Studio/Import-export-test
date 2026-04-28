@@ -1,0 +1,602 @@
+{
+  "Id": "9b0af2d6-1234-4b83-9f7b-1b4c3a1e5f10",
+  "Status": "OK",
+  "ProviderName": "Xero API",
+  "DateTimeUTC": "2026-02-17T03:21:45.123Z",
+  "Invoices": [
+    {
+      "InvoiceID": "11111111-2222-3333-4444-555555555501",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0001",
+      "Reference": "INV-83472",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "Name": "Global Widgets Ltd"
+      },
+      "Date": "2025-07-10T00:00:00",
+      "DueDate": "2025-07-25T00:00:00",
+      "FullyPaidOnDate": "2025-07-23T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 2600.00,
+      "TotalTax": 260.00,
+      "Total": 2860.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 2860.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "99999999-8888-7777-6666-555555555501",
+          "Description": "Manufacturing parts – July",
+          "Quantity": 1.0,
+          "UnitAmount": 2600.00,
+          "AccountCode": "310",
+          "TaxType": "INPUT",
+          "TaxAmount": 260.00,
+          "LineAmount": 2600.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "11111111-2222-3333-4444-555555555502",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0002",
+      "Reference": "INV-83590",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "Name": "Global Widgets Ltd"
+      },
+      "Date": "2025-08-12T00:00:00",
+      "DueDate": "2025-08-27T00:00:00",
+      "FullyPaidOnDate": "2025-08-26T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 2750.00,
+      "TotalTax": 275.00,
+      "Total": 3025.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3025.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "99999999-8888-7777-6666-555555555502",
+          "Description": "Manufacturing parts – August",
+          "Quantity": 1.0,
+          "UnitAmount": 2750.00,
+          "AccountCode": "310",
+          "TaxType": "INPUT",
+          "TaxAmount": 275.00,
+          "LineAmount": 2750.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "11111111-2222-3333-4444-555555555503",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0003",
+      "Reference": "INV-83701",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "Name": "Global Widgets Ltd"
+      },
+      "Date": "2025-09-08T00:00:00",
+      "DueDate": "2025-09-23T00:00:00",
+      "FullyPaidOnDate": "2025-09-22T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 2700.00,
+      "TotalTax": 270.00,
+      "Total": 2970.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 2970.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "99999999-8888-7777-6666-555555555503",
+          "Description": "Manufacturing parts – September",
+          "Quantity": 1.0,
+          "UnitAmount": 2700.00,
+          "AccountCode": "310",
+          "TaxType": "INPUT",
+          "TaxAmount": 270.00,
+          "LineAmount": 2700.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "11111111-2222-3333-4444-555555555504",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0004",
+      "Reference": "INV-83815",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "Name": "Global Widgets Ltd"
+      },
+      "Date": "2025-10-11T00:00:00",
+      "DueDate": "2025-10-26T00:00:00",
+      "FullyPaidOnDate": "2025-10-24T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 2800.00,
+      "TotalTax": 280.00,
+      "Total": 3080.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3080.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "99999999-8888-7777-6666-555555555504",
+          "Description": "Manufacturing parts – October",
+          "Quantity": 1.0,
+          "UnitAmount": 2800.00,
+          "AccountCode": "310",
+          "TaxType": "INPUT",
+          "TaxAmount": 280.00,
+          "LineAmount": 2800.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "11111111-2222-3333-4444-555555555505",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0005",
+      "Reference": "INV-83950",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "Name": "Global Widgets Ltd"
+      },
+      "Date": "2025-11-05T00:00:00",
+      "DueDate": "2025-11-20T00:00:00",
+      "FullyPaidOnDate": "2025-11-19T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 2750.00,
+      "TotalTax": 275.00,
+      "Total": 3025.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3025.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "99999999-8888-7777-6666-555555555505",
+          "Description": "Manufacturing parts – November",
+          "Quantity": 1.0,
+          "UnitAmount": 2750.00,
+          "AccountCode": "310",
+          "TaxType": "INPUT",
+          "TaxAmount": 275.00,
+          "LineAmount": 2750.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "11111111-2222-3333-4444-555555555506",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0006",
+      "Reference": "INV-84102",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "Name": "Global Widgets Ltd"
+      },
+      "Date": "2025-12-09T00:00:00",
+      "DueDate": "2025-12-24T00:00:00",
+      "FullyPaidOnDate": "2025-12-22T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 2900.00,
+      "TotalTax": 290.00,
+      "Total": 3190.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3190.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "99999999-8888-7777-6666-555555555506",
+          "Description": "Manufacturing parts – December",
+          "Quantity": 1.0,
+          "UnitAmount": 2900.00,
+          "AccountCode": "310",
+          "TaxType": "INPUT",
+          "TaxAmount": 290.00,
+          "LineAmount": 2900.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "11111111-2222-3333-4444-555555555507",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0007",
+      "Reference": "INV-84250",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "Name": "Global Widgets Ltd"
+      },
+      "Date": "2026-01-15T00:00:00",
+      "DueDate": "2026-01-30T00:00:00",
+      "FullyPaidOnDate": "2026-01-29T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 2750.00,
+      "TotalTax": 275.00,
+      "Total": 3025.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3025.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "99999999-8888-7777-6666-555555555507",
+          "Description": "Manufacturing parts – January",
+          "Quantity": 1.0,
+          "UnitAmount": 2750.00,
+          "AccountCode": "310",
+          "TaxType": "INPUT",
+          "TaxAmount": 275.00,
+          "LineAmount": 2750.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "22222222-3333-4444-5555-666666666601",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0010",
+      "Reference": "October rent",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+        "Name": "RentCo Property"
+      },
+      "Date": "2025-10-01T00:00:00",
+      "DueDate": "2025-10-07T00:00:00",
+      "FullyPaidOnDate": "2025-10-05T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 3000.00,
+      "TotalTax": 0.00,
+      "Total": 3000.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3000.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "aaaaaaaa-9999-8888-7777-666666666601",
+          "Description": "Office rent – October",
+          "Quantity": 1.0,
+          "UnitAmount": 3000.00,
+          "AccountCode": "400",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 3000.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "22222222-3333-4444-5555-666666666602",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0011",
+      "Reference": "November rent",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+        "Name": "RentCo Property"
+      },
+      "Date": "2025-11-01T00:00:00",
+      "DueDate": "2025-11-07T00:00:00",
+      "FullyPaidOnDate": "2025-11-04T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 3000.00,
+      "TotalTax": 0.00,
+      "Total": 3000.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3000.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "aaaaaaaa-9999-8888-7777-666666666602",
+          "Description": "Office rent – November",
+          "Quantity": 1.0,
+          "UnitAmount": 3000.00,
+          "AccountCode": "400",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 3000.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "22222222-3333-4444-5555-666666666603",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0012",
+      "Reference": "December rent",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+        "Name": "RentCo Property"
+      },
+      "Date": "2025-12-01T00:00:00",
+      "DueDate": "2025-12-07T00:00:00",
+      "FullyPaidOnDate": "2025-12-06T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 3000.00,
+      "TotalTax": 0.00,
+      "Total": 3000.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3000.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "aaaaaaaa-9999-8888-7777-666666666603",
+          "Description": "Office rent – December",
+          "Quantity": 1.0,
+          "UnitAmount": 3000.00,
+          "AccountCode": "400",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 3000.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "22222222-3333-4444-5555-666666666604",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0013",
+      "Reference": "January rent",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+        "Name": "RentCo Property"
+      },
+      "Date": "2026-01-01T00:00:00",
+      "DueDate": "2026-01-07T00:00:00",
+      "FullyPaidOnDate": "2026-01-06T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 3000.00,
+      "TotalTax": 0.00,
+      "Total": 3000.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3000.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "aaaaaaaa-9999-8888-7777-666666666604",
+          "Description": "Office rent – January",
+          "Quantity": 1.0,
+          "UnitAmount": 3000.00,
+          "AccountCode": "400",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 3000.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "22222222-3333-4444-5555-666666666605",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0014",
+      "Reference": "February rent",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+        "Name": "RentCo Property"
+      },
+      "Date": "2026-02-01T00:00:00",
+      "DueDate": "2026-02-07T00:00:00",
+      "FullyPaidOnDate": "2026-02-05T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 3000.00,
+      "TotalTax": 0.00,
+      "Total": 3000.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3000.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "aaaaaaaa-9999-8888-7777-666666666605",
+          "Description": "Office rent – February",
+          "Quantity": 1.0,
+          "UnitAmount": 3000.00,
+          "AccountCode": "400",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 3000.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "33333333-4444-5555-6666-777777777701",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0020",
+      "Reference": "Cloud hosting – Oct",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "cccccccc-dddd-eeee-ffff-111111111111",
+        "Name": "Tech Solutions Inc"
+      },
+      "Date": "2025-10-05T00:00:00",
+      "DueDate": "2025-10-20T00:00:00",
+      "FullyPaidOnDate": "2025-10-19T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 3400.00,
+      "TotalTax": 340.00,
+      "Total": 3740.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3740.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "bbbbbbbb-9999-8888-7777-666666666701",
+          "Description": "Cloud hosting & SaaS licences – October",
+          "Quantity": 1.0,
+          "UnitAmount": 3400.00,
+          "AccountCode": "320",
+          "TaxType": "INPUT",
+          "TaxAmount": 340.00,
+          "LineAmount": 3400.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "33333333-4444-5555-6666-777777777702",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0021",
+      "Reference": "Cloud hosting – Nov",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "cccccccc-dddd-eeee-ffff-111111111111",
+        "Name": "Tech Solutions Inc"
+      },
+      "Date": "2025-11-03T00:00:00",
+      "DueDate": "2025-11-18T00:00:00",
+      "FullyPaidOnDate": "2025-11-17T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 3500.00,
+      "TotalTax": 350.00,
+      "Total": 3850.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3850.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "bbbbbbbb-9999-8888-7777-666666666702",
+          "Description": "Cloud hosting & SaaS licences – November",
+          "Quantity": 1.0,
+          "UnitAmount": 3500.00,
+          "AccountCode": "320",
+          "TaxType": "INPUT",
+          "TaxAmount": 350.00,
+          "LineAmount": 3500.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "33333333-4444-5555-6666-777777777703",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0022",
+      "Reference": "Cloud hosting – Dec",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "cccccccc-dddd-eeee-ffff-111111111111",
+        "Name": "Tech Solutions Inc"
+      },
+      "Date": "2025-12-02T00:00:00",
+      "DueDate": "2025-12-17T00:00:00",
+      "FullyPaidOnDate": "2025-12-16T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 3500.00,
+      "TotalTax": 350.00,
+      "Total": 3850.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3850.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "bbbbbbbb-9999-8888-7777-666666666703",
+          "Description": "Cloud hosting & SaaS licences – December",
+          "Quantity": 1.0,
+          "UnitAmount": 3500.00,
+          "AccountCode": "320",
+          "TaxType": "INPUT",
+          "TaxAmount": 350.00,
+          "LineAmount": 3500.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "33333333-4444-5555-6666-777777777704",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0023",
+      "Reference": "Cloud hosting – Jan",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "cccccccc-dddd-eeee-ffff-111111111111",
+        "Name": "Tech Solutions Inc"
+      },
+      "Date": "2026-01-06T00:00:00",
+      "DueDate": "2026-01-21T00:00:00",
+      "FullyPaidOnDate": "2026-01-20T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 3500.00,
+      "TotalTax": 350.00,
+      "Total": 3850.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 3850.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "bbbbbbbb-9999-8888-7777-666666666704",
+          "Description": "Cloud hosting & SaaS licences – January",
+          "Quantity": 1.0,
+          "UnitAmount": 3500.00,
+          "AccountCode": "320",
+          "TaxType": "INPUT",
+          "TaxAmount": 350.00,
+          "LineAmount": 3500.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "44444444-5555-6666-7777-888888888801",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0030",
+      "Reference": "Office supplies Q3",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "dddddddd-eeee-ffff-0000-222222222222",
+        "Name": "Acme Office Supplies"
+      },
+      "Date": "2025-09-20T00:00:00",
+      "DueDate": "2025-10-05T00:00:00",
+      "FullyPaidOnDate": "2025-10-03T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 1100.00,
+      "TotalTax": 110.00,
+      "Total": 1210.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 1210.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "cccccccc-9999-8888-7777-666666666801",
+          "Description": "Office supplies – Q3 restock",
+          "Quantity": 1.0,
+          "UnitAmount": 1100.00,
+          "AccountCode": "330",
+          "TaxType": "INPUT",
+          "TaxAmount": 110.00,
+          "LineAmount": 1100.00
+        }
+      ]
+    },
+    {
+      "InvoiceID": "44444444-5555-6666-7777-888888888802",
+      "Type": "ACCPAY",
+      "InvoiceNumber": "BILL-0031",
+      "Reference": "Office supplies Q4",
+      "Status": "PAID",
+      "Contact": {
+        "ContactID": "dddddddd-eeee-ffff-0000-222222222222",
+        "Name": "Acme Office Supplies"
+      },
+      "Date": "2025-12-18T00:00:00",
+      "DueDate": "2026-01-02T00:00:00",
+      "FullyPaidOnDate": "2025-12-30T00:00:00",
+      "CurrencyCode": "USD",
+      "SubTotal": 1350.00,
+      "TotalTax": 135.00,
+      "Total": 1485.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 1485.00,
+      "AmountCredited": 0.00,
+      "LineItems": [
+        {
+          "LineItemID": "cccccccc-9999-8888-7777-666666666802",
+          "Description": "Office supplies – Q4 restock",
+          "Quantity": 1.0,
+          "UnitAmount": 1350.00,
+          "AccountCode": "330",
+          "TaxType": "INPUT",
+          "TaxAmount": 135.00,
+          "LineAmount": 1350.00
+        }
+      ]
+    }
+  ]
+}

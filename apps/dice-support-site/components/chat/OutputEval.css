@@ -1,0 +1,207 @@
+/**
+ * Output Evaluation Component
+ *
+ * Feedback UI for rating AI-generated responses.
+ * Includes thumbs up/down and expandable "Tell us more" form.
+ */
+
+/* ===== Evaluation Container ===== */
+.output-eval {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-small);
+  padding-top: var(--s-xsmall);
+}
+
+/* ===== Actions Row ===== */
+.output-eval__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-xsmall);
+}
+
+.output-eval__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-icon);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.output-eval__btn:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+}
+
+.output-eval__btn--active {
+  color: var(--color-blue);
+}
+
+.output-eval__btn--active:hover {
+  color: var(--color-blue);
+}
+
+.output-eval__btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Copy button tooltip */
+.output-eval__btn--copy {
+  position: relative;
+}
+
+.output-eval__btn--copy.is-copied::after {
+  content: 'Copied';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: var(--color-text-primary);
+  color: var(--color-white);
+  font-size: var(--font-size-xsmall);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  margin-bottom: 4px;
+}
+
+/* ===== Feedback Panel (shared) ===== */
+.output-eval__feedback,
+.output-eval__feedback-positive {
+  display: none;
+  flex-direction: column;
+  gap: var(--s-small);
+  padding: var(--s-standard);
+  background: var(--color-bg-surface);
+  border: var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-depth-lift);
+}
+
+.output-eval__feedback.is-open,
+.output-eval__feedback-positive.is-open {
+  display: flex;
+}
+
+/* Feedback Header */
+.output-eval__feedback-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.output-eval__feedback-title {
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.output-eval__feedback-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-icon);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.output-eval__feedback-close:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+}
+
+.output-eval__feedback-close svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Feedback Categories */
+.output-eval__categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-xsmall);
+}
+
+.output-eval__category {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--s-xsmall) var(--s-small);
+  border: 1px solid var(--color-border-standard);
+  border-radius: var(--radius-max);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.output-eval__category:hover {
+  border-color: var(--color-blue);
+  background: var(--color-blue-light);
+}
+
+.output-eval__category.is-selected {
+  border-color: var(--color-blue);
+  background: var(--color-blue-light);
+  color: var(--color-blue);
+}
+
+/* Other option */
+.output-eval__other {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.output-eval__other:hover {
+  color: var(--color-text-primary);
+}
+
+/* Details textarea */
+.output-eval__details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2xsmall);
+}
+
+.output-eval__details-label {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.output-eval__textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: var(--s-small);
+  border: var(--border-light);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: var(--font-size-medium);
+  line-height: var(--font-line-height-standard);
+  resize: vertical;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+.output-eval__textarea:focus {
+  outline: none;
+  border-color: var(--color-blue);
+}
+
+.output-eval__textarea::placeholder {
+  color: var(--color-text-placeholder);
+}

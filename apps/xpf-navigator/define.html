@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Define — XPF Navigator</title>
+  <link rel="preconnect" href="https://www.xero.com">
+  <link rel="stylesheet" href="navigator-chat.css">
+  <style>
+    @font-face {
+      font-family: "National2";
+      font-weight: 400;
+      src: url("https://www.xero.com/fonts/national2-web-regular.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-regular.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 400;
+      font-style: italic;
+      src: url("https://www.xero.com/fonts/national2-web-regular-italic.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-regular-italic.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 500;
+      src: url("https://www.xero.com/fonts/national2-web-medium.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-medium.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 500;
+      font-style: italic;
+      src: url("https://www.xero.com/fonts/national2-web-medium-italic.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-medium-italic.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 700;
+      src: url("https://www.xero.com/fonts/national2-web-bold.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-bold.woff") format("woff");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "National2";
+      font-weight: 700;
+      font-style: italic;
+      src: url("https://www.xero.com/fonts/national2-web-bold-italic.woff2") format("woff2"),
+        url("https://www.xero.com/fonts/national2-web-bold-italic.woff") format("woff");
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #000856;
+      --text: #ffffff;
+      --font: "National2", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: var(--text);
+      background-color: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      /* Matched to .plot-journey-panel: reserve space so the hub orbits the visual center of the “safe” zone, not under the panel. */
+      --build-nav-edge: clamp(1rem, 3vw, 1.5rem);
+      --build-nav-panel-width: min(22rem, calc(100vw - 2 * var(--build-nav-edge)));
+    }
+
+    .night-sky {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .night-sky-dot {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      margin: -1.5px 0 0 -1.5px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+      animation: dot-twinkle 3s ease-in-out infinite;
+    }
+
+    @keyframes dot-twinkle {
+      0%,
+      100% {
+        opacity: 0.35;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .phase-sticky-nav {
+      position: fixed;
+      z-index: 12;
+      top: clamp(1rem, 3vw, 1.5rem);
+      left: clamp(1rem, 3vw, 1.5rem);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: clamp(0.5rem, 1.2vw, 0.75rem);
+      max-width: min(22rem, calc(100vw - 2rem));
+    }
+
+    .phase-sticky-nav .phase-hub-center {
+      margin: 0 0 clamp(0.2rem, 0.8vw, 0.45rem);
+      text-align: left;
+      width: 100%;
+      max-width: min(22rem, calc(100vw - 2rem));
+      pointer-events: none;
+    }
+
+    .phase-sticky-nav .phase-hub-center h1 {
+      margin: 0;
+      font-family: "National2", sans-serif;
+      font-size: clamp(1.35rem, 3.2vw, 2rem);
+      font-weight: 700;
+      line-height: 1.2;
+      text-shadow: 0 0 24px rgba(62, 204, 255, 0.12);
+    }
+
+    .phase-sticky-nav .phase-hub-center .lede {
+      margin: 0.5rem 0 0;
+      font-size: clamp(0.875rem, 1.85vw, 1.0625rem);
+      font-weight: 400;
+      line-height: 1.45;
+      opacity: 0.92;
+    }
+
+    .navigate-next-phase {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: "National2", sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #3eccff;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 0.1em;
+      align-self: flex-start;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .navigate-next-phase__arrow {
+      display: flex;
+      width: 1.2rem;
+      height: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .navigate-next-phase__arrow svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .navigate-next-phase:hover {
+      color: #6aeaaa;
+      border-bottom-color: currentColor;
+    }
+
+    .navigate-next-phase:focus-visible {
+      outline: 2px solid #3eccff;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    .plot-new-journey {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: none;
+      font: inherit;
+      font-family: var(--font);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #3eccff;
+      text-align: left;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 0.1em;
+      align-self: flex-start;
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .plot-new-journey__icon--refresh {
+      display: flex;
+      width: 1.15rem;
+      height: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .plot-new-journey__icon--refresh svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .plot-new-journey:hover,
+    .plot-new-journey:hover .plot-new-journey__icon--refresh {
+      color: #6aeaaa;
+    }
+
+    .plot-new-journey:hover {
+      border-bottom-color: currentColor;
+    }
+
+    .plot-new-journey:focus-visible {
+      outline: 2px solid #3eccff;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    .phase-page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: clamp(6rem, 15vmin, 9.5rem);
+      padding-bottom: clamp(1.25rem, 4vw, 2.5rem);
+      padding-left: clamp(1.25rem, 4vw, 2.5rem);
+      padding-right: calc(var(--build-nav-edge) + var(--build-nav-panel-width) + 0.5rem);
+      text-align: center;
+    }
+
+    /* Hub: same geometry as xpf-navigator orbit (72° steps from ~10 o’clock) */
+    .phase-orbit {
+      --orbit-r: min(42vmin, 14rem);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: clamp(26rem, 78vmin, 42rem);
+      pointer-events: none;
+      isolation: isolate;
+    }
+
+    .orbit-connector {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: visible;
+    }
+
+    .orbit-connector path {
+      fill: none;
+      stroke: #184390;
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .orbit-ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1px;
+      height: 1px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .orbit-item {
+      --orbit-pull: 0px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      transform: rotate(var(--a))
+        translateY(
+          calc(-1 * (var(--orbit-r) + var(--orbit-pull, 0px)))
+        )
+        rotate(calc(-1 * var(--a)));
+      pointer-events: auto;
+    }
+
+    .orbit-item:nth-child(1) {
+      --orbit-pull: calc(clamp(2rem, 7vmin, 3.75rem) * 1.44);
+    }
+
+    button.orbit-item-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      width: max-content;
+      max-width: min(15rem, 56vw);
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button.orbit-item-inner:focus-visible {
+      outline: 2px solid #3eccff;
+      outline-offset: 6px;
+      border-radius: 4px;
+    }
+
+    .orbit-heading {
+      margin: 0;
+      color: #fff;
+      font-family: "National2", sans-serif;
+      font-size: clamp(1.625rem, 4.2vw, 2rem);
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .orbit-marker {
+      display: block;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 1px solid #fff;
+      background: #000856;
+      outline: 1px solid transparent;
+      transition: background-color 0.2s ease, border-color 0.2s ease, outline-color 0.2s ease;
+    }
+
+    button.orbit-item-inner:hover .orbit-marker,
+    .phase-orbit button.orbit-item-inner.orbit-item-inner--yes .orbit-marker {
+      background: #3eccff;
+      border-color: transparent;
+      outline-color: transparent;
+    }
+
+    button.orbit-item-inner:hover .orbit-heading,
+    .phase-orbit .orbit-item-inner--yes .orbit-heading {
+      color: #3eccff;
+      text-shadow: 0 0 18px rgba(62, 204, 255, 0.45);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 1.25rem, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    .phase-orbit .orbit-item-inner {
+      animation: fadeInUp 0.85s ease-out both;
+    }
+
+    .phase-orbit .orbit-item:nth-child(1) .orbit-item-inner {
+      animation-delay: 0.05s;
+    }
+
+    .phase-orbit .orbit-item:nth-child(2) .orbit-item-inner {
+      animation-delay: 0.12s;
+    }
+
+    .phase-orbit .orbit-item:nth-child(3) .orbit-item-inner {
+      animation-delay: 0.19s;
+    }
+
+    .phase-orbit .orbit-item:nth-child(4) .orbit-item-inner {
+      animation-delay: 0.26s;
+    }
+
+    .phase-orbit .orbit-item:nth-child(5) .orbit-item-inner {
+      animation-delay: 0.33s;
+    }
+
+    .plot-journey-panel {
+      --panel-edge: var(--build-nav-edge);
+      position: fixed;
+      top: var(--panel-edge);
+      right: var(--panel-edge);
+      z-index: 20;
+      margin: 0;
+      box-sizing: border-box;
+      width: var(--build-nav-panel-width);
+      padding: clamp(14px, 4vmin, 22px);
+      background: #fff;
+      border-radius: 12px;
+      box-shadow:
+        0 12px 32px rgba(0, 0, 0, 0.18),
+        0 4px 12px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      overflow: hidden;
+      transform-origin: top right;
+      transition:
+        height 0.55s cubic-bezier(0.33, 0.11, 0.25, 1),
+        box-shadow 0.35s ease;
+    }
+
+    @media (min-width: 420px) {
+      .plot-journey-panel {
+        padding: 20px;
+      }
+    }
+
+    .plot-journey-panel.is-expanded {
+      box-shadow:
+        0 20px 48px rgba(0, 0, 0, 0.22),
+        0 8px 20px rgba(0, 0, 0, 0.14);
+    }
+
+    .plot-journey-panel__header {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-shrink: 0;
+    }
+
+    .plot-journey-panel.is-expanded .plot-journey-panel__header {
+      padding-right: 2.75rem;
+    }
+
+    .plot-journey-panel__heading {
+      margin: 0;
+      font-family: "National2", sans-serif;
+      font-size: clamp(1rem, 2.4vw, 1.125rem);
+      font-weight: 700;
+      font-style: normal;
+      color: #000856;
+      line-height: 1.35;
+      text-align: left;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .plot-journey-panel__open {
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      border: none;
+      border-radius: 6px;
+      background: none;
+      font: inherit;
+      font-weight: 700;
+      color: #000856;
+      cursor: pointer;
+      text-align: left;
+      line-height: inherit;
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      text-underline-offset: 0.12em;
+      transition:
+        text-decoration-color 0.2s ease,
+        background-color 0.2s ease;
+    }
+
+    .plot-journey-panel__open:hover {
+      text-decoration-color: currentColor;
+      background: rgba(0, 8, 86, 0.04);
+    }
+
+    .plot-journey-panel__open:focus-visible {
+      outline: 2px solid #3eccff;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    .plot-journey-panel__close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      width: 2.25rem;
+      height: 2.25rem;
+      margin: 0;
+      padding: 0;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      font-family: "National2", sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #000856;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .plot-journey-panel__close[hidden] {
+      display: none !important;
+    }
+
+    .plot-journey-panel__close:hover {
+      background: rgba(0, 8, 86, 0.06);
+    }
+
+    .plot-journey-panel__close:focus-visible {
+      outline: 2px solid #3eccff;
+      outline-offset: 2px;
+    }
+
+    .plot-journey-panel__fill {
+      flex: 0 0 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .plot-journey-panel.is-expanded .plot-journey-panel__fill {
+      flex: 1 1 auto;
+      overflow: hidden;
+      min-height: 0;
+    }
+  </style>
+</head>
+<body>
+  <aside
+    class="plot-journey-panel"
+    id="plot-journey-panel"
+    aria-label="XPF Navigator"
+  >
+    <div class="plot-journey-panel__header">
+      <h2 class="plot-journey-panel__heading">
+        <button
+          type="button"
+          class="plot-journey-panel__open"
+          id="plot-journey-open"
+          aria-expanded="false"
+          aria-controls="plot-journey-panel"
+        >
+          🚀 XPF Navigator
+        </button>
+      </h2>
+      <button
+        type="button"
+        class="plot-journey-panel__close"
+        id="plot-journey-close"
+        aria-label="Close panel"
+        hidden
+      >
+        ×
+      </button>
+    </div>
+    <div class="plot-journey-panel__fill" id="plot-journey-fill" aria-hidden="true">
+      <div
+        class="navigator-chat"
+        id="navigator-chat"
+        role="region"
+        aria-label="Build navigator questions"
+      >
+        <div class="navigator-chat__question-wrap" aria-live="polite">
+          <p class="navigator-chat__topic-title" id="navigator-chat-topic-title"></p>
+          <p class="navigator-chat__question" id="navigator-chat-question"></p>
+        </div>
+        <div class="navigator-chat__actions" id="navigator-chat-actions">
+          <button type="button" class="navigator-chat__btn" id="navigator-chat-yes">Yes</button>
+          <button
+            type="button"
+            class="navigator-chat__btn navigator-chat__btn--secondary"
+            id="navigator-chat-no"
+          >
+            No
+          </button>
+        </div>
+        <div class="navigator-chat__methods" id="navigator-chat-methods" hidden></div>
+        <button type="button" class="navigator-chat__back" id="navigator-chat-back" hidden>
+          Back to question
+        </button>
+        <div class="navigator-chat__success" id="navigator-chat-success" hidden>
+          <p class="navigator-chat__success-msg">Good to go! Continue exploring</p>
+          <button type="button" class="navigator-chat__btn" id="navigator-chat-continue">
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="night-sky" id="night-sky" aria-hidden="true"></div>
+
+  <div class="phase-sticky-nav" aria-label="Page navigation">
+    <div class="phase-hub-center">
+      <h1>Define</h1>
+      <p class="lede">
+        Shape the ideal solution, delivery plan, technical approach, and risks before you commit to build.
+      </p>
+    </div>
+    <a class="navigate-next-phase" href="xpf-navigator.html#orbit-define">
+      <span class="navigate-next-phase__arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M15 18L9 12l6-6"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+          />
+        </svg>
+      </span>
+      <span>Back to orbit</span>
+    </a>
+    <button
+      type="button"
+      class="plot-new-journey"
+      id="plot-new-journey"
+      aria-label="Plot a new journey—clears this session and reset orbit display"
+    >
+      <span class="plot-new-journey__icon--refresh" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+          />
+          <path d="M3 3v4h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+          <path
+            d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.84"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+          />
+          <path
+            d="M21 22v-4h-4"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </span>
+      Plot new journey
+    </button>
+  </div>
+
+  <main class="phase-page">
+    <div class="phase-orbit" id="define-orbit" aria-label="Define topics">
+      <svg class="orbit-connector" id="orbit-connector" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path stroke-linejoin="round" />
+      </svg>
+
+      <div class="orbit-ring" role="presentation">
+        <div class="orbit-item" style="--a: 300deg">
+          <button type="button" class="orbit-item-inner" data-topic="ideal-state-solution">
+            <h2 class="orbit-heading">Ideal state solution</h2>
+            <span class="orbit-marker" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="orbit-item" style="--a: 30deg">
+          <button type="button" class="orbit-item-inner" data-topic="planning">
+            <h2 class="orbit-heading">Planning</h2>
+            <span class="orbit-marker" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="orbit-item" style="--a: 120deg">
+          <button type="button" class="orbit-item-inner" data-topic="technical-solution">
+            <h2 class="orbit-heading">Technical solution</h2>
+            <span class="orbit-marker" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="orbit-item" style="--a: 210deg">
+          <button type="button" class="orbit-item-inner" data-topic="risks-dependencies">
+            <h2 class="orbit-heading">Risks and dependencies</h2>
+            <span class="orbit-marker" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    window.NAVIGATOR_PAGE_CONFIG = {
+      phaseKey: "Define",
+      topicSlugs: [
+        "ideal-state-solution",
+        "planning",
+        "technical-solution",
+        "risks-dependencies",
+      ],
+      continueHref: "develop.html",
+      onYesForSlug: function (slug) {
+        if (!slug) return;
+        var b = document.querySelector(
+          '.phase-orbit .orbit-item-inner[data-topic="' + slug + '"]'
+        );
+        if (b) b.classList.add("orbit-item-inner--yes");
+      },
+    };
+  </script>
+  <script src="navigator-chat-data.js"></script>
+  <script src="navigator-chat.js"></script>
+  <script>
+    (function () {
+      var sky = document.getElementById("night-sky");
+      if (sky) {
+        var count = 420;
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < count; i++) {
+          var dot = document.createElement("span");
+          dot.className = "night-sky-dot";
+          dot.style.left = Math.random() * 100 + "%";
+          dot.style.top = Math.random() * 100 + "%";
+          dot.style.animationDelay = (Math.random() * 3).toFixed(2) + "s";
+          frag.appendChild(dot);
+        }
+        sky.appendChild(frag);
+      }
+
+      var orbitEl = document.getElementById("define-orbit");
+      var connectorSvg = document.getElementById("orbit-connector");
+      var connectorPath = connectorSvg && connectorSvg.querySelector("path");
+
+      var markerRadiusPx = 18;
+
+      function syncOrbitRadius() {
+        if (!orbitEl) return;
+        var orect = orbitEl.getBoundingClientRect();
+        var sm = Math.min(orect.width, orect.height);
+        if (sm < 2) return;
+        var r = sm * 0.36 + 28;
+        r = Math.max(132, Math.min(r, sm * 0.42));
+        orbitEl.style.setProperty("--orbit-r", r + "px");
+      }
+
+      function updateOrbitConnector() {
+        if (!orbitEl || !connectorPath) return;
+        var markers = orbitEl.querySelectorAll(".orbit-marker");
+        if (markers.length < 2) return;
+
+        var orect = orbitEl.getBoundingClientRect();
+        var hx = orect.left + orect.width / 2;
+        var hy = orect.top + orect.height / 2;
+
+        var pts = [];
+        for (var i = 0; i < markers.length; i++) {
+          var m = markers[i].getBoundingClientRect();
+          var mx = m.left + m.width / 2;
+          var my = m.top + m.height / 2;
+          var vx = mx - hx;
+          var vy = my - hy;
+          var len = Math.sqrt(vx * vx + vy * vy) || 1;
+          var ux = vx / len;
+          var uy = vy / len;
+          var ox = mx + ux * markerRadiusPx;
+          var oy = my + uy * markerRadiusPx;
+          pts.push(ox - orect.left + "," + (oy - orect.top));
+        }
+
+        var d = "M " + pts[0] + " L " + pts.slice(1).join(" L ") + " Z";
+        connectorPath.setAttribute("d", d);
+      }
+
+      function syncLayout() {
+        syncOrbitRadius();
+        requestAnimationFrame(function () {
+          requestAnimationFrame(updateOrbitConnector);
+        });
+      }
+
+      syncLayout();
+      window.addEventListener("resize", syncLayout);
+      if (typeof ResizeObserver !== "undefined" && orbitEl) {
+        var roOrbit = new ResizeObserver(syncLayout);
+        roOrbit.observe(orbitEl);
+      }
+      window.setTimeout(syncLayout, 1200);
+
+      function syncOrbitFromStorage() {
+        var have = [];
+        var key =
+          (typeof window.getNavigatorYesSlugsKey === "function" &&
+            window.getNavigatorYesSlugsKey("Define")) ||
+          "navigator:Define:yesSlugs";
+        try {
+          have = JSON.parse(localStorage.getItem(key) || "[]");
+        } catch (e) {
+          have = [];
+        }
+        if (!Array.isArray(have)) have = [];
+        document.querySelectorAll(".orbit-item-inner[data-topic]").forEach(function (btn) {
+          var s = btn.getAttribute("data-topic");
+          if (s && have.indexOf(s) >= 0) {
+            btn.classList.add("orbit-item-inner--yes");
+          } else {
+            btn.classList.remove("orbit-item-inner--yes");
+          }
+        });
+      }
+
+      syncOrbitFromStorage();
+
+      var journeyPanel = document.getElementById("plot-journey-panel");
+      var journeyOpen = document.getElementById("plot-journey-open");
+      var journeyClose = document.getElementById("plot-journey-close");
+      var collapsedJourneyH = 0;
+
+      function journeyExpandedHeight() {
+        if (!journeyPanel) return 0;
+        var top = journeyPanel.getBoundingClientRect().top;
+        return Math.max(0, window.innerHeight - 2 * top);
+      }
+
+      function journeyStoreCollapsedHeight() {
+        if (!journeyPanel || journeyPanel.classList.contains("is-expanded")) return;
+        journeyPanel.style.height = "";
+        collapsedJourneyH = journeyPanel.getBoundingClientRect().height;
+      }
+
+      function journeyOpenPanel() {
+        if (!journeyPanel || !journeyOpen || journeyPanel.classList.contains("is-expanded")) return;
+        journeyStoreCollapsedHeight();
+        var h0 = collapsedJourneyH || journeyPanel.getBoundingClientRect().height;
+        journeyPanel.style.height = h0 + "px";
+        journeyPanel.offsetHeight;
+        journeyClose.removeAttribute("hidden");
+        journeyPanel.classList.add("is-expanded");
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            journeyPanel.style.height = journeyExpandedHeight() + "px";
+          });
+        });
+        journeyOpen.setAttribute("aria-expanded", "true");
+        document.body.classList.add("phase-panel-open");
+        requestAnimationFrame(function () {
+          requestAnimationFrame(syncLayout);
+        });
+        if (window.NavigatorChat && window.NavigatorChat.onOpen) {
+          window.NavigatorChat.onOpen();
+        }
+      }
+
+      window.__plotJourneyOpen = journeyOpenPanel;
+
+      function journeyClosePanel() {
+        if (!journeyPanel || !journeyOpen || !journeyClose) return;
+        if (!journeyPanel.classList.contains("is-expanded")) return;
+        var hFull = journeyPanel.getBoundingClientRect().height;
+        var hTarget = collapsedJourneyH;
+        if (!hTarget) {
+          if (window.NavigatorChat && window.NavigatorChat.onClose) {
+            window.NavigatorChat.onClose();
+          }
+          journeyPanel.classList.remove("is-expanded");
+          journeyPanel.style.height = "";
+          journeyClose.setAttribute("hidden", "");
+          journeyOpen.setAttribute("aria-expanded", "false");
+          document.body.classList.remove("phase-panel-open");
+          requestAnimationFrame(function () {
+            requestAnimationFrame(syncLayout);
+          });
+          return;
+        }
+        journeyPanel.style.height = hFull + "px";
+        journeyPanel.offsetHeight;
+        requestAnimationFrame(function () {
+          journeyPanel.style.height = hTarget + "px";
+        });
+        journeyOpen.setAttribute("aria-expanded", "false");
+
+        function onTe(ev) {
+          if (ev.target !== journeyPanel || ev.propertyName !== "height") return;
+          journeyPanel.removeEventListener("transitionend", onTe);
+          if (window.NavigatorChat && window.NavigatorChat.onClose) {
+            window.NavigatorChat.onClose();
+          }
+          journeyPanel.classList.remove("is-expanded");
+          journeyPanel.style.height = "";
+          journeyClose.setAttribute("hidden", "");
+          document.body.classList.remove("phase-panel-open");
+          requestAnimationFrame(function () {
+            requestAnimationFrame(syncLayout);
+          });
+        }
+
+        journeyPanel.addEventListener("transitionend", onTe);
+      }
+
+      if (journeyPanel && journeyOpen && journeyClose) {
+        journeyOpen.addEventListener("click", function (e) {
+          e.stopPropagation();
+          journeyOpenPanel();
+        });
+        journeyClose.addEventListener("click", function (e) {
+          e.stopPropagation();
+          journeyClosePanel();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && journeyPanel.classList.contains("is-expanded")) {
+            journeyClosePanel();
+          }
+        });
+        window.addEventListener("resize", function () {
+          if (journeyPanel.classList.contains("is-expanded")) {
+            journeyPanel.style.height = journeyExpandedHeight() + "px";
+          } else {
+            journeyStoreCollapsedHeight();
+          }
+        });
+        journeyStoreCollapsedHeight();
+        window.addEventListener("load", journeyStoreCollapsedHeight);
+        window.setTimeout(journeyStoreCollapsedHeight, 100);
+        window.setTimeout(journeyStoreCollapsedHeight, 1300);
+
+        document.querySelectorAll(".orbit-item-inner[data-topic]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var slug = btn.getAttribute("data-topic");
+            if (!slug) return;
+            try {
+              sessionStorage.setItem("navigator:lastTopicSlug", slug);
+            } catch (e) {}
+            if (journeyPanel && journeyPanel.classList.contains("is-expanded")) {
+              if (window.NavigatorChat && window.NavigatorChat.onOpen) {
+                window.NavigatorChat.onOpen();
+              }
+            } else {
+              journeyOpenPanel();
+            }
+          });
+        });
+
+        var plotNewJourney = document.getElementById("plot-new-journey");
+        if (plotNewJourney) {
+          plotNewJourney.addEventListener("click", function () {
+            if (window.NavigatorChat && window.NavigatorChat.resetJourney) {
+              window.NavigatorChat.resetJourney();
+            } else {
+              try {
+                sessionStorage.removeItem("navigator:lastTopicSlug");
+                sessionStorage.removeItem("navigator:journeyComplete");
+                localStorage.removeItem("navigator:Define:yesSlugs");
+              } catch (e) {}
+            }
+            syncOrbitFromStorage();
+            if (journeyPanel && journeyPanel.classList.contains("is-expanded")) {
+              journeyClosePanel();
+            }
+          });
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+# =============================================================================
+# MANUAL WORKFLOW — DO NOT RUN AUTOMATICALLY
+# =============================================================================
+# This workflow audits and enforces Vercel Access Group membership across all
+# active apps registered in apps.json.
+#
+# HOW IT WORKS:
+# 1. Reads all active (non-deleted) apps from apps.json that have a vercelProjectId
+# 2. Checks each app's current Access Group membership status
+# 3. Reports which apps are in the Access Group and which are not
+# 4. Adds any missing apps to the Access Group with the configured role
+# 5. Checks for stale projects in the Access Group that are not in apps.json
+#
+# Run this after adding the Access Group secret, or periodically to ensure
+# all projects are correctly assigned.
+# =============================================================================
+
+name: 🕹 Manual - Audit Vercel Access Group
+
+on:
+  workflow_dispatch: # Manual trigger only — go to Actions tab and click "Run workflow"
+
+jobs:
+  audit-and-enforce:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check current Access Group membership
+        id: audit
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_ACCESS_GROUP_ID: ${{ secrets.VERCEL_ACCESS_GROUP_ID }}
+        run: |
+          set -euo pipefail
+
+          # --- Access Group Configuration ---
+          ACCESS_GROUP_ROLE="PROJECT_VIEWER"   # Role assigned to projects in the Access Group
+
+          echo "=========================================="
+          echo "Vercel Access Group Audit"
+          echo "=========================================="
+          echo ""
+          echo "Access Group ID: $VERCEL_ACCESS_GROUP_ID"
+          echo "Role: $ACCESS_GROUP_ROLE"
+          echo ""
+
+          # Arrays to track results
+          declare -a IN_GROUP_APPS=()
+          declare -a NOT_IN_GROUP_APPS=()
+          declare -a FAILED_APPS=()
+
+          # Get all app keys from apps.json
+          APPS=$(jq -r 'keys[]' apps.json)
+
+          for app in $APPS; do
+            # Skip deleted apps
+            if jq -e --arg a "$app" '.[$a].tags // [] | index("deleted")' apps.json > /dev/null 2>&1; then
+              echo "⏭️  $app: Skipped (deleted)"
+              continue
+            fi
+
+            # Get project ID
+            PROJECT_ID=$(jq -r --arg a "$app" '.[$a].vercelProjectId // "null"' apps.json)
+
+            # Skip apps without project ID (not yet deployed)
+            if [ "$PROJECT_ID" = "null" ] || [ -z "$PROJECT_ID" ]; then
+              echo "⏭️  $app: Skipped (no Vercel project yet)"
+              continue
+            fi
+
+            # Check if project is in the Access Group
+            RESPONSE=$(curl -s -w "\n%{http_code}" \
+              "https://api.vercel.com/v1/access-groups/$VERCEL_ACCESS_GROUP_ID/projects?teamId=$VERCEL_TEAM_ID&projectId=$PROJECT_ID" \
+              -H "Authorization: Bearer $VERCEL_TOKEN")
+
+            HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+            BODY=$(echo "$RESPONSE" | sed '$d')
+
+            if [ "$HTTP_CODE" -ge 400 ] && [ "$HTTP_CODE" -ne 404 ]; then
+              echo "❌ $app: Failed to check membership (HTTP $HTTP_CODE)"
+              FAILED_APPS+=("$app")
+              continue
+            fi
+
+            MEMBER_COUNT=0
+            if [ "$HTTP_CODE" -lt 400 ]; then
+              MEMBER_COUNT=$(echo "$BODY" | jq -r '.members | length // 0' 2>/dev/null || echo "0")
+            fi
+
+            if [ "$MEMBER_COUNT" -gt 0 ]; then
+              echo "✅ $app: In Access Group"
+              IN_GROUP_APPS+=("$app")
+            else
+              echo "⚠️  $app: NOT in Access Group"
+              NOT_IN_GROUP_APPS+=("$app:$PROJECT_ID")
+            fi
+          done
+
+          echo ""
+          echo "=========================================="
+          echo "Audit Summary"
+          echo "=========================================="
+          echo ""
+          echo "Already in group:     ${#IN_GROUP_APPS[@]}"
+          echo "Not in group:         ${#NOT_IN_GROUP_APPS[@]}"
+          echo "Failed to check:      ${#FAILED_APPS[@]}"
+
+          if [ ${#FAILED_APPS[@]} -gt 0 ]; then
+            echo ""
+            echo "Apps that failed status check:"
+            for app in "${FAILED_APPS[@]}"; do
+              echo "  - $app"
+            done
+          fi
+
+          # Output for next step (newline-separated list of app:projectId pairs)
+          if [ ${#NOT_IN_GROUP_APPS[@]} -gt 0 ]; then
+            {
+              echo "not_in_group<<EOF"
+              printf '%s\n' "${NOT_IN_GROUP_APPS[@]}"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+            echo "has_missing=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_missing=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Add missing apps to Access Group
+        if: steps.audit.outputs.has_missing == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_ACCESS_GROUP_ID: ${{ secrets.VERCEL_ACCESS_GROUP_ID }}
+          NOT_IN_GROUP: ${{ steps.audit.outputs.not_in_group }}
+        run: |
+          set -euo pipefail
+
+          # --- Access Group Configuration ---
+          ACCESS_GROUP_ROLE="PROJECT_VIEWER"   # Role assigned to projects in the Access Group
+
+          echo "=========================================="
+          echo "Adding Apps to Access Group"
+          echo "=========================================="
+          echo ""
+          echo "Role: $ACCESS_GROUP_ROLE"
+          echo ""
+
+          declare -a NEWLY_ADDED=()
+          declare -a ALREADY_PRESENT=()
+          declare -a FAILED_TO_ADD=()
+
+          while IFS= read -r entry; do
+            [ -z "$entry" ] && continue
+
+            app="${entry%%:*}"
+            PROJECT_ID="${entry##*:}"
+
+            echo "Adding $app to Access Group..."
+
+            RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+              "https://api.vercel.com/v1/access-groups/$VERCEL_ACCESS_GROUP_ID/projects?teamId=$VERCEL_TEAM_ID" \
+              -H "Authorization: Bearer $VERCEL_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"projectId\": \"$PROJECT_ID\",
+                \"role\": \"$ACCESS_GROUP_ROLE\"
+              }")
+
+            HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+            BODY=$(echo "$RESPONSE" | sed '$d')
+
+            # Success: added to group
+            if [ "$HTTP_CODE" -lt 400 ]; then
+              echo "✅ $app: Added to Access Group successfully"
+              NEWLY_ADDED+=("$app")
+            # Already in group (409 conflict or 400 with "duplicated" message)
+            elif [ "$HTTP_CODE" -eq 409 ] || echo "$BODY" | grep -qi "duplicated"; then
+              echo "✅ $app: Already present in Access Group"
+              ALREADY_PRESENT+=("$app")
+            else
+              ERROR_MSG=$(echo "$BODY" | jq -r '.error.message // .message // "Unknown error"' 2>/dev/null || echo "HTTP $HTTP_CODE")
+              echo "❌ $app: Failed to add (HTTP $HTTP_CODE) — $ERROR_MSG"
+              FAILED_TO_ADD+=("$app")
+            fi
+          done <<< "$NOT_IN_GROUP"
+
+          echo ""
+          echo "=========================================="
+          echo "Enforcement Summary"
+          echo "=========================================="
+          echo ""
+          echo "Added successfully:   ${#NEWLY_ADDED[@]}"
+          echo "Already present:      ${#ALREADY_PRESENT[@]}"
+          echo "Failed to add:        ${#FAILED_TO_ADD[@]}"
+
+          if [ ${#FAILED_TO_ADD[@]} -gt 0 ]; then
+            echo ""
+            echo "Apps that failed to be added:"
+            for app in "${FAILED_TO_ADD[@]}"; do
+              echo "  - $app"
+            done
+            echo ""
+            echo "::error::Some apps failed to be added to the Access Group. Ask an admin to add them manually in the Vercel dashboard → Access Groups."
+            exit 1
+          fi
+
+          echo ""
+          echo "All missing apps have been added to the Access Group!"
+
+      - name: Check for stale projects in Access Group
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_ACCESS_GROUP_ID: ${{ secrets.VERCEL_ACCESS_GROUP_ID }}
+        run: |
+          set -euo pipefail
+
+          echo "=========================================="
+          echo "Stale Project Check"
+          echo "=========================================="
+          echo ""
+          echo "Checking for projects in the Access Group that are not in apps.json..."
+          echo ""
+
+          # Collect all known (non-deleted) project IDs from apps.json
+          KNOWN_PROJECT_IDS=$(jq -r '
+            to_entries[]
+            | select((.value.tags // [] | index("deleted")) | not)
+            | select(.value.vercelProjectId != null)
+            | .value.vercelProjectId
+          ' apps.json | sort -u)
+
+          # Fetch all projects in the Access Group (paginate if needed)
+          declare -a STALE_PROJECTS=()
+          NEXT=""
+          PAGE=1
+
+          while true; do
+            URL="https://api.vercel.com/v1/access-groups/$VERCEL_ACCESS_GROUP_ID/projects?teamId=$VERCEL_TEAM_ID&limit=100"
+            if [ -n "$NEXT" ]; then
+              URL="${URL}&next=${NEXT}"
+            fi
+
+            RESPONSE=$(curl -s -w "\n%{http_code}" \
+              "$URL" \
+              -H "Authorization: Bearer $VERCEL_TOKEN")
+
+            HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+            BODY=$(echo "$RESPONSE" | sed '$d')
+
+            if [ "$HTTP_CODE" -ge 400 ]; then
+              echo "::warning::Failed to fetch Access Group projects (HTTP $HTTP_CODE). Skipping stale check."
+              exit 0
+            fi
+
+            # Extract project IDs and names from this page
+            PROJECTS_ON_PAGE=$(echo "$BODY" | jq -r '.members[]? | "\(.project.id)|\(.project.name)"' 2>/dev/null || true)
+
+            for entry in $PROJECTS_ON_PAGE; do
+              PROJ_ID="${entry%%|*}"
+              PROJ_NAME="${entry##*|}"
+
+              if ! echo "$KNOWN_PROJECT_IDS" | grep -qF "$PROJ_ID"; then
+                echo "⚠️  $PROJ_NAME ($PROJ_ID): In Access Group but NOT in apps.json"
+                STALE_PROJECTS+=("$PROJ_NAME ($PROJ_ID)")
+              fi
+            done
+
+            # Check for next page
+            NEXT=$(echo "$BODY" | jq -r '.pagination.next // empty' 2>/dev/null || true)
+            if [ -z "$NEXT" ]; then
+              break
+            fi
+            PAGE=$((PAGE + 1))
+          done
+
+          echo ""
+          echo "=========================================="
+          echo "Stale Project Summary"
+          echo "=========================================="
+          echo ""
+
+          if [ ${#STALE_PROJECTS[@]} -eq 0 ]; then
+            echo "✅ No stale projects found. All Access Group projects are tracked in apps.json."
+          else
+            echo "⚠️  Found ${#STALE_PROJECTS[@]} project(s) in the Access Group not tracked in apps.json:"
+            echo ""
+            for proj in "${STALE_PROJECTS[@]}"; do
+              echo "  - $proj"
+            done
+            echo ""
+            echo "These may be leftover from deleted apps or manually added projects."
+            echo "An admin should review and remove them from the Access Group if they are no longer needed."
+            echo ""
+            echo "::warning::${#STALE_PROJECTS[@]} stale project(s) found in Access Group that are not in apps.json."
+          fi

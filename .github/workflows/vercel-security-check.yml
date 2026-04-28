@@ -1,0 +1,195 @@
+# =============================================================================
+# MANUAL WORKFLOW — DO NOT RUN AUTOMATICALLY
+# =============================================================================
+# This workflow audits and enforces Vercel Deployment Protection (SSO/Vercel
+# Authentication) across all active apps registered in apps.json.
+#
+# HOW IT WORKS:
+# 1. Reads all active (non-deleted) apps from apps.json
+# 2. Checks each app's current Vercel Authentication protection status
+# 3. Reports which apps are protected (All Domains) and which are not
+# 4. Enables Vercel Authentication (All Domains) for any unprotected apps
+#
+# Run this periodically or after adding new apps to ensure all deployments
+# are protected behind Vercel Authentication.
+# =============================================================================
+
+name: 🕹 Manual - Audit Vercel Deployment Security
+
+on:
+  workflow_dispatch: # Manual trigger only — go to Actions tab and click "Run workflow"
+
+jobs:
+  audit-and-enable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check current protection status
+        id: audit
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+        run: |
+          set -euo pipefail
+
+          echo "=========================================="
+          echo "Vercel Deployment Protection Audit"
+          echo "=========================================="
+          echo ""
+
+          # Arrays to track results
+          declare -a PROTECTED_APPS=()
+          declare -a UNPROTECTED_APPS=()
+          declare -a FAILED_APPS=()
+
+          # Get all app keys from apps.json
+          APPS=$(jq -r 'keys[]' apps.json)
+
+          for app in $APPS; do
+            # Skip deleted apps
+            if jq -e --arg a "$app" '.[$a].tags // [] | index("deleted")' apps.json > /dev/null 2>&1; then
+              echo "⏭️  $app: Skipped (deleted)"
+              continue
+            fi
+
+            # Get project ID
+            PROJECT_ID=$(jq -r --arg a "$app" '.[$a].vercelProjectId // "null"' apps.json)
+
+            # Skip apps without project ID (not yet deployed)
+            if [ "$PROJECT_ID" = "null" ] || [ -z "$PROJECT_ID" ]; then
+              echo "⏭️  $app: Skipped (no Vercel project yet)"
+              continue
+            fi
+
+            # Query Vercel API for project details
+            RESPONSE=$(curl -s -w "\n%{http_code}" \
+              "https://api.vercel.com/v9/projects/$PROJECT_ID?teamId=$VERCEL_TEAM_ID" \
+              -H "Authorization: Bearer $VERCEL_TOKEN")
+
+            HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+            BODY=$(echo "$RESPONSE" | sed '$d')
+
+            if [ "$HTTP_CODE" -ge 400 ]; then
+              echo "❌ $app: Failed to fetch status (HTTP $HTTP_CODE)"
+              FAILED_APPS+=("$app")
+              continue
+            fi
+
+            # Check ssoProtection status
+            SSO_PROTECTION=$(echo "$BODY" | jq -r '.ssoProtection // empty')
+
+            if [ -n "$SSO_PROTECTION" ] && [ "$SSO_PROTECTION" != "null" ]; then
+              DEPLOYMENT_TYPE=$(echo "$BODY" | jq -r '.ssoProtection.deploymentType // "unknown"')
+              if [ "$DEPLOYMENT_TYPE" = "all" ]; then
+                echo "✅ $app: Vercel Authentication enabled (All Domains)"
+                PROTECTED_APPS+=("$app")
+              else
+                echo "⚠️  $app: Vercel Authentication enabled but not All Domains (current: $DEPLOYMENT_TYPE)"
+                UNPROTECTED_APPS+=("$app:$PROJECT_ID")
+              fi
+            else
+              echo "⚠️  $app: Vercel Authentication NOT enabled"
+              UNPROTECTED_APPS+=("$app:$PROJECT_ID")
+            fi
+          done
+
+          echo ""
+          echo "=========================================="
+          echo "Audit Summary"
+          echo "=========================================="
+          echo ""
+          echo "Already protected:    ${#PROTECTED_APPS[@]}"
+          echo "Unprotected:          ${#UNPROTECTED_APPS[@]}"
+          echo "Failed to check:      ${#FAILED_APPS[@]}"
+
+          if [ ${#FAILED_APPS[@]} -gt 0 ]; then
+            echo ""
+            echo "Apps that failed status check:"
+            for app in "${FAILED_APPS[@]}"; do
+              echo "  - $app"
+            done
+          fi
+
+          # Output for next step (newline-separated list of app:projectId pairs)
+          if [ ${#UNPROTECTED_APPS[@]} -gt 0 ]; then
+            {
+              echo "unprotected_apps<<EOF"
+              printf '%s\n' "${UNPROTECTED_APPS[@]}"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+            echo "has_unprotected=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_unprotected=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Enable protection for unprotected apps
+        if: steps.audit.outputs.has_unprotected == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          UNPROTECTED_APPS: ${{ steps.audit.outputs.unprotected_apps }}
+        run: |
+          set -euo pipefail
+
+          echo "=========================================="
+          echo "Enabling Vercel Authentication"
+          echo "=========================================="
+          echo ""
+
+          declare -a NEWLY_PROTECTED_APPS=()
+          declare -a FAILED_TO_PROTECT=()
+
+          while IFS= read -r entry; do
+            [ -z "$entry" ] && continue
+
+            app="${entry%%:*}"
+            PROJECT_ID="${entry##*:}"
+
+            echo "Enabling Vercel Authentication for $app..."
+
+            RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH \
+              "https://api.vercel.com/v9/projects/$PROJECT_ID?teamId=$VERCEL_TEAM_ID" \
+              -H "Authorization: Bearer $VERCEL_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "ssoProtection": {
+                  "deploymentType": "all"
+                }
+              }')
+
+            HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+            BODY=$(echo "$RESPONSE" | sed '$d')
+
+            if [ "$HTTP_CODE" -ge 400 ]; then
+              echo "❌ $app: Failed to enable (HTTP $HTTP_CODE)"
+              echo "   Error: $(echo "$BODY" | jq -r '.error.message // .message // "Unknown error"')"
+              FAILED_TO_PROTECT+=("$app")
+            else
+              echo "✅ $app: Vercel Authentication enabled successfully"
+              NEWLY_PROTECTED_APPS+=("$app")
+            fi
+          done <<< "$UNPROTECTED_APPS"
+
+          echo ""
+          echo "=========================================="
+          echo "Fix Summary"
+          echo "=========================================="
+          echo ""
+          echo "Newly protected:      ${#NEWLY_PROTECTED_APPS[@]}"
+          echo "Failed to protect:    ${#FAILED_TO_PROTECT[@]}"
+
+          if [ ${#FAILED_TO_PROTECT[@]} -gt 0 ]; then
+            echo ""
+            echo "Apps that failed to enable protection:"
+            for app in "${FAILED_TO_PROTECT[@]}"; do
+              echo "  - $app"
+            done
+            echo ""
+            echo "::error::Some apps failed to enable Vercel Authentication"
+            exit 1
+          fi
+
+          echo ""
+          echo "All unprotected apps have been secured!"

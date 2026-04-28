@@ -1,0 +1,61 @@
+/**
+ * JAX Design System - Color Tokens
+ * Extracted from: source-jax-styles/
+ *
+ * Usage: var(--color-text-standard)
+ */
+
+:root {
+  /* ===== Brand Colors ===== */
+  --color-blue: #0078C8;
+  --color-blue-bright: #018DEB;
+  --color-blue-light: #B1DFFE;
+
+  /* JAX Gradient */
+  --gradient-jax: linear-gradient(112.08deg, #1759FF 14.43%, #2BABF8 85.57%);
+  --gradient-jax-light: linear-gradient(180deg, #B1DFFE 2.31%, rgba(242, 248, 252, 0.2) 100%);
+
+  /* ===== Text Colors ===== */
+  --color-text-standard: #000A1E;
+  --color-text-muted: #404756;
+  --color-text-faint: #59606D;
+  --color-text-inverted: #FFFFFF;
+  --color-text-link: #0078C8;
+  --color-text-negative: #DC3246;
+  --color-text-placeholder: rgba(0, 10, 30, 0.65);
+
+  /* ===== Neutral Colors ===== */
+  --color-neutral-white: #FFFFFF;
+  --color-neutral-grey-2: #404756;
+  --color-neutral-grey-3: #59606D;
+  --color-neutral-grey-5: #A6A9B0;
+  --color-neutral-grey-6: #CCCED2;
+  --color-neutral-grey-7: #E6E7E9;
+
+  /* ===== Icon Colors ===== */
+  --color-icon-muted: #404756;
+  --color-icon-faint: #59606D;
+  --color-icon-blue: #0078C8;
+
+  /* ===== Semantic Colors ===== */
+  /* Positive/Success */
+  --color-positive-xlight: #A6D3BB;
+  --color-positive-light: #80C19E;
+  --color-positive-xdark: #002E15;
+
+  /* Negative/Error */
+  --color-negative-bg: #FDECED;
+  --color-negative-border: #DC3246;
+
+  /* ===== Border Colors ===== */
+  --color-border-standard: #A6A9B0;
+  --color-border-light: #CCCED2;
+  --color-border-focus: #A9C9FF;
+
+  /* ===== Background Colors ===== */
+  --color-bg-primary: #FFFFFF;
+  --color-bg-error: #FDECED;
+
+  /* ===== Shadow Colors ===== */
+  --color-shadow-pop: rgba(0, 10, 30, 0.20188);
+}

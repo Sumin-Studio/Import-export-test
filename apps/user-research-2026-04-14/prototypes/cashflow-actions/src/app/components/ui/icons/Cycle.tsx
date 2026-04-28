@@ -1,0 +1,27 @@
+import type { ReactElement } from "react";
+
+interface IconProps {
+  className?: string;
+}
+
+/** Cycle / repeat arrows (source: cycle.svg). */
+export default function Cycle({ className }: IconProps): ReactElement {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      height="32"
+      role="presentation"
+      viewBox="0 0 32 32"
+      width="32"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        clipRule="evenodd"
+        d="M16 23C17.9367 23 19.6867 22.2183 20.9525 20.9525L19.8912 19.8912C18.8967 20.8858 17.5217 21.5 16 21.5C12.9567 21.5 10.5 19.0433 10.5 16H13L10 13L7 16H9C9 19.8733 12.1267 23 16 23ZM11.0475 11.0475L12.1088 12.1087C13.1033 11.1142 14.4783 10.5 16 10.5C19.0433 10.5 21.5 12.9567 21.5 16H19L22 19L25 16H23C23 12.1267 19.8733 9 16 9C14.0633 9 12.3133 9.78167 11.0475 11.0475Z"
+        fill="currentColor"
+        fillRule="evenodd"
+      />
+    </svg>
+  );
+}

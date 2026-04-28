@@ -1,0 +1,137 @@
+/**
+ * Fluid UI Panel Component
+ *
+ * The AI-powered side/fullscreen panel for chat, search, widgets.
+ * Context-aware of the content area.
+ */
+
+/* ===== Panel Structure ===== */
+.fluid-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-bg-surface);
+}
+
+/* ===== Panel Body (Scrollable Content Area) ===== */
+.fluid-panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-standard);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-large);
+}
+
+/* ===== Panel Footer (Input Area) ===== */
+.fluid-panel__footer {
+  padding: var(--s-small) var(--s-standard);
+  background: var(--color-bg-surface);
+  flex-shrink: 0;
+}
+
+/* ===== Fluid UI Heading Block ===== */
+.fluid-heading {
+  background: var(--color-bg-surface);
+  padding: var(--s-standard) 0;
+  text-align: left;
+}
+
+.fluid-heading__title {
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-emphasis);
+  color: var(--color-text-primary);
+  margin-bottom: var(--s-2xsmall);
+}
+
+.fluid-heading__subtitle {
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+}
+
+/* ===== Context Indicator ===== */
+.fluid-context {
+  display: flex;
+  align-items: center;
+  gap: var(--s-xsmall);
+  padding: var(--s-xsmall) var(--s-small);
+  background: var(--color-blue-light);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-small);
+  color: var(--color-text-primary);
+}
+
+.fluid-context__icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-blue);
+}
+
+.fluid-context__text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== Message/Content Area ===== */
+.fluid-panel__messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-standard);
+}
+
+/* ===== Quick Actions/Suggestions ===== */
+.fluid-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-xsmall);
+}
+
+/* ===== Panel Widget Placeholder ===== */
+.fluid-widget {
+  background: var(--color-neutral-grey-7);
+  border-radius: var(--radius-lg);
+  padding: var(--s-large);
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}
+
+/* ===== Fullscreen Mode Adjustments ===== */
+/* Centered content column with comfortable reading width */
+.canvas[data-state="fullscreen"] .fluid-panel__body {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 40px 72px;
+  box-sizing: border-box;
+}
+
+.canvas[data-state="fullscreen"] .fluid-panel__footer {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border-top: none;
+  padding: var(--s-small) 40px var(--s-large);
+  box-sizing: border-box;
+}
+
+/* ===== Responsive: Panel adapts to available space ===== */
+@media (max-width: 768px) {
+  .fluid-panel__body {
+    padding: var(--s-small);
+  }
+
+  .fluid-heading {
+    padding: var(--s-small);
+  }
+
+  .fluid-heading__title {
+    font-size: var(--font-size-medium);
+  }
+}

@@ -1,0 +1,6 @@
+.vercel
+node_modules
+.env
+.mcp.json
+.DS_Store
+*.log

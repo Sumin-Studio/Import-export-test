@@ -1,0 +1,81 @@
+/**
+ * JAX Design System - Typography Tokens
+ * Extracted from: source-jax-styles/
+ *
+ * Usage: var(--font-size-medium), var(--line-height-medium)
+ */
+
+:root {
+  /* ===== Font Family ===== */
+  --font-family-primary: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  /* ===== Font Weights ===== */
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+
+  /* ===== Font Sizes ===== */
+  --font-size-xsmall: 11px;
+  --font-size-small: 13px;
+  --font-size-medium: 15px;
+  --font-size-large: 17px;
+  --font-size-xlarge: 21px;
+
+  /* ===== Line Heights ===== */
+  --line-height-xsmall: 16px;
+  --line-height-small: 20px;
+  --line-height-medium: 24px;
+  --line-height-large: 28px;
+  --line-height-xlarge: 32px;
+}
+
+/* ===== Typography Utility Classes ===== */
+
+.text-xsmall {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-xsmall);
+  line-height: var(--line-height-xsmall);
+  font-weight: var(--font-weight-normal);
+}
+
+.text-small {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+  font-weight: var(--font-weight-normal);
+}
+
+.text-medium {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-medium);
+  line-height: var(--line-height-medium);
+  font-weight: var(--font-weight-normal);
+}
+
+.text-large {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-large);
+  line-height: var(--line-height-large);
+  font-weight: var(--font-weight-normal);
+}
+
+.text-xlarge {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-xlarge);
+  line-height: var(--line-height-xlarge);
+  font-weight: var(--font-weight-normal);
+}
+
+/* Bold variants */
+.text-small-bold {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+  font-weight: var(--font-weight-bold);
+}
+
+.text-large-bold {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-large);
+  line-height: var(--line-height-large);
+  font-weight: var(--font-weight-bold);
+}

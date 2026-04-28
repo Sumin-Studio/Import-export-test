@@ -1,0 +1,128 @@
+# =============================================================================
+# MANUAL TEST WORKFLOW — DO NOT RUN AUTOMATICALLY
+# =============================================================================
+# This workflow verifies that the VERCEL_TOKEN and VERCEL_TEAM_ID secrets have
+# the necessary permissions to create, deploy, and manage Vercel projects.
+#
+# HOW IT WORKS:
+# 1. Checks token validity by fetching current user info
+# 2. Verifies access to the configured team
+# 3. Lists existing projects to confirm read access
+# 4. Creates a temporary test project, then immediately deletes it
+#
+# ⚠️  WARNING: This creates a real (temporary) Vercel project as part of the
+# test. It is deleted immediately, but avoid running this frequently.
+# Only run when diagnosing permission issues or after rotating tokens.
+# =============================================================================
+
+name: 🕹 Manual - Verify Vercel Connection
+
+on:
+  workflow_dispatch: # Manual trigger only — go to Actions tab and click "Run workflow"
+
+jobs:
+  check-permissions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check token validity (get current user)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          echo "=== Verifying token validity ==="
+          RESPONSE=$(curl -sf -H "Authorization: Bearer $VERCEL_TOKEN" \
+            https://api.vercel.com/v2/user)
+          
+          if [ $? -eq 0 ]; then
+            USERNAME=$(echo "$RESPONSE" | jq -r '.user.username')
+            echo "✅ Token is valid. Authenticated as: $USERNAME"
+          else
+            echo "❌ Token is invalid or expired"
+            exit 1
+          fi
+
+      - name: Verify team access
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+        run: |
+          echo "=== Verifying team access ==="
+          RESPONSE=$(curl -sf -H "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v2/teams/$VERCEL_TEAM_ID")
+          
+          if [ $? -eq 0 ]; then
+            TEAM_NAME=$(echo "$RESPONSE" | jq -r '.name')
+            echo "✅ Team access confirmed. Team name: $TEAM_NAME"
+          else
+            echo "❌ Cannot access team. Token may lack team scope."
+            exit 1
+          fi
+
+      - name: List existing projects (read access)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+        run: |
+          echo "=== Verifying project read access ==="
+          RESPONSE=$(curl -sf -H "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v9/projects?teamId=$VERCEL_TEAM_ID&limit=5")
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ Project read access confirmed. Sample projects:"
+            echo "$RESPONSE" | jq -r '.projects[].name' | head -5
+          else
+            echo "❌ Cannot list projects. Token may lack read scope."
+            exit 1
+          fi
+
+      - name: Test project creation and deletion (write access)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+        run: |
+          echo "=== Testing project create/delete permissions ==="
+          TEST_PROJECT_NAME="__permissions-test-delete-me-$(date +%s)"
+          
+          # Attempt to create a test project
+          RESPONSE=$(curl -sf -X POST -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"name\":\"$TEST_PROJECT_NAME\",\"framework\":null}" \
+            "https://api.vercel.com/v9/projects?teamId=$VERCEL_TEAM_ID")
+          
+          PROJECT_ID=$(echo "$RESPONSE" | jq -r '.id')
+          
+          if [ "$PROJECT_ID" != "null" ] && [ -n "$PROJECT_ID" ]; then
+            echo "✅ Project creation works (project ID: $PROJECT_ID)"
+            
+            # Clean up immediately
+            curl -sf -X DELETE -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v9/projects/$PROJECT_ID?teamId=$VERCEL_TEAM_ID"
+            
+            if [ $? -eq 0 ]; then
+              echo "✅ Project deletion works. Test project cleaned up."
+            else
+              echo "⚠️  Project created but deletion failed. Manual cleanup may be needed."
+              echo "    Project name: $TEST_PROJECT_NAME"
+            fi
+          else
+            echo "❌ Project creation failed. Token may lack write scope."
+            echo "Response:"
+            echo "$RESPONSE" | jq .
+            exit 1
+          fi
+
+      - name: Summary
+        run: |
+          echo ""
+          echo "============================================"
+          echo "✅ All permission checks passed!"
+          echo "============================================"
+          echo ""
+          echo "Your VERCEL_TOKEN and VERCEL_TEAM_ID are correctly"
+          echo "configured and have the necessary permissions to:"
+          echo "  • Authenticate with Vercel API"
+          echo "  • Access your team"
+          echo "  • Read existing projects"
+          echo "  • Create new projects"
+          echo "  • Delete projects"
+          echo ""
+          echo "The deploy workflow should work correctly."

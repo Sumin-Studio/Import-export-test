@@ -1,0 +1,74 @@
+/* XDL (Xero Design Language) -- Web Design Tokens */
+/* Generated from Figma: 4YLjes8hJHKjWhHuwxYwG8 */
+/* Note: Semantic color values are theme-dependent (light/dark). */
+/* Values below reflect the default light theme. */
+
+:root {
+  /* === Text === */
+  --xdl-color-text-default: #333333;
+  --xdl-color-text-muted: #666666;
+  --xdl-color-text-faint: #999999;
+  --xdl-color-text-inverse: #FFFFFF;
+
+  /* === Action === */
+  --xdl-color-action-default: #0078C8;
+  --xdl-color-action-hover: #005999;
+  --xdl-color-action-active: #004477;
+  --xdl-color-action-focus: #0078C8;
+
+  /* === Theme / Backgrounds === */
+  --xdl-color-theme-ab: #FFFFFF;
+  --xdl-color-theme-sb: #F4F5F7;
+
+  /* === Borders === */
+  --xdl-color-border-subtle: #ECEEF1;
+  --xdl-color-border-soft: #D4D7DC;
+  --xdl-color-border-regular: #B3B7BD;
+  --xdl-color-border-strong: #8C9196;
+
+  /* === Brand === */
+  --xdl-color-xero-logo: #13B5EA;
+
+  /* === Spacing === */
+  --xdl-spacing-0: 0px;
+  --xdl-spacing-2: 2px;
+  --xdl-spacing-4: 4px;
+  --xdl-spacing-8: 8px;
+  --xdl-spacing-12: 12px;
+  --xdl-spacing-16: 16px;
+  --xdl-spacing-20: 20px;
+  --xdl-spacing-24: 24px;
+  --xdl-spacing-32: 32px;
+  --xdl-spacing-48: 48px;
+  --xdl-spacing-64: 64px;
+
+  /* === Typography === */
+  --xdl-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  --xdl-font-size-10: 10px;
+  --xdl-font-size-11: 11px;
+  --xdl-font-size-12: 12px;
+  --xdl-font-size-13: 13px;
+  --xdl-font-size-14: 14px;
+  --xdl-font-size-15: 15px;
+  --xdl-font-size-17: 17px;
+  --xdl-font-size-22: 22px;
+  --xdl-font-size-24: 24px;
+  --xdl-font-size-28: 28px;
+  --xdl-font-size-32: 32px;
+  --xdl-font-size-44: 44px;
+  --xdl-font-size-64: 64px;
+
+  /* === Border Radius === */
+  --xdl-radius-none: 0px;
+  --xdl-radius-small: 2px;
+  --xdl-radius-medium: 4px;
+  --xdl-radius-large: 8px;
+  --xdl-radius-xlarge: 12px;
+  --xdl-radius-max: 9999px;
+  --xdl-radius-circle: 50%;
+
+  /* === Icon Sizes === */
+  --xdl-icon-small: 16px;
+  --xdl-icon-large: 24px;
+  --xdl-icon-xlarge: 32px;
+}

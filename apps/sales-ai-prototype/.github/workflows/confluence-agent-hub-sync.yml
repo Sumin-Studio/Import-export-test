@@ -1,0 +1,61 @@
+name: Confluence Agent Hub Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Preview only, do not write to Confluence"
+        required: false
+        default: "true"
+      title_prefix:
+        description: "Optional page title prefix override"
+        required: false
+        default: ""
+      parent_page_id:
+        description: "Optional Confluence parent page ID override"
+        required: false
+        default: ""
+  schedule:
+    - cron: "0 7 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      CONFLUENCE_USERNAME: ${{ secrets.CONFLUENCE_USERNAME }}
+      CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+      CONFLUENCE_URL: ${{ vars.CONFLUENCE_URL }}
+      CONFLUENCE_SPACE_KEY: ${{ vars.CONFLUENCE_SPACE_KEY }}
+      CONFLUENCE_AGENT_HUB_PREFIX: ${{ inputs.title_prefix || vars.CONFLUENCE_AGENT_HUB_PREFIX }}
+      CONFLUENCE_AGENT_HUB_PARENT_PAGE_ID: ${{ inputs.parent_page_id || vars.CONFLUENCE_AGENT_HUB_PARENT_PAGE_ID }}
+      DRY_RUN: ${{ inputs.dry_run || 'false' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.2.8"
+
+      - name: Validate required Confluence configuration
+        run: |
+          test -n "$CONFLUENCE_USERNAME"
+          test -n "$CONFLUENCE_API_TOKEN"
+          test -n "$CONFLUENCE_URL"
+          test -n "$CONFLUENCE_SPACE_KEY"
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Preview Confluence sync
+        if: ${{ github.event_name == 'workflow_dispatch' && env.DRY_RUN == 'true' }}
+        run: bun run confluence:bootstrap-hub --dry-run
+
+      - name: Run Confluence sync
+        if: ${{ github.event_name == 'schedule' || env.DRY_RUN != 'true' }}
+        run: bun run confluence:bootstrap-hub

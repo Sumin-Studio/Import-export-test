@@ -1,0 +1,131 @@
+/**
+ * Header Component
+ *
+ * Fixed header bar with logo and controls.
+ * Adapts to canvas state.
+ */
+
+/* ===== Main Header ===== */
+.canvas__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-small) var(--s-large);
+  background: var(--color-bg-surface);
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* ===== Logo Area ===== */
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--s-xsmall);
+}
+
+.header__logo-text {
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-emphasis);
+  color: var(--color-text-primary);
+}
+
+/* ===== Header Controls ===== */
+.header__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s-xsmall);
+}
+
+/* ===== Fluid Panel Trigger Button ===== */
+.header__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-icon);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.header__trigger:hover {
+  background: var(--color-neutral-grey-7);
+  color: var(--color-text-icon);
+}
+
+.header__trigger:focus-visible {
+  outline: 2px solid var(--color-blue);
+  outline-offset: 2px;
+}
+
+/* Hide trigger when panel is open */
+.canvas[data-state="side-assist"] .header__trigger,
+.canvas[data-state="fullscreen"] .header__trigger {
+  display: none;
+}
+
+/* ===== Fluid Panel Header ===== */
+.fluid-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-small) var(--s-standard);
+  min-height: 64px;
+  flex-shrink: 0;
+}
+
+.fluid-panel__title {
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-emphasis);
+  color: var(--color-text-primary);
+}
+
+.fluid-panel__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2xsmall);
+}
+
+/* ===== Panel Control Buttons ===== */
+.fluid-panel__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-icon);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.fluid-panel__btn:hover {
+  background: var(--color-neutral-grey-7);
+  color: var(--color-text-icon);
+}
+
+.fluid-panel__btn:focus-visible {
+  outline: 2px solid var(--color-blue);
+  outline-offset: 2px;
+}
+
+/* Expand button - hidden in fullscreen */
+.canvas[data-state="fullscreen"] .fluid-panel__btn--expand {
+  display: none;
+}
+
+/* Collapse button - only shown in fullscreen */
+.fluid-panel__btn--collapse {
+  display: none;
+}
+
+.canvas[data-state="fullscreen"] .fluid-panel__btn--collapse {
+  display: flex;
+}

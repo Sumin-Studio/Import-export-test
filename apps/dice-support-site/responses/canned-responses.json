@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "description": "Canned responses for demo chat functionality",
+    "lastUpdated": "2026-02-20",
+    "notes": "Keywords are matched case-insensitively. First matching response wins."
+  },
+  "responses": [
+    {
+      "id": "send-invoice",
+      "name": "Send Invoice",
+      "keywords": [["send", "invoice"], ["create", "invoice"], ["first", "invoice"], ["email", "invoice"]],
+      "response": "To send your first invoice:\n\n1. Go to **Business > Invoices** and click **New Invoice**\n2. Select or add your customer's details\n3. Add line items for your products or services\n4. Set the due date and any other terms\n5. Click **Approve** then **Send** to email it directly\n\nYou can also save as draft if you're not ready to send yet.",
+      "source": "https://central.xero.com/s/article/Create-and-send-invoices",
+      "category": "invoicing"
+    },
+    {
+      "id": "bank-feed-broken",
+      "name": "Bank Feed Issues",
+      "keywords": [["bank", "feed"], ["bank", "broken"], ["bank", "not working"], ["bank", "stopped"], ["feed", "broken"], ["feed", "error"], ["bank", "disconnected"], ["bank", "sync"], ["transactions", "not showing"]],
+      "response": "If your bank feed has stopped working:\n\n1. **Check the connection status** in Accounting > Bank Accounts\n2. **Refresh the feed** by clicking the bank account and selecting 'Refresh'\n3. **Re-authenticate** if prompted - your bank may require you to log in again\n4. **Check your bank's website** for any service outages\n\nIf it's still not working after 24 hours, the issue may be with the bank's data feed. Let me know if you'd like to contact support.",
+      "source": "https://central.xero.com/s/article/Bank-feed-troubleshooting",
+      "category": "banking"
+    },
+    {
+      "id": "contact-support",
+      "name": "Contact Support",
+      "keywords": [["need", "help"], ["talk", "someone"], ["contact", "support"], ["speak", "person"], ["human", "help"], ["real", "person"], ["support", "team"], ["get", "help"], ["need", "support"]],
+      "response": "I can connect you with our support team. Here are your options:\n\n• **Live chat** - Available 24/7 for subscribers\n• **Raise a case** - Get a response within 24 hours\n• **Community forums** - Ask questions and share knowledge\n\nWould you like me to start a live chat with a support specialist?",
+      "source": "https://central.xero.com/s/article/Get-help-from-Xero",
+      "category": "support"
+    }
+  ],
+  "fallback": {
+    "response": "I'm not sure about that one. Could you try rephrasing, or would you like me to connect you with our support team?",
+    "showSupportOption": true
+  }
+}

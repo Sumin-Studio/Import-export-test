@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI design scorecard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI design scorecard</h1>
+            <p class="subtitle">Do our AI design goals meet our customer expectations?</p>
+        </header>
+
+        <main class="split-layout">
+            <!-- Left side: Input Form -->
+            <div class="form-section">
+                <h2>Configuration</h2>
+                <form id="aiDesignForm">
+                    <div id="inputsContainer" class="inputs-container">
+                        <!-- Inputs will be dynamically loaded here -->
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="resetBtn">Reset All</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right side: Live Scorecard -->
+            <div class="scorecard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h2 style="margin: 0;">Scorecard</h2>
+                    <button type="button" class="btn btn-primary" id="downloadBtn" style="display: none;">Download scorecard</button>
+                </div>
+                <div id="scorecardContent" class="scorecard-content">
+                    <div class="empty-state">
+                        <p>Complete the inputs to see your scorecard</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Info Side Panel -->
+    <div id="infoPanel" class="info-panel">
+        <div class="info-panel-header">
+            <h3 id="infoPanelTitle">Information</h3>
+            <button id="closePanelBtn" class="close-panel-btn" aria-label="Close panel">&times;</button>
+        </div>
+        <div class="info-panel-content" id="infoPanelContent">
+            <!-- Content will be loaded here -->
+        </div>
+    </div>
+    <div id="panelOverlay" class="panel-overlay"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+

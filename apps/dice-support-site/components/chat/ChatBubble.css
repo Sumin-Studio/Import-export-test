@@ -1,0 +1,80 @@
+/**
+ * Chat Bubble Component
+ *
+ * User and system message bubbles for conversational UI.
+ * Based on JAX chat bubble & text styles.
+ */
+
+/* ===== Message Container ===== */
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2xsmall);
+  max-width: 328px;
+}
+
+/* User messages align right */
+.message--user {
+  align-self: flex-end;
+}
+
+/* System messages align left */
+.message--system {
+  align-self: flex-start;
+}
+
+/* ===== Fullscreen Mode Adjustments ===== */
+
+/* User messages: constrained to 480px for readability */
+[data-state="fullscreen"] .message--user {
+  max-width: 480px;
+}
+
+/* System messages: expand to fill column width (no constraint) */
+[data-state="fullscreen"] .message--system {
+  max-width: none;
+}
+
+/* ===== Chat Bubble ===== */
+.chat-bubble {
+  padding: var(--s-xsmall) var(--s-standard);
+  font-family: var(--font-family);
+  font-size: var(--font-size-medium);
+  line-height: var(--font-line-height-standard);
+  word-wrap: break-word;
+}
+
+/* User Bubble - Blue background */
+.chat-bubble--user {
+  background: var(--color-blue);
+  color: var(--color-white);
+  border-radius: 12px 12px 2px 12px;
+}
+
+/* System Bubble - No background, just text */
+.chat-bubble--system {
+  background: transparent;
+  color: var(--color-text-primary);
+  border-radius: 16px 16px 16px 2px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* ===== Message Timestamp ===== */
+.message__time {
+  font-size: var(--font-size-xsmall);
+  color: var(--color-text-secondary);
+  padding: 0 var(--s-xsmall);
+}
+
+.message--user .message__time {
+  text-align: right;
+}
+
+/* ===== Messages List ===== */
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-standard);
+  padding: var(--s-standard) 0;
+}

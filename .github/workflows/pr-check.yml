@@ -1,0 +1,133 @@
+name: PR Boundary Check
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for boundary violations
+        id: check
+        run: |
+          set -euo pipefail
+
+          # Get all changed files in the PR
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+
+          # Find which app folders are touched
+          APP_FOLDERS=$(echo "$CHANGED_FILES" | grep -oP '^apps/\K[^/]+' | sort -u || true)
+
+          # If no app folders are touched, nothing to check
+          if [ -z "$APP_FOLDERS" ]; then
+            echo "has_violations=false" >> "$GITHUB_OUTPUT"
+            echo "No app folders changed, skipping boundary check."
+            exit 0
+          fi
+
+          # Build a list of allowed paths: all detected app folders + apps.json
+          VIOLATIONS=""
+
+          while IFS= read -r file; do
+            # Skip empty lines
+            [ -z "$file" ] && continue
+
+            # apps.json is always allowed
+            if [ "$file" = "apps.json" ]; then
+              continue
+            fi
+
+            # Repo CI / workflow changes are not app-boundary violations
+            if echo "$file" | grep -q '^\.github/'; then
+              continue
+            fi
+
+            # Check if file is inside one of the changed app folders
+            IS_ALLOWED=false
+            for app in $APP_FOLDERS; do
+              if echo "$file" | grep -q "^apps/$app/"; then
+                IS_ALLOWED=true
+                break
+              fi
+            done
+
+            if [ "$IS_ALLOWED" = "false" ]; then
+              VIOLATIONS="${VIOLATIONS}${file}\n"
+            fi
+          done <<< "$CHANGED_FILES"
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "has_violations=true" >> "$GITHUB_OUTPUT"
+            # Write violations to a file to preserve newlines
+            printf '%b' "$VIOLATIONS" > /tmp/violations.txt
+            echo "Boundary violations found:"
+            cat /tmp/violations.txt
+          else
+            echo "has_violations=false" >> "$GITHUB_OUTPUT"
+            echo "No boundary violations."
+          fi
+
+      - name: Remove stale boundary warning comment
+        if: steps.check.outputs.has_violations == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- pr-boundary-check -->';
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+              });
+            }
+
+      - name: Comment warning on PR
+        if: steps.check.outputs.has_violations == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const violations = fs.readFileSync('/tmp/violations.txt', 'utf8').trim().split('\n');
+            const marker = '<!-- pr-boundary-check -->';
+            const fileList = violations.map(f => `- \`${f}\``).join('\n');
+            const body = `${marker}\n⚠️ **Boundary warning**: This PR touches app folder(s) but also modifies files outside the app boundaries. This is usually unintentional.\n\n**Files outside app scope:**\n${fileList}\n\n_This is a warning only and does not block the PR. \`apps.json\` changes are expected and excluded from this check._`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

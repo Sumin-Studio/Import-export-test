@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Top 9 problems — Chong's metrics (Bill Agent PoC)</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+    body {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      background: #f8f8f8;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: #555;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .scale {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background: #2d2d2d;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    th:nth-child(n+4) {
+      text-align: center;
+    }
+    td:nth-child(n+4) {
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    tbody tr:hover {
+      background: #fafafa;
+    }
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .clickable {
+      cursor: pointer;
+      transition: outline 0.15s ease;
+    }
+    .clickable:hover {
+      outline: 2px solid #c62828;
+      outline-offset: -1px;
+    }
+    .clickable:focus {
+      outline: 2px solid #c62828;
+      outline-offset: 1px;
+    }
+    #explanation-panel {
+      margin-top: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border-left: 4px solid #2d2d2d;
+      min-height: 4rem;
+    }
+    #explanation-panel.empty {
+      color: #999;
+      font-style: italic;
+    }
+    #explanation-panel .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #666;
+      margin-bottom: 0.35rem;
+    }
+    #explanation-panel .content {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    #explanation-panel .source {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #555;
+    }
+    .footnote {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Top 9 problems — Workshop 1</h1>
+  <p class="subtitle">Bill Pay Agent PoC · Ranked by Chong's four metrics (1–5). <strong>Click any score or problem name</strong> to see how we got there.</p>
+  <p class="scale"><strong>Scale:</strong> 1 = low (white) → 5 = high (red). Total = sum of the four. Opinion only — use to spark debate.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>#</th>
+        <th>Problem</th>
+        <th class="clickable" data-explanation-id="col-severity" tabindex="0">Severity</th>
+        <th class="clickable" data-explanation-id="col-ai" tabindex="0">AI alignment</th>
+        <th class="clickable" data-explanation-id="col-feasibility" tabindex="0">Feasibility</th>
+        <th class="clickable" data-explanation-id="col-agent" tabindex="0">Agent alignment</th>
+        <th class="clickable" data-explanation-id="col-total" tabindex="0">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>5</td>
+        <td class="clickable" data-explanation-id="p5-source" tabindex="0">Chasing approvers / overdue approvals</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p5-severity" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#c62828;color:#fff" data-explanation-id="p5-ai" tabindex="0">5</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p5-feasibility" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#c62828;color:#fff" data-explanation-id="p5-agent" tabindex="0">5</td>
+        <td class="clickable" style="background-color:#c62828;color:#fff" data-explanation-id="p5-total" tabindex="0">18</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>2</td>
+        <td class="clickable" data-explanation-id="p2-source" tabindex="0">Manual, repetitive configuration</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p2-severity" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#c62828;color:#fff" data-explanation-id="p2-ai" tabindex="0">5</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p2-feasibility" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p2-agent" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p2-total" tabindex="0">17</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>6</td>
+        <td class="clickable" data-explanation-id="p6-source" tabindex="0">No smart payment planning</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p6-severity" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#c62828;color:#fff" data-explanation-id="p6-ai" tabindex="0">5</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p6-feasibility" tabindex="0">3</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p6-agent" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p6-total" tabindex="0">16</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>7</td>
+        <td class="clickable" data-explanation-id="p7-source" tabindex="0">Fraud and error risk</td>
+        <td class="clickable" style="background-color:#c62828;color:#fff" data-explanation-id="p7-severity" tabindex="0">5</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p7-ai" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p7-feasibility" tabindex="0">3</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p7-agent" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p7-total" tabindex="0">16</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>1</td>
+        <td class="clickable" data-explanation-id="p1-source" tabindex="0">Cash flow & scheduling friction</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p1-severity" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p1-ai" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p1-feasibility" tabindex="0">3</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p1-agent" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p1-total" tabindex="0">15</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>8</td>
+        <td class="clickable" data-explanation-id="p8-source" tabindex="0">Post-payment mess</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p8-severity" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p8-ai" tabindex="0">3</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p8-feasibility" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p8-agent" tabindex="0">3</td>
+        <td class="clickable" style="background-color:#ffcdd2;color:#000" data-explanation-id="p8-total" tabindex="0">14</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>3</td>
+        <td class="clickable" data-explanation-id="p3-source" tabindex="0">Low bill pay adoption</td>
+        <td class="clickable" style="background-color:#c62828;color:#fff" data-explanation-id="p3-severity" tabindex="0">5</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p3-ai" tabindex="0">3</td>
+        <td class="clickable" style="background-color:#ffcdd2;color:#000" data-explanation-id="p3-feasibility" tabindex="0">2</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p3-agent" tabindex="0">3</td>
+        <td class="clickable" style="background-color:#ffcdd2;color:#000" data-explanation-id="p3-total" tabindex="0">13</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>4</td>
+        <td class="clickable" data-explanation-id="p4-source" tabindex="0">Fragmented / single-step approval</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p4-severity" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p4-ai" tabindex="0">3</td>
+        <td class="clickable" style="background-color:#ffcdd2;color:#000" data-explanation-id="p4-feasibility" tabindex="0">2</td>
+        <td class="clickable" style="background-color:#ef9a9a;color:#000" data-explanation-id="p4-agent" tabindex="0">3</td>
+        <td class="clickable" style="background-color:#ffcdd2;color:#000" data-explanation-id="p4-total" tabindex="0">12</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>9</td>
+        <td class="clickable" data-explanation-id="p9-source" tabindex="0">Melio / US flow constraints</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p9-severity" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#ffcdd2;color:#000" data-explanation-id="p9-ai" tabindex="0">2</td>
+        <td class="clickable" style="background-color:#ffffff;color:#000;border:1px solid #ddd" data-explanation-id="p9-feasibility" tabindex="0">1</td>
+        <td class="clickable" style="background-color:#e57373;color:#000" data-explanation-id="p9-agent" tabindex="0">4</td>
+        <td class="clickable" style="background-color:#ffffff;color:#000;border:1px solid #ddd" data-explanation-id="p9-total" tabindex="0">11</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="explanation-panel" class="empty" role="region" aria-live="polite">
+    <div class="label">How we got here</div>
+    <div class="content">Click any score, problem name, or column header above to see the assumption and source.</div>
+  </div>
+
+  <p class="footnote">Color scale: 1 = #ffffff → 2 = #ffcdd2 → 3 = #ef9a9a → 4 = #e57373 → 5 = #c62828. Total column: 11→white, 18→red.</p>
+
+  <h2 style="margin-top: 2.5rem; font-size: 1.2rem;">Chong & Lili's items — all 20 with predicted scores</h2>
+  <p class="subtitle" style="margin-bottom: 0.75rem;">Severity = how much of an issue · Feasibility = how hard to fix · Benefit of AI = agent vs just fix (5 = strong agent). <strong>Click a row</strong> to see rationale.</p>
+
+  <table id="full-table">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>#</th>
+        <th>Area of opportunity</th>
+        <th>Sev</th>
+        <th>Feas</th>
+        <th>AI</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="clickable" data-explanation-id="r8"><td>1</td><td>8</td><td>Chasing approvers / approval bottlenecks</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#c62828;color:#fff">13</td></tr>
+      <tr class="clickable" data-explanation-id="r7"><td>1</td><td>7</td><td>Manual, repetitive configuration (system doesn't learn)</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#c62828;color:#fff">13</td></tr>
+      <tr class="clickable" data-explanation-id="r3"><td>1</td><td>3</td><td>Time and cognitive load for high-volume bill processors</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#c62828;color:#fff">13</td></tr>
+      <tr class="clickable" data-explanation-id="r10"><td>4</td><td>10</td><td>Fraud and error risk with no risk signal layer</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#e57373;color:#000">13</td></tr>
+      <tr class="clickable" data-explanation-id="r1"><td>5</td><td>1</td><td>No cash-aware payment planning or prioritization</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#e57373;color:#000">12</td></tr>
+      <tr class="clickable" data-explanation-id="r19"><td>5</td><td>19</td><td>Guardrailed auto-approval missing</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#e57373;color:#000">12</td></tr>
+      <tr class="clickable" data-explanation-id="r20"><td>5</td><td>20</td><td>Obligation detection / no "financial memory"</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#e57373;color:#000">12</td></tr>
+      <tr class="clickable" data-explanation-id="r2"><td>8</td><td>2</td><td>Late bill entry undermines cash flow forecasting</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#e57373;color:#000">12</td></tr>
+      <tr class="clickable" data-explanation-id="r5"><td>8</td><td>5</td><td>Cash flow uncertainty and "caught short"</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#e57373;color:#000">12</td></tr>
+      <tr class="clickable" data-explanation-id="r4"><td>8</td><td>4</td><td>Late payments and due-date miss</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ef9a9a;color:#000">11</td></tr>
+      <tr class="clickable" data-explanation-id="r13"><td>11</td><td>13</td><td>No visibility into when/how bills will be paid</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ef9a9a;color:#000">11</td></tr>
+      <tr class="clickable" data-explanation-id="r14"><td>11</td><td>14</td><td>Bulk operations and repetitive edits</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ef9a9a;color:#000">11</td></tr>
+      <tr class="clickable" data-explanation-id="r16"><td>11</td><td>16</td><td>Early-pay discount value invisible</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ef9a9a;color:#000">11</td></tr>
+      <tr class="clickable" data-explanation-id="r6"><td>14</td><td>6</td><td>No clear cash position or simple guardrail before payment</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#ef9a9a;color:#000">11</td></tr>
+      <tr class="clickable" data-explanation-id="r11"><td>14</td><td>11</td><td>Post-payment mess (reconciliation, verification)</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#ef9a9a;color:#000">11</td></tr>
+      <tr class="clickable" data-explanation-id="r18"><td>14</td><td>18</td><td>No cash scenario or stress testing</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ffcdd2;color:#000">10</td></tr>
+      <tr class="clickable" data-explanation-id="r9"><td>16</td><td>9</td><td>Fragmented / single-step approval</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ffcdd2;color:#000">2</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#ffcdd2;color:#000">9</td></tr>
+      <tr class="clickable" data-explanation-id="r17"><td>16</td><td>17</td><td>Payment rail / PSP choice opaque</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#ffcdd2;color:#000">9</td></tr>
+      <tr class="clickable" data-explanation-id="r12"><td>19</td><td>12</td><td>Low bill pay adoption (effort &gt; value)</td><td style="background-color:#c62828;color:#fff">5</td><td style="background-color:#ffcdd2;color:#000">2</td><td style="background-color:#ef9a9a;color:#000">3</td><td style="background-color:#ffcdd2;color:#000">10</td></tr>
+      <tr class="clickable" data-explanation-id="r15"><td>20</td><td>15</td><td>Melio / US flow constraints (feasibility ceiling)</td><td style="background-color:#e57373;color:#000">4</td><td style="background-color:#ffffff;color:#000;border:1px solid #ddd">1</td><td style="background-color:#ffcdd2;color:#000">2</td><td style="background-color:#ffffff;color:#000;border:1px solid #ddd">7</td></tr>
+    </tbody>
+  </table>
+
+  <p class="footnote" style="margin-top: 0.75rem;">Source: chong-lili-items-scored-with-rationale.md. Total = Sev + Feas + AI (3 columns only for this table).</p>
+
+  <script>
+    const EXPLANATIONS = {
+      "col-severity": {
+        label: "Metric: Severity",
+        content: "How bad is the problem and what is its business impact? (e.g. revenue at risk, adoption gap, trust/fraud.)",
+        source: "Chong's problem selection framework (standup/planning). docs/meeting-notes/2026-02-12-standup-and-workshop-planning.md §4."
+      },
+      "col-ai": {
+        label: "Metric: AI alignment",
+        content: "Where can AI help uniquely versus what a traditional feature could do? Higher = AI is a clear differentiator for this problem.",
+        source: "Chong's framework. Same standup doc."
+      },
+      "col-feasibility": {
+        label: "Metric: Feasibility",
+        content: "Technical constraints and integration limits (e.g. Melio APIs, baseline approval workflow). Lower = blocked or high dependency.",
+        source: "Chong's framework. Tauqir: 'challenges for agentic paying bills in Melio flow.' Angus: Melio doesn't expose APIs. docs/meeting-notes/2026-02-13-slack-channel-schedule-and-prework.md, strategic-context.md."
+      },
+      "col-agent": {
+        label: "Metric: Agent alignment",
+        content: "How well does the solution fit Xero's established AI agent patterns? (e.g. payer-chasing, payroll-chasing, JAX, Brett's Miro boards.)",
+        source: "Chong's framework. Brett's agent platform; payer-chasing / payroll-chasing Miros. docs/workshop-1-prep-compiled.md."
+      },
+      "col-total": {
+        label: "Total score",
+        content: "Sum of Severity + AI alignment + Feasibility + Agent alignment (each 1–5). Used to rank problems. Not weighted—each criterion counts equally.",
+        source: "Simple sum for discussion. workshop-1-top-9-problems.md."
+      },
+      "p1-source": {
+        label: "Problem #1 — Source",
+        content: "Cash flow & scheduling friction: users struggle to set and manage payment runs from terms/due dates; ~25% of bills created after paid → broken cash flow forecasting.",
+        source: "Opportunity 2 (AI Opportunities in Payments, Chong/Peter). strategic-context.md. workshop-1-prep-compiled.md §1.1."
+      },
+      "p1-severity": { label: "Problem 1 · Severity = 4", content: "High impact: broken forecasting affects primary value prop; 25% created-after-paid is a known stat. Not 5 because adoption/trust have even bigger strategic weight elsewhere.", source: "Opportunity 2, strategic-context." },
+      "p1-ai": { label: "Problem 1 · AI alignment = 4", content: "AI can predict and suggest scheduling (cash flow, due dates); ML for 'when to pay.' Strong fit but not the only area where AI is unique.", source: "Pay planner concept; standup planning." },
+      "p1-feasibility": { label: "Problem 1 · Feasibility = 3", content: "Planning/suggestions can be done with existing data (bank rec, invoices). Execution in Melio has constraints (Tauqir). So 'plan' is more feasible than 'pay' in US flow.", source: "Tauqir tech update; standup." },
+      "p1-agent": { label: "Problem 1 · Agent alignment = 4", content: "Fits pay planner / scheduling agent; aligns with JAX and agent patterns for proactive suggestions. Well within current agent thinking.", source: "Standup pay planner; workshop prep." },
+      "p1-total": { label: "Problem 1 · Total = 15", content: "4+4+3+4. Ranks 5th. Strong but not top because feasibility is capped by Melio and others score higher on AI+agent fit.", source: "Sum of row." },
+      "p2-source": {
+        label: "Problem #2 — Source",
+        content: "Manual, repetitive configuration: system doesn't learn; users manually set details over and over instead of automation against preferences.",
+        source: "Opportunity 2 (AI Opportunities in Payments). workshop-1-prep-compiled.md §1.1; natural language rules in §2.1–2.2."
+      },
+      "p2-severity": { label: "Problem 2 · Severity = 4", content: "High toil and frustration; VOC says customers expect the system to learn. Direct driver of 'effort exceeds value' and low adoption. Not 5 because other problems have more acute $/trust impact.", source: "Opportunity 2, VOC." },
+      "p2-ai": { label: "Problem 2 · AI alignment = 5", content: "Natural language rules, learning defaults, and auto-apply are classic AI/agent differentiators. 'Set default contacts for all bills,' 'Amazon → 310-COGS' — uniquely AI.", source: "Opportunity 2, Confluence Option C; workshop prep §2.1–3.1." },
+      "p2-feasibility": { label: "Problem 2 · Feasibility = 4", content: "Rules and defaults can be implemented with existing data and in-app logic; less dependent on Melio execution APIs. Good candidate for API-light POC.", source: "Workshop prep; feasibility discussion." },
+      "p2-agent": { label: "Problem 2 · Agent alignment = 4", content: "Fits JAX-style natural language rules and agentic reasoning. Aligns with 'custom rule creation' and proactive application of preferences.", source: "Workshop prep §2–3; Brett's patterns." },
+      "p2-total": { label: "Problem 2 · Total = 17", content: "4+5+4+4. Ranks 2nd. Top tier because AI and feasibility are both high; clear 'crawl' candidate.", source: "Sum of row." },
+      "p3-source": {
+        label: "Problem #3 — Source",
+        content: "Low bill pay adoption: ~90% of users don't use bill pay; effort exceeds perceived value; only 1% use bill payments.",
+        source: "Standup planning chat; strategic-context.md. workshop-1-top-9-problems.md."
+      },
+      "p3-severity": { label: "Problem 3 · Severity = 5", content: "Strategic: only 1% use bill payments. This is the adoption gap that makes the whole bill workflow underinvested. Highest severity from a 'why we care' perspective.", source: "Standup; strategic-context." },
+      "p3-ai": { label: "Problem 3 · AI alignment = 3", content: "AI can reduce effort (so adoption goes up) but the problem is partly product/positioning and value perception. AI is one lever, not the only one.", source: "Interpretation from strategic-context and standup." },
+      "p3-feasibility": { label: "Problem 3 · Feasibility = 2", content: "Fixing 'adoption' means touching many parts of the journey and GTM. Melio constraints and baseline gaps make a narrow POC harder to tie directly to adoption.", source: "Standup; Chong's baseline-first." },
+      "p3-agent": { label: "Problem 3 · Agent alignment = 3", content: "Agents can make the workflow easier (so more people use it), but 'adoption' itself isn't an agent pattern—it's an outcome. Moderate fit.", source: "Interpretation." },
+      "p3-total": { label: "Problem 3 · Total = 13", content: "5+3+2+3. Ranks 7th. Severity is top but feasibility and agent alignment pull the total down.", source: "Sum of row." },
+      "p4-source": {
+        label: "Problem #4 — Source",
+        content: "Fragmented / single-step approval: no multi-step, no conditions or workflow rules; approval before payment details set; 'two signatories,' 'Create Payment off-screen,' Ramp envy.",
+        source: "Confluence: Product Opportunity Brief – Multi-User, Multi-Step Approval Workflow (Pratik). workshop-1-prep-compiled.md §1.2–1.3."
+      },
+      "p4-severity": { label: "Problem 4 · Severity = 4", content: "Customer quotes show real pain (charity two signatories, Ramp comparison). ~120k orgs view awaiting-approval monthly. High but blocked by no baseline.", source: "Confluence Approval Workflow." },
+      "p4-ai": { label: "Problem 4 · AI alignment = 3", content: "AI can help with routing and rules once a baseline exists. Today the gap is 'we don't have multi-step at all'—so AI is secondary to shipping baseline.", source: "Chong's baseline-first; Confluence Option C." },
+      "p4-feasibility": { label: "Problem 4 · Feasibility = 2", content: "We don't have baseline approval workflow in production. Event streaming, new DBs, Melio integration all in the path. Low for POC scope.", source: "strategic-context.md; Confluence technical; run sheet gaps." },
+      "p4-agent": { label: "Problem 4 · Agent alignment = 3", content: "Approval workflows and routing fit agent patterns (payroll-chasing, payer-chasing) but depend on baseline. Agent alignment is there once we have the foundation.", source: "Workshop prep; Pratik phases." },
+      "p4-total": { label: "Problem 4 · Total = 12", content: "4+3+2+3. Ranks 8th. Feasibility and AI alignment both limited by 'no baseline yet.'", source: "Sum of row." },
+      "p5-source": {
+        label: "Problem #5 — Source",
+        content: "Chasing approvers / overdue approvals: chasing managers for approvals; overdue payments; manual repetitive chasing; no smart reminders or escalation.",
+        source: "Payer-chasing and Payroll-chasing Miro boards. workshop-1-prep-compiled.md §Miro 2 and §5 (Payroll-chasing)."
+      },
+      "p5-severity": { label: "Problem 5 · Severity = 4", content: "Wasted time and delayed payments; VOC and Miros both call it out. High impact but not as strategically headline as adoption or fraud dollar loss.", source: "Payer-chasing Miro; payroll-chasing user stories." },
+      "p5-ai": { label: "Problem 5 · AI alignment = 5", content: "Chasing, reminders, escalation, and auto-approve low-risk are exactly what our existing agent work does (payer-chasing, payroll-chasing). AI/agent is the natural solution.", source: "Miros; Brett's agent platform; standup." },
+      "p5-feasibility": { label: "Problem 5 · Feasibility = 4", content: "Notifications, in-app reminders, and escalation don't require Melio execution APIs. We have patterns from payroll and payer-chasing. Strong for POC.", source: "Tauqir (tech exploration 'looking good'); Miro flows." },
+      "p5-agent": { label: "Problem 5 · Agent alignment = 5", content: "Direct match to payer-chasing and payroll-chasing agent patterns. Same job dashboard, same 'Blocked / Pending Approval' mental model. Best agent fit.", source: "Workshop prep Miros; Brett; run sheet." },
+      "p5-total": { label: "Problem 5 · Total = 18", content: "4+5+4+5. Ranks 1st. Highest total because AI, feasibility, and agent alignment are all top—and severity is still high.", source: "Sum of row." },
+      "p6-source": {
+        label: "Problem #6 — Source",
+        content: "No smart payment planning (pay planner gap): awaiting payment tab → click each bill; no pre-built plan from due dates, critical suppliers, cash flow, or user goals.",
+        source: "Standup planning: pay planner concept. workshop-1-top-9-problems.md; 2026-02-12-standup-and-workshop-planning.md §5."
+      },
+      "p6-severity": { label: "Problem 6 · Severity = 4", content: "Scale: average customer 40 bills/month, medium/high SKUs 50–100. Clicking each bill is high toil. Directly undermines adoption and control.", source: "Standup pay planner; strategic-context." },
+      "p6-ai": { label: "Problem 6 · AI alignment = 5", content: "Pre-built plans from money-in/money-out, due dates, critical suppliers, and user goals are a clear AI/ML use case. Prediction and recommendation.", source: "Standup §5 pay planner." },
+      "p6-feasibility": { label: "Problem 6 · Feasibility = 3", content: "Planning and suggestions can use existing data (bank rec, payroll, invoices). The 'paying' step in Melio has challenges (Tauqir), so feasibility is capped for full execution.", source: "Tauqir; standup." },
+      "p6-agent": { label: "Problem 6 · Agent alignment = 4", content: "Fits scheduling/planning agents and JAX-style suggestions. Aligns with auto-scheduler and risk-based timing in payer-chasing Miro.", source: "Workshop prep; pay planner concept." },
+      "p6-total": { label: "Problem 6 · Total = 16", content: "4+5+3+4. Tied 3rd. Strong AI and agent fit; feasibility limited by Melio execution.", source: "Sum of row." },
+      "p7-source": {
+        label: "Problem #7 — Source",
+        content: "Fraud and error risk (protection): $500k loss from fraudulent bank account change; unusual amounts; duplicate bills; overpayment; no anomaly detection or proactive alerts.",
+        source: "Pratik's 'Protection' phase (meeting-notes/2026-02-pratik-context-and-next-steps.md §2). Confluence Option C (AI-powered approval – anomaly, fraud alerts)."
+      },
+      "p7-severity": { label: "Problem 7 · Severity = 5", content: "Concrete $500k example; bills = 'where most of the fraud can happen' (Brett). Trust and revenue engine. Highest severity for risk.", source: "Pratik; Brett in Slack (2026-02-13-slack-workshop-brett-chong.md)." },
+      "p7-ai": { label: "Problem 7 · AI alignment = 4", content: "Anomaly detection, red flags, and fraud/compliance alerts are strong AI use cases. Option C and competitive (Ramp) both cite this.", source: "Confluence Option C; workshop prep." },
+      "p7-feasibility": { label: "Problem 7 · Feasibility = 3", content: "Detection and alerts can be built with our data and models; execution (blocking payment) may depend on workflow. Moderate—doable for POC if scoped to 'surface risk.'", source: "Pratik protection phase; Confluence." },
+      "p7-agent": { label: "Problem 7 · Agent alignment = 4", content: "Protection and proactive alerts fit agent patterns (proactive action, in-context recommendation). Aligns with 'don't fuck this up' crawl-walk-run.", source: "Pratik; run sheet trust framing." },
+      "p7-total": { label: "Problem 7 · Total = 16", content: "5+4+3+4. Tied 3rd. Highest severity; AI and agent fit strong; feasibility moderate.", source: "Sum of row." },
+      "p8-source": {
+        label: "Problem #8 — Source",
+        content: "Post-payment mess: remittance advice to suppliers; reconciliation 'currently broken'; payment success verification missing.",
+        source: "Pratik's 'Post-payment' phase. meeting-notes/2026-02-pratik-context-and-next-steps.md §2 (three phases)."
+      },
+      "p8-severity": { label: "Problem 8 · Severity = 4", content: "Reconciliation broken is a known pain; remittance and verification matter for trust and cleanup. High but often deprioritized vs creation/approval.", source: "Pratik post-payment; strategic-context." },
+      "p8-ai": { label: "Problem 8 · AI alignment = 3", content: "AI can help with matching and verification. Useful but not as 'agentic' as chasing or planning; more like accuracy and automation.", source: "Interpretation; Pratik phases." },
+      "p8-feasibility": { label: "Problem 8 · Feasibility = 4", content: "Reconciliation and verification often live in our systems and data. Less blocked by Melio execution. Good feasibility for POC.", source: "Pratik; technical scope." },
+      "p8-agent": { label: "Problem 8 · Agent alignment = 3", content: "Fits 'plan completion' and cleanup agents but is less central to the agent dashboard/chasing patterns. Moderate.", source: "Workshop prep Miros." },
+      "p8-total": { label: "Problem 8 · Total = 14", content: "4+3+4+3. Ranks 6th. Balanced; feasibility helps, AI/agent fit moderate.", source: "Sum of row." },
+      "p9-source": {
+        label: "Problem #9 — Source",
+        content: "Melio / US flow constraints: embedded, disconnected payment experience; no APIs for agentic 'paying bills'; challenges for agentic capabilities in Melio flow.",
+        source: "Confluence Approval Workflow (Melio integration); Tauqir Slack (challenges for paying bills in Melio); Angus (APIs). strategic-context.md; 2026-02-13-slack-channel-schedule-and-prework.md."
+      },
+      "p9-severity": { label: "Problem 9 · Severity = 4", content: "US impact and GTM matter; constraint affects what we can promise. Not 'a problem we solve' so much as 'the ceiling'—so severity is real but framed differently.", source: "Strategic context; US Melio strategy." },
+      "p9-ai": { label: "Problem 9 · AI alignment = 2", content: "The constraint is feasibility (APIs), not whether AI could help. So 'AI alignment' is low: we're not scoring 'can AI solve Melio'—we're scoring that this is a blocker, not an opportunity.", source: "Angus; Tauqir; framing in workshop-1-top-9-problems.md." },
+      "p9-feasibility": { label: "Problem 9 · Feasibility = 1", content: "Melio doesn't currently expose APIs for meaningful agentic integration (Angus). Tauqir: challenges for agentic 'paying bills' in Melio flow. Lowest feasibility by definition.", source: "Angus; Tauqir; strategic-context; run sheet." },
+      "p9-agent": { label: "Problem 9 · Agent alignment = 4", content: "If we had APIs, agentic pay would align with agent patterns. So the 'idea' fits; the blocker is technical. Score reflects alignment of the opportunity, not current feasibility.", source: "Workshop prep; agent roadmap (bill pay automation FY27)." },
+      "p9-total": { label: "Problem 9 · Total = 11", content: "4+2+1+4. Ranks 9th. Feasibility = 1 dominates. This row is the 'design within this constraint' reminder.", source: "Sum of row." },
+      "r1": { label: "#1 · No cash-aware payment planning", content: "<strong>Severity:</strong> High strategic pain: no proposal of which bills to pay, when, why, or cash impact; no view of reserve or projected position.<br><strong>Feasibility:</strong> Needs data and UX; some logic buildable without Melio APIs. Agent that proposes a plan is the differentiator.<br><strong>Benefit of AI:</strong> Strong agent fit: AI proposal of what to pay and when is the value. Without agent = dashboard; with agent = proactive plan for review.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r2": { label: "#2 · Late bill entry undermines cash flow forecasting", content: "<strong>Severity:</strong> 25% created after paid; ~half paid ~1 week late. Core to laborious→autonomous and adoption story.<br><strong>Feasibility:</strong> Entry automation (OCR, matching, learn preferences) is buildable; Melio doesn't block entry.<br><strong>Benefit of AI:</strong> Agent can learn defaults, match suppliers, suggest coding; also better UX and system that learns. High AI for learning.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r3": { label: "#3 · Time and cognitive load for high-volume bill processors", content: "<strong>Severity:</strong> 11–100 bills/month for 15%; real time and cognitive load. Direct efficiency story.<br><strong>Feasibility:</strong> Bulk operations, defaults, system learns in our control. Approval chasing and planning help.<br><strong>Benefit of AI:</strong> Agent excels: reduce load by proposing batches, auto-coding, chasing approvers, suggesting payment timing.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r4": { label: "#4 · Late payments and due-date miss", content: "<strong>Severity:</strong> Half of bills paid late, ~1 week after due; risk, supplier friction, missed discounts.<br><strong>Feasibility:</strong> Scheduling and reminders need data + notifications; payment execution touches Melio. Planning and nudges feasible.<br><strong>Benefit of AI:</strong> Agent can suggest pay by X and chase; also just fix with due-date visibility and reminders. Agent adds proactive nudging.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r5": { label: "#5 · Cash flow uncertainty and caught short", content: "<strong>Severity:</strong> 44% caught short; 35% say top challenge is having enough to pay bills. Core SMB pain.<br><strong>Feasibility:</strong> Needs cash position and simple guardrails; data and UX, not Melio-dependent for visibility.<br><strong>Benefit of AI:</strong> Agent can surface pay this vs that and buffer impact; also fix with clear cash position and guardrails.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r6": { label: "#6 · No clear cash position or simple guardrail", content: "<strong>Severity:</strong> Users don't see current/projected cash, major outflows, or impact of a payment run.<br><strong>Feasibility:</strong> Largely product + data: balance, projections, one guardrail view. No agent required for v1.<br><strong>Benefit of AI:</strong> Just fix first: show position and simple check. Agent later for should you pay this now?", source: "chong-lili-items-scored-with-rationale.md" },
+      "r7": { label: "#7 · Manual, repetitive configuration (system doesn't learn)", content: "<strong>Severity:</strong> VOC: customers expect the system to learn and automate against their preferences. Repeated entry of accounts, contacts, terms.<br><strong>Feasibility:</strong> We control product and data; learning defaults and applying them is buildable.<br><strong>Benefit of AI:</strong> Strong agent fit: learn and automate against preferences is agentic. Natural language rules (e.g. all Amazon → 310-COGS) are AI.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r8": { label: "#8 · Chasing approvers / approval bottlenecks", content: "<strong>Severity:</strong> Chasing managers; overdue approvals; no smart reminders or escalation. ~120k orgs view awaiting approval monthly.<br><strong>Feasibility:</strong> Notifications, escalation rules, in-product chase in our scope. Payroll-chasing pattern exists.<br><strong>Benefit of AI:</strong> Agent is the natural fit: proactive reminders, escalation, who to chase, in-context nudge. High agent alignment.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r9": { label: "#9 · Fragmented / single-step approval", content: "<strong>Severity:</strong> No multi-step, conditions, or rules; approval before payment details. Two signatories, Ramp envy.<br><strong>Feasibility:</strong> Baseline gap: needs event streaming, rules DB, Melio integration for multi-step execution. Hard in short term.<br><strong>Benefit of AI:</strong> Fix is build the workflow first; AI can then route and suggest. AI benefit comes after baseline.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r10": { label: "#10 · Fraud and error risk with no risk signal layer", content: "<strong>Severity:</strong> Real losses ($500k example); unusual amounts, duplicates, overpayment; no anomaly detection. Bills = where most fraud can happen.<br><strong>Feasibility:</strong> Anomaly detection and signals buildable; surfacing in approval flow needs approval UX. Option C = AI-powered approval automation.<br><strong>Benefit of AI:</strong> Agent excels: risk signal layer = AI/ML for anomaly, duplicate, vendor change. Human approver + AI context.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r11": { label: "#11 · Post-payment mess (reconciliation, verification)", content: "<strong>Severity:</strong> Reconciliation currently broken; remittance advice and payment verification missing or weak. Clean-up painful.<br><strong>Feasibility:</strong> We own reconciliation and verification flows; product and integrations. Not primarily an agent problem.<br><strong>Benefit of AI:</strong> Just fix reconciliation and verification first; agent could chase missing remittance or match payments later.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r12": { label: "#12 · Low bill pay adoption (effort > value)", content: "<strong>Severity:</strong> Only 10% create bills; 1% use bill payments. Strategic adoption gap.<br><strong>Feasibility:</strong> Fixing adoption touches journey, GTM, value prop; Melio and baseline gaps make narrow PoC hard to tie to adoption.<br><strong>Benefit of AI:</strong> AI can reduce effort and thus improve value; but fix is broad product/GTM. Agent supports, doesn't own adoption.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r13": { label: "#13 · No visibility into when/how bills will be paid", content: "<strong>Severity:</strong> Users want clear when and how and chance to intervene. Set and forget without losing control.<br><strong>Feasibility:</strong> Visibility and control are product; scheduling and status can be improved without Melio APIs for planning.<br><strong>Benefit of AI:</strong> Agent can tell you the plan and let you intervene; combines visibility with proactive communication.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r14": { label: "#14 · Bulk operations and repetitive edits", content: "<strong>Severity:</strong> No bulk approve or bulk edit; lots of bill-by-bill work.<br><strong>Feasibility:</strong> Straightforward product: bulk actions, multi-select, batch apply.<br><strong>Benefit of AI:</strong> Agent can suggest batches and apply in one go; also just fix with bulk UI. Agent adds intelligence to what to batch.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r15": { label: "#15 · Melio / US flow constraints", content: "<strong>Severity:</strong> Embedded, disconnected experience; no APIs for agentic paying bills. Limits US automation.<br><strong>Feasibility:</strong> Constraint, not something we solve in PoC. Design within it; API-free ideas vs future.<br><strong>Benefit of AI:</strong> Without APIs, agent can't pay in Melio flow; agent fits planning, approval, chasing—not execution in US.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r16": { label: "#16 · Early-pay discount value invisible", content: "<strong>Severity:</strong> No discount value, annualized return, or early pay ROI lens.<br><strong>Feasibility:</strong> Calculation and display are product + data.<br><strong>Benefit of AI:</strong> Agent can suggest take this discount and explain ROI; combines visibility with recommendation.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r17": { label: "#17 · Payment rail / PSP choice opaque", content: "<strong>Severity:</strong> Users don't know cheapest vs fastest vs best for float; no optimization or PSP routing.<br><strong>Feasibility:</strong> Routing and optimization depend on PSP/Melio capabilities and data. Partly out of our hands.<br><strong>Benefit of AI:</strong> Could be just fix (explain options) or agent (recommend rail). Medium either way.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r18": { label: "#18 · No cash scenario or stress testing", content: "<strong>Severity:</strong> Can't ask what if I delay top 5 / AR slips / FX moves?<br><strong>Feasibility:</strong> Scenario modeling needs data and product; no Melio dependency.<br><strong>Benefit of AI:</strong> Agent can run scenarios and summarize if you delay these, here's the impact. Good agent use case.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r19": { label: "#19 · Guardrailed auto-approval missing", content: "<strong>Severity:</strong> Auto-approval is all-or-nothing. No auto-approve when low risk with clear audit.<br><strong>Feasibility:</strong> Needs rules engine, risk signals, and approval baseline. Tied to #9 and #10.<br><strong>Benefit of AI:</strong> Agent is the natural owner: when low risk (trusted vendor, in range, no anomaly, buffer OK) = agent + rules.", source: "chong-lili-items-scored-with-rationale.md" },
+      "r20": { label: "#20 · Obligation detection / no financial memory", content: "<strong>Severity:</strong> Invoices/obligations not detected from email, bank, subscriptions, SMS/photo. Things get missed or entered late.<br><strong>Feasibility:</strong> Requires ingestion, matching, and memory; significant build.<br><strong>Benefit of AI:</strong> Strong agent fit: financial memory and proactive detection are agentic. High AI benefit.", source: "chong-lili-items-scored-with-rationale.md" }
+    };
+
+    const panel = document.getElementById("explanation-panel");
+    const contentEl = panel.querySelector(".content");
+    const labelEl = panel.querySelector(".label");
+
+    function showExplanation(id) {
+      const ex = EXPLANATIONS[id];
+      if (!ex) return;
+      panel.classList.remove("empty");
+      labelEl.textContent = ex.label;
+      contentEl.innerHTML = ex.content + (ex.source ? `<div class="source"><strong>Source:</strong> ${ex.source}</div>` : "");
+    }
+
+    function handleClick(e) {
+      const el = e.target.closest("[data-explanation-id]");
+      if (el) showExplanation(el.getAttribute("data-explanation-id"));
+    }
+
+    function handleKeydown(e) {
+      if (e.key === "Enter" || e.key === " ") {
+        const cell = e.target.closest("[data-explanation-id]");
+        if (cell) {
+          e.preventDefault();
+          showExplanation(cell.getAttribute("data-explanation-id"));
+        }
+      }
+    }
+
+    document.querySelectorAll("[data-explanation-id]").forEach(el => {
+      el.addEventListener("click", handleClick);
+      el.addEventListener("keydown", handleKeydown);
+    });
+  </script>
+</body>
+</html>

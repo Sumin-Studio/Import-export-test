@@ -1,0 +1,39 @@
+/* Custom Tokens — dice-support-site
+ * Vars specific to this prototype that have no direct xui-tokens equivalent.
+ * These sit on top of the xui-tokens layer.
+ */
+
+:root {
+  /* ===== Gradients (JAX brand, no xui equivalent) ===== */
+  --gradient-jax: linear-gradient(112.08deg, #1759FF 14.43%, #2BABF8 85.57%);
+  --gradient-jax-light: linear-gradient(180deg, #B1DFFE 2.31%, rgba(242, 248, 252, 0.2) 100%);
+
+  /* ===== Font weights (xui only has emphasis=700 and deemphasis=400) ===== */
+  --font-weight-medium: 600;
+  --font-weight-semibold: 600;
+
+  /* ===== Border radii (xui --radius = 3px; these are prototype-specific scales) ===== */
+  --radius-sm: 3px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-composer: 16px;
+
+  /* ===== Brand blue variant not in xui primitives ===== */
+  --color-blue-bright: #018DEB;
+
+  /* ===== Border colours (light-mode UI borders, not covered by xui semantic layer) ===== */
+  --color-border-light: #CCCED2;
+  --color-border-standard: #A6A9B0;
+
+  /* ===== Neutral greys (old JAX scale ≠ xui grey primitives) ===== */
+  --color-neutral-grey-6: #CCCED2;
+  --color-neutral-grey-7: #E6E7E9;
+
+  /* ===== Secondary background (light tint, not in xui semantic layer) ===== */
+  --color-bg-secondary: var(--color-bg-surface);
+
+  /* ===== Composite border presets ===== */
+  --border-error: 1px solid var(--color-negative);
+  --border-light: 1px solid var(--color-border-light);
+  --border-standard: 1px solid var(--color-border-standard);
+}

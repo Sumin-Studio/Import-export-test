@@ -1,0 +1,79 @@
+/* Layout & Structure
+ * Converted from xui-tokens source JSON — do not edit directly.
+ * Source: xui-tokens-main/tokens
+ */
+
+:root {
+  --s-2xsmall: 4px;
+  --s-xsmall: 8px;
+  --s-small: 12px;
+  --s-standard: 16px;
+  --s-large: 20px;
+  --s-xlarge: 24px;
+  --s-2xlarge: 32px;
+  --s-3xlarge: 40px;
+  --s-4xlarge: 48px;
+  --s-5xlarge: 64px;
+  --icon-xsmall: 20px;
+  --icon-small: 24px;
+  --icon-medium: 32px;
+  --icon-large: 40px;
+  --icon-xlarge: 60px;
+  --illustration-small: 160px;
+  --illustration-medium: 280px;
+  --illustration-large: 400px;
+  --grid-gutter: 20px;
+  --layout-columns: 12;
+  --layout-column-start: 1;
+  --navigation-height: 60px;
+  --form-width: 400px;
+  --input-padding-horizontal: 16px;
+  --input-padding-vertical: 8px;
+  --control-size-2xsmall: 16px;
+  --control-size-xsmall: 24px;
+  --control-size-small: 32px;
+  --control-size-standard: 40px;
+  --control-size-large: 80px;
+  --control-size-xlarge: 120px;
+  --class-suffix-auto: '-auto';
+  --class-suffix-none: '-none';
+  --class-suffix-small: '-small';
+  --class-suffix-2xsmall: '-2xsmall';
+  --class-suffix-xsmall: '-xsmall';
+  --class-suffix-standard: '';
+  --class-suffix-large: '-large';
+  --class-suffix-xlarge: '-xlarge';
+  --class-suffix-2xlarge: '-2xlarge';
+  --class-suffix-3xlarge: '-3xlarge';
+  --class-suffix-4xlarge: '-4xlarge';
+  --class-suffix-5xlarge: '-5xlarge';
+  --class-suffix-6xlarge: '-6xlarge';
+  --z-index-toast: 6000;
+  --z-index-sheet: 5000;
+  --z-index-sheetmask: 4000;
+  --z-index-nav: 3000;
+  --z-index-sidepanel: 2000;
+  --z-index-headerfooter: 800;
+  --z-index-contextualtop: 500;
+  --z-index-checkboxradio: 3;
+  --z-index-focus: 2;
+  --z-index-responsiveoverlay: 1;
+  --z-index-body: 1;
+  --z-index-html: 0;
+  --z-index-hidden: -1;
+  --minimum-touch-target: 40px;
+  --common-widths-xsmall: 100px;
+  --common-widths-small: 200px;
+  --common-widths-medium: 300px;
+  --common-widths-large: 400px;
+  --modal-widths-small: 300px;
+  --modal-widths-medium: 400px;
+  --modal-widths-large: 600px;
+  --modal-widths-xlarge: 800px;
+  --radius: 3px;
+  --radius-circle: 50%;
+  --radius-max: 9999px;
+  --radius-scaled: 8%;
+  --page-width-small: 1000px;
+  --page-width-large: 1200px;
+}

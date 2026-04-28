@@ -1,0 +1,164 @@
+[
+  {
+    "name": "Adam Huskisson",
+    "slug": "adam-huskisson",
+    "role": "Lead Designer",
+    "joined": "2025-11-07",
+    "photo": null,
+    "milestones": {
+      "adminAccess": "2025-11-07",
+      "cursorInstalled": "2025-11-07",
+      "githubSetup": "2025-11-07",
+      "firstApp": null,
+      "firstCommit": null,
+      "hostedApp": null
+    },
+    "notes": null,
+    "github": null,
+    "favoritePrototype": null
+  },
+  {
+    "name": "Chloe Akerblom",
+    "slug": "chloe-akerblom",
+    "role": "Associate Product Designer",
+    "joined": "2025-11-08",
+    "photo": null,
+    "milestones": {
+      "adminAccess": null,
+      "cursorInstalled": "2025-11-08",
+      "githubSetup": null,
+      "firstApp": null,
+      "firstCommit": null,
+      "hostedApp": null
+    },
+    "notes": null,
+    "github": null,
+    "favoritePrototype": null
+  },
+  {
+    "name": "Corinne Bowie",
+    "slug": "corinne-bowie",
+    "role": "Product Designer",
+    "joined": "2025-11-12",
+    "photo": null,
+    "milestones": {
+      "adminAccess": null,
+      "cursorInstalled": null,
+      "githubSetup": null,
+      "firstApp": null,
+      "firstCommit": null,
+      "hostedApp": null
+    },
+    "notes": null,
+    "github": null,
+    "favoritePrototype": null
+  },
+  {
+    "name": "Darryl Powell",
+    "slug": "darryl-powell",
+    "role": "Lead Product Designer - Payments",
+    "joined": "2025-11-03",
+    "photo": null,
+    "milestones": {
+      "adminAccess": "2025-11-11",
+      "cursorInstalled": "2025-11-03",
+      "githubSetup": null,
+      "firstApp": null,
+      "firstCommit": null,
+      "hostedApp": null
+    },
+    "notes": null,
+    "github": null,
+    "favoritePrototype": null
+  },
+  {
+    "name": "Jon Bell",
+    "slug": "jon-bell",
+    "role": "Principal Product Designer",
+    "joined": "2025-11-01",
+    "photo": null,
+    "milestones": {
+      "adminAccess": "2025-11-01",
+      "cursorInstalled": "2025-11-01",
+      "githubSetup": "2025-11-01",
+      "firstApp": "2025-11-01",
+      "firstCommit": "2025-11-01",
+      "hostedApp": "2025-11-01"
+    },
+    "notes": null,
+    "github": null,
+    "favoritePrototype": null
+  },
+  {
+    "name": "Katrina Li",
+    "slug": "katrina-li",
+    "role": "Senior Product Designer",
+    "joined": "2025-11-03",
+    "photo": null,
+    "milestones": {
+      "adminAccess": "2025-11-05",
+      "cursorInstalled": "2025-11-05",
+      "githubSetup": null,
+      "firstApp": null,
+      "firstCommit": null,
+      "hostedApp": null
+    },
+    "notes": null,
+    "github": null,
+    "favoritePrototype": null
+  },
+  {
+    "name": "Nathaniel Gomez",
+    "slug": "nathaniel-gomez",
+    "role": "Product Design Director",
+    "joined": "2025-11-10",
+    "photo": null,
+    "milestones": {
+      "adminAccess": "2025-11-10",
+      "cursorInstalled": "2025-11-10",
+      "githubSetup": null,
+      "firstApp": null,
+      "firstCommit": null,
+      "hostedApp": null
+    },
+    "notes": null,
+    "github": null,
+    "favoritePrototype": null
+  },
+  {
+    "name": "Robb Schiller",
+    "slug": "robb-schiller",
+    "role": "Lead Product Designer",
+    "joined": "2025-11-11",
+    "photo": null,
+    "milestones": {
+      "adminAccess": null,
+      "cursorInstalled": "2025-11-11",
+      "githubSetup": "2025-11-11",
+      "firstApp": "2025-11-11",
+      "firstCommit": "2025-11-11",
+      "hostedApp": null
+    },
+    "notes": null,
+    "github": "https://github.com/robb-schiller_xero/cards",
+    "favoritePrototype": null
+  },
+  {
+    "name": "Vivian Ngai",
+    "slug": "vivian-ngai",
+    "role": "Senior Product Designer",
+    "joined": "2025-11-10",
+    "photo": null,
+    "milestones": {
+      "adminAccess": null,
+      "cursorInstalled": "2025-11-11",
+      "githubSetup": null,
+      "firstApp": null,
+      "firstCommit": null,
+      "hostedApp": null
+    },
+    "notes": null,
+    "github": null,
+    "favoritePrototype": null
+  }
+]

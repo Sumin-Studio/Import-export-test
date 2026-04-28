@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Allocation - Settings</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'xero-blue': '#13B5EA',
+                        'xero-dark-blue': '#1273EB',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        /* Tracking category: fill row, shrink with viewport; truncate label where supported */
+        /* Width cap comes from parent (max-w-[250px]); select fills parent and can shrink */
+        .tracking-category-select,
+        .tracking-option-select {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+// Get current tax year start date (6 April of current year or previous year)
+const getTaxYearStart = () => {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const taxYearStart = new Date(currentYear, 3, 6); // April 6th
+  
+  if (now < taxYearStart) {
+    return new Date(currentYear - 1, 3, 6).toISOString().split('T')[0];
+  }
+  return taxYearStart.toISOString().split('T')[0];
+};
+
+// Initial data structure
+const getInitialData = () => ({
+  businessAllocation: 100,
+  businessAllocationHistory: [], // Array of {percentage, effectiveFrom, effectiveTo}
+  allocationMethod: "BUSINESS", // or "OPTIONS"
+  trackingCategory: "",
+  trackingOptions: [
+    { id: 1, name: "", allocation: 100, allocationHistory: [] }
+  ]
+});
+
+// Initial state for no tracking categories set up
+const getEmptyState = () => ({
+  businessAllocation: 100,
+  businessAllocationHistory: [],
+  allocationMethod: "BUSINESS",
+  trackingCategory: "",
+  trackingOptions: []
+});
+
+// Available tracking categories
+const availableCategories = ["MTD IT", "Regions"];
+
+// Available tracking option names
+const availableOptionNames = [
+  "Kingsland Road",
+  "High St Flat", 
+  "Baker Street",
+  "Oxford Circus",
+  "Camden Town",
+  "Shoreditch",
+  "Unassigned"
+];
+
+// Get available tracking options based on selected category
+const getAvailableOptionsForCategory = (category) => {
+  if (category === "MTD IT") {
+    return availableOptionNames;
+  } else if (category !== "") {
+    // For other categories, only show Unassigned
+    return ["Unassigned"];
+  }
+  return [];
+};
+
+// Helper function to deep clone data
+const cloneData = (data) => JSON.parse(JSON.stringify(data));
+
+// Percentage Input Component
+const PercentageInput = ({ value, onChange, readOnly = false, hasError = false }) => {
+  const handleChange = (e) => {
+    let val = e.target.value;
+    
+    // Allow empty string for clearing
+    if (val === '') {
+      onChange('');
+      return;
+    }
+    
+    // Remove any non-numeric characters except decimal point
+    val = val.replace(/[^\d.]/g, '');
+    
+    // Ensure only one decimal point
+    const parts = val.split('.');
+    if (parts.length > 2) {
+      val = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Limit to 3 decimal places
+    if (parts[1] && parts[1].length > 3) {
+      val = parts[0] + '.' + parts[1].substring(0, 3);
+    }
+    
+    // Parse and validate range
+    const numVal = parseFloat(val);
+    if (!isNaN(numVal)) {
+      if (numVal > 100) {
+        onChange('100');
+        return;
+      }
+      if (numVal < 0) {
+        onChange('0');
+        return;
+      }
+    }
+    
+    onChange(val);
+  };
+
+  return (
+    <div className="relative inline-flex items-center">
+      <input
+        type="text"
+        value={value}
+        onChange={handleChange}
+        readOnly={readOnly}
+        className={`w-24 px-3 py-1.5 pr-8 border rounded text-sm focus:outline-none focus:ring-1 ${
+          hasError 
+            ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+            : 'border-gray-300 focus:ring-xero-dark-blue focus:border-xero-dark-blue'
+        } ${
+          readOnly ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'bg-white'
+        }`}
+        placeholder="0"
+      />
+      <span className="absolute right-3 text-gray-400 pointer-events-none text-sm">%</span>
+    </div>
+  );
+};
+
+// Date Input Component
+const DateInput = ({ value, onChange, onBlur, className = "", minDate = null, hasError = false }) => {
+  return (
+    <input
+      type="date"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={onBlur}
+      min={minDate}
+      className={`px-3 py-1.5 border rounded text-sm focus:outline-none focus:ring-1 ${
+        hasError 
+          ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+          : 'border-gray-300 focus:ring-xero-dark-blue focus:border-xero-dark-blue'
+      } bg-white ${className}`}
+    />
+  );
+};
+
+// Allocation Input with Date Component
+const AllocationInputWithDate = ({ 
+  value, 
+  onChange, 
+  effectiveDate, 
+  onDateChange,
+  readOnly = false,
+  hasHistory = false,
+  onShowHistory,
+  dateWarning = null,
+  inline = false,
+  hasError = false,
+  showDateField = true  // When false, only show % (first percentage applies for all time until first change)
+}) => {
+  if (inline) {
+    // Inline layout for tracking options
+    return (
+      <div className="space-y-1.5 min-w-0">
+        {!readOnly ? (
+          <div className="space-y-2 min-w-0">
+            <div className="flex flex-wrap items-end gap-3 min-w-0">
+              <div className="flex-shrink-0 min-w-0">
+                <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+                  Allocation
+                </label>
+                <PercentageInput
+                  value={value}
+                  onChange={onChange}
+                  readOnly={readOnly}
+                  hasError={hasError}
+                />
+                {hasError && (
+                  <p className="text-xs text-red-600 mt-1">Required</p>
+                )}
+              </div>
+              {showDateField && (
+              <div className="flex-1">
+                <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+                  Effective date (optional)
+                  <button
+                    type="button"
+                    className="ml-1 text-gray-400 hover:text-gray-600 inline-block align-baseline relative group"
+                    aria-label="Information"
+                  >
+                    <svg className="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div className="invisible group-hover:visible absolute left-0 top-6 z-10 w-64 p-2 bg-gray-900 text-white text-xs rounded shadow-lg">
+                      Record when this allocation was effective from. This helps track allocation changes over time for accurate income and expense submissions.
+                    </div>
+                  </button>
+                </label>
+                <DateInput
+                  value={effectiveDate}
+                  onChange={onDateChange}
+                  className="w-[200px]"
+                />
+                {dateWarning && (
+                  <p className="text-xs text-yellow-700 flex items-start gap-1 mt-1">
+                    <svg className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{dateWarning}</span>
+                  </p>
+                )}
+              </div>
+              )}
+              {hasHistory && (
+                <button
+                  onClick={onShowHistory}
+                  className="text-sm text-xero-dark-blue hover:text-blue-700 whitespace-nowrap mb-0.5"
+                >
+                  View history
+                </button>
+              )}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+  
+  // Stacked layout for business level
+  return (
+    <div className="space-y-2">
+      {!readOnly ? (
+        <div className="space-y-3">
+          {/* Current allocation (and optional date only when showDateField) */}
+          <div className="flex items-end gap-3">
+            <div className="flex-shrink-0">
+              <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+                Allocation
+              </label>
+              <PercentageInput
+                value={value}
+                onChange={onChange}
+                readOnly={readOnly}
+                hasError={hasError}
+              />
+              {hasError && (
+                <p className="text-xs text-red-600 mt-1">Required</p>
+              )}
+            </div>
+            {showDateField && (
+            <div className="flex-1">
+              <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+                Effective date (optional)
+                <button
+                  type="button"
+                  className="ml-1 text-gray-400 hover:text-gray-600 inline-block align-baseline relative group"
+                  aria-label="Information"
+                >
+                  <svg className="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div className="invisible group-hover:visible absolute left-0 top-6 z-10 w-64 p-2 bg-gray-900 text-white text-xs rounded shadow-lg">
+                    Record when this allocation was effective from. This helps track allocation changes over time for accurate income and expense submissions.
+                  </div>
+                </button>
+              </label>
+              <DateInput
+                value={effectiveDate}
+                onChange={onDateChange}
+                className="w-[200px]"
+              />
+              {dateWarning && (
+                <p className="text-xs text-yellow-700 flex items-start gap-1 mt-1">
+                  <svg className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>{dateWarning}</span>
+                </p>
+              )}
+            </div>
+            )}
+            {hasHistory && (
+              <button
+                onClick={onShowHistory}
+                className="text-sm text-xero-dark-blue hover:text-blue-700 whitespace-nowrap mb-0.5"
+              >
+                View history
+              </button>
+            )}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
+// Tracking Option Row Component
+const TrackingOptionRow = ({ 
+  option, 
+  allocation, 
+  onAllocationChange, 
+  onNameChange, 
+  readOnly, 
+  onDelete, 
+  availableNames, 
+  usedNames, 
+  isTrackingCategorySelected, 
+  isFirstOption, 
+  showDeleteButton = true, 
+  hasError = false, 
+  hasAllocationError = false,
+  onFocus,
+  // Date picker props
+  effectiveDate = '',
+  onDateChange = () => {},
+  hasHistory = false,
+  onShowHistory = () => {},
+  dateWarning = null
+}) => {
+  // Filter out names that are already used by other tracking options
+  const selectableNames = availableNames.filter(name => 
+    name === option.name || !usedNames.includes(name)
+  );
+  
+  const isDisabled = !isTrackingCategorySelected;
+  // Show X button if: showDeleteButton is true AND (it has a name selected, OR it's not the first option)
+  const shouldShowDeleteButton = showDeleteButton && (option.name !== "" || !isFirstOption);
+  
+  const removeBtnClasses = 'text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0';
+  const removeBtn = shouldShowDeleteButton ? (
+    <button
+      type="button"
+      onClick={onDelete}
+      className={removeBtnClasses}
+      title="Remove"
+    >
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  ) : null;
+
+  return (
+    <div className="py-4 min-w-0">
+      {readOnly ? (
+        <>
+      <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+        Tracking option
+      </label>
+        {/* Allocate by business: X next to select, aligned with select (mt-1.5) */}
+        <div className="flex items-start gap-2 min-w-0 w-full flex-nowrap">
+          <div className="min-w-[168px] flex-1 max-w-[250px]">
+            <select
+              value={option.name}
+              onChange={(e) => {
+                onNameChange(e.target.value);
+                if (onFocus) onFocus();
+              }}
+              disabled={isDisabled}
+              className={`tracking-option-select px-3 py-1.5 border rounded text-sm focus:outline-none focus:ring-1 ${
+                isDisabled 
+                  ? 'bg-gray-50 text-gray-400 cursor-not-allowed border-gray-300' 
+                  : hasError
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-white'
+                    : 'border-gray-300 focus:ring-xero-dark-blue focus:border-xero-dark-blue bg-white'
+              }`}
+            >
+              {(isDisabled || option.name === '') && (
+                <option value=""></option>
+              )}
+              {!isDisabled && selectableNames.map(name => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+            {hasError && !isDisabled && (
+              <p className="text-xs text-red-600 mt-1">Select a tracking option to save</p>
+            )}
+          </div>
+          {removeBtn && <span className="mt-1.5 inline-flex flex-shrink-0">{removeBtn}</span>}
+        </div>
+        </>
+      ) : (
+        /* Labels line up; allocation + X stay grouped (no flex-1 gap pushing X right) */
+        <div className="flex flex-nowrap items-start gap-x-2 min-w-0 w-full">
+          <div className="min-w-[168px] flex-1 max-w-[250px]">
+            <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+              Tracking option
+            </label>
+            <select
+              value={option.name}
+              onChange={(e) => {
+                onNameChange(e.target.value);
+                if (onFocus) onFocus();
+              }}
+              disabled={isDisabled}
+              className={`tracking-option-select px-3 py-1.5 border rounded text-sm focus:outline-none focus:ring-1 ${
+                isDisabled 
+                  ? 'bg-gray-50 text-gray-400 cursor-not-allowed border-gray-300' 
+                  : hasError
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-white'
+                    : 'border-gray-300 focus:ring-xero-dark-blue focus:border-xero-dark-blue bg-white'
+              }`}
+            >
+              {(isDisabled || option.name === '') && (
+                <option value=""></option>
+              )}
+              {!isDisabled && selectableNames.map(name => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+            {hasError && !isDisabled && (
+              <p className="text-xs text-red-600 mt-1">Select a tracking option to save</p>
+            )}
+          </div>
+          <div className="flex items-start gap-2 shrink-0 min-w-0">
+            <AllocationInputWithDate
+              value={allocation}
+              onChange={onAllocationChange}
+              effectiveDate={effectiveDate}
+              onDateChange={onDateChange}
+              hasHistory={hasHistory}
+              onShowHistory={onShowHistory}
+              dateWarning={dateWarning}
+              readOnly={readOnly}
+              inline={true}
+              hasError={hasAllocationError}
+              showDateField={false}
+            />
+            {removeBtn && (
+              <span className="inline-flex flex-shrink-0 mt-[35px]">{removeBtn}</span>
+            )}
+          </div>
+        </div>
+      )}
+      {option.name === "Unassigned" && (
+        <div className="text-xs text-gray-500 mt-2 leading-relaxed min-w-0">
+          All transactions not assigned a tracking option will be allocated to this business using this allocation percentage, while the specific tracking option will be allocated to the business.
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Ownership History Item Component
+const OwnershipHistoryItem = ({ percentage, effectiveFrom, effectiveTo, onEdit, onDelete, isLast }) => {
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'Present';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  return (
+    <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+      <div className="flex-1">
+        <span className="font-medium text-gray-900">{percentage}%</span>
+        <span className="text-sm text-gray-500 ml-2">
+          {formatDate(effectiveFrom)} - {formatDate(effectiveTo)}
+        </span>
+      </div>
+      {!isLast && (
+        <div className="flex gap-2">
+          <button
+            onClick={onEdit}
+            className="text-sm text-xero-dark-blue hover:text-blue-700"
+          >
+            Edit
+          </button>
+          <button
+            onClick={onDelete}
+            className="text-sm text-gray-500 hover:text-red-600"
+          >
+            Delete
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// History Modal Component
+const HistoryModal = ({ isOpen, onClose, title, history, onEditEntry, onDeleteEntry }) => {
+  if (!isOpen) return null;
+
+  const sortedHistory = [...history].sort((a, b) => {
+    if (!a.effectiveFrom) return 1;
+    if (!b.effectiveFrom) return -1;
+    return new Date(b.effectiveFrom) - new Date(a.effectiveFrom);
+  });
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-md shadow-xl max-w-lg w-full p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">
+            {title || "Ownership History"}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="space-y-1">
+          {sortedHistory.map((entry, index) => (
+            <OwnershipHistoryItem
+              key={index}
+              percentage={entry.percentage}
+              effectiveFrom={entry.effectiveFrom}
+              effectiveTo={entry.effectiveTo}
+              onEdit={() => onEditEntry(index, entry)}
+              onDelete={() => onDeleteEntry(index)}
+              isLast={index === 0}
+            />
+          ))}
+        </div>
+        {history.length === 0 && (
+          <p className="text-sm text-gray-500 text-center py-4">
+            No ownership history yet
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Edit History Entry Modal
+const EditHistoryModal = ({ isOpen, onClose, onSave, entry }) => {
+  const [percentage, setPercentage] = useState(entry?.percentage || '');
+  const [effectiveFrom, setEffectiveFrom] = useState(entry?.effectiveFrom || '');
+
+  useEffect(() => {
+    if (entry) {
+      setPercentage(entry.percentage);
+      setEffectiveFrom(entry.effectiveFrom);
+    }
+  }, [entry]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-md shadow-xl max-w-md w-full p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Edit Ownership Entry
+        </h2>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm text-gray-700 mb-1.5">
+              Allocation percentage
+            </label>
+            <PercentageInput
+              value={percentage}
+              onChange={setPercentage}
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-700 mb-1.5">
+              Effective from
+            </label>
+            <DateInput
+              value={effectiveFrom}
+              onChange={setEffectiveFrom}
+            />
+          </div>
+        </div>
+        <div className="flex gap-2 justify-end mt-6">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => onSave({ ...entry, percentage: parseFloat(percentage), effectiveFrom })}
+            className="px-4 py-2 bg-xero-dark-blue text-white rounded text-sm hover:bg-blue-700 transition-colors"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Modal Component
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirmText }) => {
+  if (!isOpen) return null;
+
+  const defaultTitle = "Confirm allocation changes";
+  const defaultMessage = "Are you sure you want to save these changes? This will apply for all tax years.";
+  const defaultConfirmText = "Confirm";
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-md shadow-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">
+          {title || defaultTitle}
+        </h2>
+        <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+          {message || defaultMessage}
+        </p>
+        <div className="flex gap-2 justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (onConfirm) onConfirm(e);
+            }}
+            className="px-4 py-2 bg-xero-dark-blue text-white rounded text-sm hover:bg-blue-700 transition-colors"
+          >
+            {confirmText || defaultConfirmText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Toast Component
+const Toast = ({ message, isVisible, onClose }) => {
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(onClose, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, onClose]);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-md shadow-lg flex items-center gap-2">
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      </svg>
+      {message}
+    </div>
+  );
+};
+
+// Developer Panel Component
+const DeveloperPanel = ({ onShowEmptyState, onShowCategoriesSetUp }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="fixed bottom-4 right-4 z-40">
+      {isExpanded ? (
+        <div className="bg-gray-900 text-white rounded-lg shadow-2xl p-4 w-64">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-semibold text-sm">Developer Tools</h3>
+            <button
+              onClick={() => setIsExpanded(false)}
+              className="text-gray-400 hover:text-white"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <div className="text-xs text-gray-400 mb-2">Switch Scenario:</div>
+              <button
+                onClick={onShowEmptyState}
+                className="w-full px-3 py-2 bg-red-600 hover:bg-red-700 rounded text-sm transition-colors text-left"
+              >
+                No Tracking Categories
+              </button>
+              <button
+                onClick={onShowCategoriesSetUp}
+                className="w-full px-3 py-2 mt-2 bg-green-600 hover:bg-green-700 rounded text-sm transition-colors text-left"
+              >
+                Categories Set Up
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
+          title="Developer Tools"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+};
+
+// Main App Component
+const App = () => {
+  const [currentData, setCurrentData] = useState(getEmptyState());
+  const [savedData, setSavedData] = useState(cloneData(getEmptyState()));
+  const [showModal, setShowModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [showClearCategoryModal, setShowClearCategoryModal] = useState(false);
+  const [showChangeCategoryModal, setShowChangeCategoryModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showDeleteTrackingOptionModal, setShowDeleteTrackingOptionModal] = useState(false);
+  const [pendingDeleteOptionId, setPendingDeleteOptionId] = useState(null);
+  const [pendingCategory, setPendingCategory] = useState("");
+  const [categoriesSetUp, setCategoriesSetUp] = useState(false);
+  const [hasEverSaved, setHasEverSaved] = useState(false);
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
+  // Snapshot of change IDs when we last attempted save (so we only show inline errors for rows that existed then, not newly added rows)
+  const [validatedBusinessChangeIds, setValidatedBusinessChangeIds] = useState([]);
+  const [validatedTrackingOptionChangeIds, setValidatedTrackingOptionChangeIds] = useState({});
+  const [warningDismissed, setWarningDismissed] = useState(false);
+  const [cancelTriggeredByNav, setCancelTriggeredByNav] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  
+  // Ownership change tracking
+  const [businessEffectiveDate, setBusinessEffectiveDate] = useState('');
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [historyModalData, setHistoryModalData] = useState({ type: null, optionId: null, history: [] });
+  const [showEditHistoryModal, setShowEditHistoryModal] = useState(false);
+  const [editingHistoryEntry, setEditingHistoryEntry] = useState(null);
+  const [trackingOptionDates, setTrackingOptionDates] = useState({}); // Stores date strings keyed by optionId
+  const [businessAdditionalChanges, setBusinessAdditionalChanges] = useState([]); // Array of {id, percentage, date} for additional business allocation changes
+  const [trackingOptionAdditionalChanges, setTrackingOptionAdditionalChanges] = useState({}); // Object keyed by optionId, each value is array of {id, percentage, date}
+  const [businessDateErrors, setBusinessDateErrors] = useState({}); // Object keyed by change id, value is error message
+  const [trackingOptionDateErrors, setTrackingOptionDateErrors] = useState({}); // Object keyed by optionId, contains object keyed by change id
+  const [showBusinessChangePrompt, setShowBusinessChangePrompt] = useState(false);
+  const [showTrackingOptionChangePrompts, setShowTrackingOptionChangePrompts] = useState({});
+  const [showBusinessDateField, setShowBusinessDateField] = useState(false);
+  const [showTrackingOptionDateFields, setShowTrackingOptionDateFields] = useState({});
+
+  // Check if there are unsaved changes
+  const hasChanges = () => {
+    // Check main data
+    if (JSON.stringify(currentData) !== JSON.stringify(savedData)) return true;
+    
+    // Check business date and additional changes
+    if (businessEffectiveDate !== '') return true;
+    if (businessAdditionalChanges.length > 0) return true;
+    
+    // Check tracking option dates and additional changes
+    if (Object.keys(trackingOptionDates).some(key => trackingOptionDates[key] !== '')) return true;
+    if (Object.keys(trackingOptionAdditionalChanges).some(key => trackingOptionAdditionalChanges[key]?.length > 0)) return true;
+    
+    return false;
+  };
+
+  // Check if page is configured (not in initial state)
+  const isConfigured = () => {
+    return currentData.trackingCategory !== "" && categoriesSetUp;
+  };
+
+  const isBusinessMethod = currentData.allocationMethod === "BUSINESS";
+
+  // Combined count for rate limits: only the current allocation method's items (the other method's data isn't saved).
+  // Only count tracking option rows that have a name selected (exclude the initial placeholder so it doesn't count toward the limit).
+  // When 'Allocate by business': business allocation items (1 main + additional rows) + tracking options with a name.
+  // When 'Allocate by tracking options': tracking options with a name + allocation change rows per option.
+  const trackingOptionsWithName = currentData.trackingOptions.filter(opt => opt.name !== "");
+  const rateLimitCount = isBusinessMethod
+    ? (1 + businessAdditionalChanges.length) + trackingOptionsWithName.length
+    : trackingOptionsWithName.length + Object.values(trackingOptionAdditionalChanges).reduce((sum, arr) => sum + (arr?.length || 0), 0);
+
+  // Check for validation errors
+  // When onlyValidatedRows is true, only count errors in rows that existed at last save (so banner doesn't reappear when user adds a new row)
+  const getValidationErrors = (onlyValidatedRows = false) => {
+    const errors = {
+      hasErrors: false,
+      emptyCategory: false,
+      emptyOptions: [],
+      emptyAllocation: false,
+      emptyBusinessAllocation: false,
+      emptyAdditionalAllocations: [],
+      emptyAdditionalDates: [],
+      emptyTrackingOptionAllocations: [], // option IDs with empty allocations
+      emptyTrackingOptionAdditionalAllocations: {}, // keyed by optionId
+      emptyTrackingOptionAdditionalDates: {}, // keyed by optionId
+      hasDateOrderErrors: false
+    };
+
+    // Only require tracking options to be selected when a tracking category has been selected
+    if (currentData.trackingCategory !== "") {
+      currentData.trackingOptions.forEach(opt => {
+        if (opt.name === "") {
+          errors.hasErrors = true;
+          errors.emptyOptions.push(opt.id);
+        }
+      });
+    }
+
+    // Check for empty business allocation if business method is selected
+    if (isBusinessMethod && (!currentData.businessAllocation || currentData.businessAllocation === "")) {
+      errors.hasErrors = true;
+      errors.emptyBusinessAllocation = true;
+      errors.emptyAllocation = true;
+    }
+
+    // Check for empty tracking option allocations if tracking method is selected
+    if (!isBusinessMethod && currentData.trackingCategory !== "") {
+      currentData.trackingOptions.forEach(opt => {
+        if (opt.name !== "" && (!opt.allocation || opt.allocation === "")) {
+          errors.hasErrors = true;
+          errors.emptyAllocation = true;
+          errors.emptyTrackingOptionAllocations.push(opt.id);
+        }
+      });
+    }
+
+    // Check business additional changes for empty allocations or dates (optionally only validated rows)
+    const businessChangesToCheck = onlyValidatedRows
+      ? businessAdditionalChanges.filter(c => validatedBusinessChangeIds.includes(c.id))
+      : businessAdditionalChanges;
+    businessChangesToCheck.forEach(change => {
+      if (!change.percentage || change.percentage === "") {
+        errors.hasErrors = true;
+        errors.emptyAllocation = true;
+        errors.emptyAdditionalAllocations.push(change.id);
+      }
+      if (!change.date || change.date === "") {
+        errors.hasErrors = true;
+        errors.emptyAdditionalDates.push(change.id);
+      }
+    });
+
+    // Check tracking option additional changes for empty allocations or dates (optionally only validated rows)
+    Object.keys(trackingOptionAdditionalChanges).forEach(optionId => {
+      const allChanges = trackingOptionAdditionalChanges[optionId] || [];
+      const validatedIds = validatedTrackingOptionChangeIds[optionId] || [];
+      const changesToCheck = onlyValidatedRows
+        ? allChanges.filter(c => validatedIds.includes(c.id))
+        : allChanges;
+      changesToCheck.forEach(change => {
+        if (!change.percentage || change.percentage === "") {
+          errors.hasErrors = true;
+          errors.emptyAllocation = true;
+          if (!errors.emptyTrackingOptionAdditionalAllocations[optionId]) {
+            errors.emptyTrackingOptionAdditionalAllocations[optionId] = [];
+          }
+          errors.emptyTrackingOptionAdditionalAllocations[optionId].push(change.id);
+        }
+        if (!change.date || change.date === "") {
+          errors.hasErrors = true;
+          if (!errors.emptyTrackingOptionAdditionalDates[optionId]) {
+            errors.emptyTrackingOptionAdditionalDates[optionId] = [];
+          }
+          errors.emptyTrackingOptionAdditionalDates[optionId].push(change.id);
+        }
+      });
+    });
+
+    // Date-order errors (optionally only for validated rows)
+    if (onlyValidatedRows) {
+      const validatedBusinessIdsSet = new Set(validatedBusinessChangeIds);
+      const businessDateOrderErrored = Object.keys(businessDateErrors || {}).some(id => validatedBusinessIdsSet.has(Number(id)) || validatedBusinessIdsSet.has(id));
+      if (businessDateOrderErrored) {
+        errors.hasErrors = true;
+        errors.hasDateOrderErrors = true;
+      }
+      Object.keys(trackingOptionDateErrors || {}).forEach(optionId => {
+        const validatedOptionIds = new Set(validatedTrackingOptionChangeIds[optionId] || []);
+        const optionErrors = trackingOptionDateErrors[optionId] || {};
+        if (Object.keys(optionErrors).some(id => validatedOptionIds.has(Number(id)) || validatedOptionIds.has(id))) {
+          errors.hasErrors = true;
+          errors.hasDateOrderErrors = true;
+        }
+      });
+    } else {
+      if (Object.keys(businessDateErrors || {}).length > 0) {
+        errors.hasErrors = true;
+        errors.hasDateOrderErrors = true;
+      }
+      Object.keys(trackingOptionDateErrors || {}).forEach(optionId => {
+        if (Object.keys(trackingOptionDateErrors[optionId] || {}).length > 0) {
+          errors.hasErrors = true;
+          errors.hasDateOrderErrors = true;
+        }
+      });
+    }
+
+    return errors;
+  };
+
+  // Set up tracking categories for the first time
+  const setupTrackingCategories = () => {
+    setCategoriesSetUp(true);
+    const initialData = getInitialData();
+    setCurrentData(initialData);
+    setSavedData(cloneData(initialData));
+  };
+
+  // Handle allocation method change
+  const handleMethodChange = (method) => {
+    setCurrentData(prev => ({
+      ...prev,
+      allocationMethod: method
+    }));
+  };
+
+  // Handle business effective date change
+  const handleBusinessEffectiveDateChange = (date) => {
+    setBusinessEffectiveDate(date);
+    // Re-validate all additional dates when main date changes
+    if (date && businessAdditionalChanges.length > 0) {
+      setTimeout(() => {
+        const errors = {};
+        let prevDate = date;
+        
+        businessAdditionalChanges.forEach((change) => {
+          if (change.date && prevDate) {
+            if (new Date(change.date) <= new Date(prevDate)) {
+              errors[change.id] = 'Date must be after the previous effective date';
+            }
+          }
+          if (change.date) {
+            prevDate = change.date;
+          }
+        });
+        
+        setBusinessDateErrors(errors);
+      }, 0);
+    }
+  };
+  
+  // Handle tracking option effective date change
+  const handleTrackingOptionEffectiveDateChange = (optionId, date) => {
+    setTrackingOptionDates(prev => ({
+      ...prev,
+      [optionId]: date
+    }));
+    // Re-validate all additional dates when main date changes
+    const additionalChanges = trackingOptionAdditionalChanges[optionId] || [];
+    if (date && additionalChanges.length > 0) {
+      setTimeout(() => {
+        const errors = {};
+        let prevDate = date;
+        
+        additionalChanges.forEach((change) => {
+          if (change.date && prevDate) {
+            if (new Date(change.date) <= new Date(prevDate)) {
+              errors[change.id] = 'Date must be after the previous effective date';
+            }
+          }
+          if (change.date) {
+            prevDate = change.date;
+          }
+        });
+        
+        setTrackingOptionDateErrors(prevErrors => ({
+          ...prevErrors,
+          [optionId]: errors
+        }));
+      }, 0);
+    }
+  };
+
+  // Handle business allocation change
+  const handleBusinessAllocationChange = (value) => {
+    setCurrentData(prev => ({
+      ...prev,
+      businessAllocation: value
+    }));
+  };
+
+  // Handle tracking option allocation change
+  const handleOptionAllocationChange = (optionId, value) => {
+    setCurrentData(prev => ({
+      ...prev,
+      trackingOptions: prev.trackingOptions.map(opt =>
+        opt.id === optionId ? { ...opt, allocation: value } : opt
+      )
+    }));
+  };
+
+  // Handle tracking option name change
+  const handleOptionNameChange = (optionId, name) => {
+    setCurrentData(prev => ({
+      ...prev,
+      trackingOptions: prev.trackingOptions.map(opt =>
+        opt.id === optionId ? { ...opt, name: name } : opt
+      )
+    }));
+  };
+
+  // Handle add allocation change for business
+  const handleAddBusinessAllocationChange = () => {
+    const newChange = {
+      id: Date.now(), // Simple unique ID
+      percentage: '',
+      date: ''
+    };
+    setBusinessAdditionalChanges(prev => [...prev, newChange]);
+  };
+
+  // Handle add allocation change for tracking option
+  const handleAddTrackingOptionAllocationChange = (optionId) => {
+    const newChange = {
+      id: Date.now(),
+      percentage: '',
+      date: ''
+    };
+    setTrackingOptionAdditionalChanges(prev => ({
+      ...prev,
+      [optionId]: [...(prev[optionId] || []), newChange]
+    }));
+  };
+
+  // Handle removing business additional change
+  const handleRemoveBusinessAdditionalChange = (changeId) => {
+    setBusinessAdditionalChanges(prev => prev.filter(change => change.id !== changeId));
+  };
+
+  // Handle removing tracking option additional change
+  const handleRemoveTrackingOptionAdditionalChange = (optionId, changeId) => {
+    setTrackingOptionAdditionalChanges(prev => ({
+      ...prev,
+      [optionId]: (prev[optionId] || []).filter(change => change.id !== changeId)
+    }));
+  };
+
+  // Handle updating business additional change
+  const handleUpdateBusinessAdditionalChange = (changeId, field, value) => {
+    setBusinessAdditionalChanges(prev => {
+      const updated = prev.map(change =>
+        change.id === changeId ? { ...change, [field]: value } : change
+      );
+      if (field === 'date') {
+        setTimeout(() => {
+          const errors = {};
+          let prevDate = null;
+          updated.forEach((change) => {
+            if (change.date && prevDate && new Date(change.date) <= new Date(prevDate)) {
+              errors[change.id] = 'Date must be after the previous effective date';
+            }
+            if (change.date) prevDate = change.date;
+          });
+          setBusinessDateErrors(errors);
+        }, 0);
+      }
+      return updated;
+    });
+  };
+
+  // Handle updating tracking option additional change
+  const handleUpdateTrackingOptionAdditionalChange = (optionId, changeId, field, value) => {
+    setTrackingOptionAdditionalChanges(prev => {
+      const updated = {
+        ...prev,
+        [optionId]: (prev[optionId] || []).map(change =>
+          change.id === changeId ? { ...change, [field]: value } : change
+        )
+      };
+      if (field === 'date') {
+        setTimeout(() => {
+          const errors = {};
+          const optionChanges = updated[optionId] || [];
+          let prevDate = null;
+          optionChanges.forEach((change) => {
+            if (change.date && prevDate && new Date(change.date) <= new Date(prevDate)) {
+              errors[change.id] = 'Date must be after the previous effective date';
+            }
+            if (change.date) prevDate = change.date;
+          });
+          setTrackingOptionDateErrors(prevErrors => ({ ...prevErrors, [optionId]: errors }));
+        }, 0);
+      }
+      return updated;
+    });
+  };
+
+  // Handle tracking category change
+  const handleCategoryChange = (category) => {
+    // Check if changing from one category to another (not initial selection)
+    const hasExistingCategory = currentData.trackingCategory !== "";
+    const hasSelectedOptions = currentData.trackingOptions.some(opt => opt.name !== "");
+    
+    if (hasExistingCategory && hasSelectedOptions && category !== "") {
+      // Show confirmation modal if changing categories with existing options
+      setPendingCategory(category);
+      setShowChangeCategoryModal(true);
+    } else {
+      // Change directly if no options selected or first selection
+      setCurrentData(prev => ({
+        ...prev,
+        trackingCategory: category
+      }));
+    }
+  };
+
+  // Confirm category change and clear tracking options
+  const confirmCategoryChange = () => {
+    setCurrentData(prev => ({
+      ...prev,
+      trackingCategory: pendingCategory,
+      trackingOptions: [{ id: 1, name: "", allocation: 100 }]
+    }));
+    setShowChangeCategoryModal(false);
+    setPendingCategory("");
+  };
+
+  // Handle clear tracking category
+  const handleClearCategory = () => {
+    // Check if any tracking options have been selected
+    const hasSelectedOptions = currentData.trackingOptions.some(opt => opt.name !== "");
+    
+    if (hasSelectedOptions) {
+      // Show confirmation modal if tracking options exist
+      setShowClearCategoryModal(true);
+    } else {
+      // Clear directly if no tracking options selected
+      setCurrentData(prev => ({
+        ...prev,
+        trackingCategory: "",
+        allocationMethod: "BUSINESS",
+        trackingOptions: [{ id: 1, name: "", allocation: 100 }]
+      }));
+    }
+  };
+
+  // Confirm clear tracking category
+  const confirmClearCategory = () => {
+    setCurrentData(prev => ({
+      ...prev,
+      trackingCategory: "",
+      allocationMethod: "BUSINESS",
+      trackingOptions: [{ id: 1, name: "", allocation: 100 }]
+    }));
+    setShowClearCategoryModal(false);
+  };
+
+  // Handle delete tracking option
+  const handleDeleteOption = (optionId) => {
+    const option = currentData.trackingOptions.find(opt => opt.id === optionId);
+    
+    // If it's the first option (id: 1) and only one exists, clear its name
+    if (optionId === 1 && currentData.trackingOptions.length === 1) {
+      setCurrentData(prev => ({
+        ...prev,
+        allocationMethod: "BUSINESS", // Switch back to business method when clearing
+        trackingOptions: prev.trackingOptions.map(opt =>
+          opt.id === optionId ? { ...opt, name: "" } : opt
+        )
+      }));
+    } else {
+      // Otherwise, remove the option entirely
+      setCurrentData(prev => ({
+        ...prev,
+        trackingOptions: prev.trackingOptions.filter(opt => opt.id !== optionId)
+      }));
+      // Clean up allocation change state for this option
+      setTrackingOptionAdditionalChanges(prev => {
+        const next = { ...prev };
+        delete next[optionId];
+        return next;
+      });
+      setTrackingOptionDateErrors(prev => {
+        const next = { ...prev };
+        delete next[optionId];
+        return next;
+      });
+    }
+  };
+
+  const handleDeleteOptionClick = (optionId) => {
+    const hasAllocationChanges = (trackingOptionAdditionalChanges[optionId] || []).length > 0;
+    if (hasAllocationChanges) {
+      setPendingDeleteOptionId(optionId);
+      setShowDeleteTrackingOptionModal(true);
+    } else {
+      handleDeleteOption(optionId);
+    }
+  };
+
+  const confirmDeleteTrackingOption = () => {
+    if (pendingDeleteOptionId != null) {
+      handleDeleteOption(pendingDeleteOptionId);
+      setPendingDeleteOptionId(null);
+    }
+    setShowDeleteTrackingOptionModal(false);
+  };
+
+  // Handle add tracking option
+  const handleAddOption = () => {
+    const newId = Math.max(...currentData.trackingOptions.map(opt => opt.id), 0) + 1;
+    
+    setCurrentData(prev => ({
+      ...prev,
+      trackingOptions: [...prev.trackingOptions, { id: newId, name: "", allocation: 100, allocationHistory: [] }]
+    }));
+  };
+
+  // Handle save
+  const handleSave = () => {
+    const validationErrors = getValidationErrors();
+    
+    if (validationErrors.hasErrors) {
+      setShowValidationErrors(true);
+      setValidatedBusinessChangeIds(businessAdditionalChanges.map(c => c.id));
+      setValidatedTrackingOptionChangeIds(
+        Object.fromEntries(
+          Object.keys(trackingOptionAdditionalChanges).map(optionId => [
+            optionId,
+            (trackingOptionAdditionalChanges[optionId] || []).map(c => c.id)
+          ])
+        )
+      );
+      return;
+    }
+    
+    setShowValidationErrors(false);
+    setValidatedBusinessChangeIds([]);
+    setValidatedTrackingOptionChangeIds({});
+    
+    if (hasChanges()) {
+      setShowModal(true);
+    } else {
+      setShowToast(true);
+    }
+  };
+
+  // History management functions
+  const handleShowHistory = (type, optionId = null) => {
+    let history = [];
+    let title = "";
+    
+    if (type === 'BUSINESS') {
+      history = currentData.businessAllocationHistory || [];
+      // Current percentage has no date; it applies from the last change (or from the start)
+      if (currentData.businessAllocation !== '' && currentData.businessAllocation != null) {
+        const sortedChanges = [...currentData.businessAdditionalChanges]
+          .filter(c => c.date)
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+        const effectiveFrom = sortedChanges.length > 0
+          ? sortedChanges[sortedChanges.length - 1].date
+          : getTaxYearStart();
+        history = [...history, {
+          percentage: parseFloat(currentData.businessAllocation),
+          effectiveFrom,
+          effectiveTo: null
+        }];
+      }
+      title = "Business Allocation History";
+    } else if (type === 'OPTION' && optionId) {
+      const option = currentData.trackingOptions.find(opt => opt.id === optionId);
+      if (option) {
+        history = option.allocationHistory || [];
+        if (option.allocation !== '' && option.allocation != null) {
+          const changes = (trackingOptionAdditionalChanges[optionId] || [])
+            .filter(c => c.date)
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+          const effectiveFrom = changes.length > 0
+            ? changes[changes.length - 1].date
+            : getTaxYearStart();
+          history = [...history, {
+            percentage: parseFloat(option.allocation),
+            effectiveFrom,
+            effectiveTo: null
+          }];
+        }
+        title = `${option.name} Allocation History`;
+      }
+    }
+    
+    setHistoryModalData({ type, optionId, history });
+    setShowHistoryModal(true);
+  };
+
+  const handleEditHistoryEntry = (index, entry) => {
+    setEditingHistoryEntry({ ...entry, index, type: historyModalData.type, optionId: historyModalData.optionId });
+    setShowEditHistoryModal(true);
+  };
+
+  const handleSaveHistoryEntry = (updatedEntry) => {
+    if (updatedEntry.type === 'BUSINESS') {
+      setCurrentData(prev => {
+        const newHistory = [...prev.businessAllocationHistory];
+        if (updatedEntry.index < newHistory.length) {
+          newHistory[updatedEntry.index] = {
+            percentage: updatedEntry.percentage,
+            effectiveFrom: updatedEntry.effectiveFrom,
+            effectiveTo: updatedEntry.effectiveTo
+          };
+        }
+        return { ...prev, businessAllocationHistory: newHistory };
+      });
+    } else if (updatedEntry.type === 'OPTION') {
+      setCurrentData(prev => ({
+        ...prev,
+        trackingOptions: prev.trackingOptions.map(opt => {
+          if (opt.id === updatedEntry.optionId) {
+            const newHistory = [...(opt.allocationHistory || [])];
+            if (updatedEntry.index < newHistory.length) {
+              newHistory[updatedEntry.index] = {
+                percentage: updatedEntry.percentage,
+                effectiveFrom: updatedEntry.effectiveFrom,
+                effectiveTo: updatedEntry.effectiveTo
+              };
+            }
+            return { ...opt, allocationHistory: newHistory };
+          }
+          return opt;
+        })
+      }));
+    }
+    
+    setShowEditHistoryModal(false);
+    setEditingHistoryEntry(null);
+    // Refresh history modal
+    handleShowHistory(updatedEntry.type, updatedEntry.optionId);
+  };
+
+  const handleDeleteHistoryEntry = (index) => {
+    if (historyModalData.type === 'BUSINESS') {
+      setCurrentData(prev => ({
+        ...prev,
+        businessAllocationHistory: prev.businessAllocationHistory.filter((_, i) => i !== index)
+      }));
+    } else if (historyModalData.type === 'OPTION') {
+      setCurrentData(prev => ({
+        ...prev,
+        trackingOptions: prev.trackingOptions.map(opt => {
+          if (opt.id === historyModalData.optionId) {
+            return {
+              ...opt,
+              allocationHistory: (opt.allocationHistory || []).filter((_, i) => i !== index)
+            };
+          }
+          return opt;
+        })
+      }));
+    }
+    // Refresh history modal
+    handleShowHistory(historyModalData.type, historyModalData.optionId);
+  };
+
+  const getDateWarning = (date) => {
+    const taxYearStart = getTaxYearStart();
+    if (date && date < taxYearStart) {
+      return "This date is before the current tax year and may require amending a previous tax year";
+    }
+    return null;
+  };
+
+  // Confirm save
+  const confirmSave = () => {
+    const newData = cloneData(currentData);
+    
+    // Build business allocation history from "additional changes" only (date = change between one % and the next).
+    // First percentage has no date and applies for all time until the first change.
+    const sortedBusinessChanges = [...(businessAdditionalChanges || [])]
+      .filter(c => c.date && c.percentage !== '' && !isNaN(parseFloat(c.percentage)))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+    newData.businessAllocationHistory = sortedBusinessChanges.map((change, i) => ({
+      percentage: parseFloat(change.percentage),
+      effectiveFrom: change.date,
+      effectiveTo: sortedBusinessChanges[i + 1]?.date || null
+    }));
+    
+    // Build tracking option allocation history from their additional changes
+    newData.trackingOptions = newData.trackingOptions.map(opt => {
+      const changes = (trackingOptionAdditionalChanges[opt.id] || [])
+        .filter(c => c.date && c.percentage !== '' && !isNaN(parseFloat(c.percentage)))
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+      return {
+        ...opt,
+        allocationHistory: changes.map((change, i) => ({
+          percentage: parseFloat(change.percentage),
+          effectiveFrom: change.date,
+          effectiveTo: changes[i + 1]?.date || null
+        }))
+      };
+    });
+    
+    setSavedData(newData);
+    setCurrentData(newData);
+    setShowModal(false);
+    setShowToast(true);
+    setHasEverSaved(true);
+    
+    setShowBusinessChangePrompt(false);
+    setShowTrackingOptionChangePrompts({});
+  };
+
+  const confirmSaveRef = useRef(confirmSave);
+  confirmSaveRef.current = confirmSave;
+
+  // Developer tools functions
+  // Developer panel functions
+  const showEmptyState = () => {
+    setCategoriesSetUp(false);
+    const emptyData = getEmptyState();
+    setCurrentData(emptyData);
+    setSavedData(cloneData(emptyData));
+    setHasEverSaved(false);
+    setShowValidationErrors(false);
+    setValidatedBusinessChangeIds([]);
+    setValidatedTrackingOptionChangeIds({});
+    setBusinessEffectiveDate('');
+    setTrackingOptionDates({});
+    setBusinessAdditionalChanges([]);
+    setTrackingOptionAdditionalChanges({});
+    setBusinessDateErrors({});
+    setTrackingOptionDateErrors({});
+  };
+
+  const showCategoriesSetUp = () => {
+    setCategoriesSetUp(true);
+    const initialData = getInitialData();
+    setCurrentData(initialData);
+    setSavedData(cloneData(initialData));
+    setHasEverSaved(false);
+    setShowValidationErrors(false);
+    setValidatedBusinessChangeIds([]);
+    setValidatedTrackingOptionChangeIds({});
+    setBusinessEffectiveDate('');
+    setTrackingOptionDates({});
+    setBusinessAdditionalChanges([]);
+    setTrackingOptionAdditionalChanges({});
+    setBusinessDateErrors({});
+    setTrackingOptionDateErrors({});
+  };
+
+  return (
+    <>
+    <div className="min-h-screen py-6 px-3 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        {/* Page Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-normal text-gray-900 mb-2">Settings</h1>
+        </div>
+        
+        {/* Layout: collapsible Menu (small screens) + sidebar (md+) + main content */}
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Small screens: Menu panel above main content */}
+          <div className="md:hidden shrink-0">
+            <div className="bg-white rounded border border-gray-200 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setMobileNavOpen((o) => !o)}
+                className="w-full flex items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors"
+                aria-expanded={mobileNavOpen}
+                aria-controls="settings-mobile-nav"
+                id="settings-menu-toggle"
+              >
+                <span>Menu</span>
+                <svg
+                  className={`w-5 h-5 text-gray-500 transition-transform ${mobileNavOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {mobileNavOpen && (
+                <div
+                  id="settings-mobile-nav"
+                  className="border-t border-gray-200 px-2 pb-3 pt-1 space-y-1"
+                  role="region"
+                  aria-labelledby="settings-menu-toggle"
+                >
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setMobileNavOpen(false);
+                      if (hasChanges()) {
+                        setCancelTriggeredByNav(true);
+                        setShowCancelModal(true);
+                      }
+                    }}
+                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer"
+                  >
+                    Tax information
+                  </a>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setMobileNavOpen(false);
+                      if (hasChanges()) {
+                        setCancelTriggeredByNav(true);
+                        setShowCancelModal(true);
+                      }
+                    }}
+                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer"
+                  >
+                    Connected businesses
+                  </a>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setMobileNavOpen(false);
+                    }}
+                    className="block px-3 py-2 text-sm text-xero-dark-blue font-medium border-l-4 border-xero-dark-blue bg-blue-50 rounded transition-colors"
+                  >
+                    Tracking and allocation
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* md+: Left sidebar navigation */}
+          <div className="hidden md:block w-64 flex-shrink-0">
+            <div className="bg-white rounded border border-gray-200 p-4">
+              <div className="space-y-1">
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (hasChanges()) {
+                      setCancelTriggeredByNav(true);
+                      setShowCancelModal(true);
+                    }
+                  }}
+                  className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer"
+                >
+                  Tax information
+                </a>
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (hasChanges()) {
+                      setCancelTriggeredByNav(true);
+                      setShowCancelModal(true);
+                    }
+                  }}
+                  className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer"
+                >
+                  Connected businesses
+                </a>
+                <a
+                  href="#"
+                  onClick={(e) => e.preventDefault()}
+                  className="block px-3 py-2 text-sm text-xero-dark-blue font-medium border-l-4 border-xero-dark-blue bg-blue-50 rounded transition-colors"
+                >
+                  Tracking and allocation
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          <div className="flex-1 min-w-0">
+            {/* Main Content Card */}
+            <div className="bg-white rounded border border-gray-200">
+              {/* Title left, actions right; wrap only when needed */}
+              <div className="px-6 py-4 border-b border-gray-200 min-w-0 flex flex-wrap items-center gap-x-4 gap-y-2">
+                <h2 className="text-base font-semibold text-gray-900 min-w-0 mr-auto pr-2">
+                  Tracking and allocation
+                </h2>
+                {hasChanges() && (
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCancelTriggeredByNav(false);
+                        setShowCancelModal(true);
+                      }}
+                      className="px-4 py-1.5 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSave}
+                      className={`px-4 py-1.5 rounded text-sm font-medium transition-colors ${
+                        hasChanges()
+                          ? 'bg-xero-dark-blue text-white hover:bg-blue-700'
+                          : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      }`}
+                      disabled={!hasChanges()}
+                    >
+                      Save
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="px-4 py-4">
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                  Configure how transactions are included in MTD for Income Tax.
+                </p>
+                <a 
+                  href="#" 
+                  onClick={(e) => e.preventDefault()}
+                  className="text-sm text-xero-dark-blue hover:underline inline-block mb-6"
+                >
+                  Learn more about tracking categories and transaction allocation
+                </a>
+                <div className="mb-6">
+                  <button
+                    onClick={(e) => e.preventDefault()}
+                    className="px-3 py-1.5 border border-gray-300 text-xero-dark-blue rounded text-sm font-medium hover:bg-blue-50 transition-colors"
+                  >
+                    Manage tracking categories
+                  </button>
+                </div>
+
+                {/* Validation Error Banner - only after save attempt, and only for rows that existed at last save */}
+                {showValidationErrors && getValidationErrors(true).hasErrors && (
+                  <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md flex items-start gap-3">
+                    <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div className="text-sm text-red-800">
+                  {(() => {
+                    const errors = getValidationErrors(true);
+                    const messages = [];
+                    if (errors.emptyOptions.length > 0) {
+                      messages.push("All tracking options need to be assigned");
+                    }
+                    if (errors.emptyAllocation) {
+                      messages.push("Enter an allocation percentage for each required field");
+                    }
+                    if (errors.emptyAdditionalDates.length > 0 || Object.keys(errors.emptyTrackingOptionAdditionalDates).length > 0 || errors.hasDateOrderErrors) {
+                      messages.push("Enter a valid effective date for each allocation");
+                    }
+                    if (messages.length === 0) return "Please fix the errors below before saving";
+                    if (messages.length === 1) return messages[0];
+                    return (
+                      <ul className="list-disc list-inside mt-0 mb-0 space-y-0.5">
+                        {messages.map((m, i) => <li key={i}>{m}</li>)}
+                      </ul>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+
+                {/* Rate limit warning - 5+ tracking options and/or allocation changes (all scenarios) */}
+                {rateLimitCount >= 5 && rateLimitCount < 10 && !warningDismissed && (
+                  <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-md flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-2 flex-1">
+                      <svg className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p className="text-sm text-yellow-800">
+                        Using more than 5 tracking options or allocation changes for a business may affect performance
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setWarningDismissed(true)}
+                      className="text-yellow-600 hover:text-yellow-800 flex-shrink-0"
+                      aria-label="Dismiss warning"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+
+                {/* Rate limit block - 10 tracking options and/or allocation changes (all scenarios) */}
+                {rateLimitCount >= 10 && (
+                  <div className="mb-6 p-3 bg-gray-50 border border-gray-300 rounded-md flex items-start gap-2">
+                    <svg className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-sm text-gray-700">
+                      You can't add more than 10 tracking options or allocation changes for a business
+                    </p>
+                  </div>
+                )}
+
+            {/* UK Property Card */}
+            <div className="border border-gray-200 rounded min-w-0 overflow-hidden">
+              <div className="px-5 py-4 bg-gray-50 border-b border-gray-200">
+                <h3 className="text-base font-medium text-gray-900">UK property</h3>
+              </div>
+              
+              <div className="px-5 py-5 min-w-0">
+                {/* Radio Buttons - At top */}
+                <div className="mb-6">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <label className="text-sm text-gray-700">
+                      Transaction allocation
+                    </label>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                        onClick={() => setShowTooltip(!showTooltip)}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </button>
+                      {showTooltip && (
+                        <div className="absolute left-0 top-6 z-50 w-72 p-3 bg-gray-900 text-white text-xs rounded shadow-lg">
+                          Select <span className="font-semibold">Allocate by business</span> if your share of income is the same for all properties, or <span className="font-semibold">Allocate by tracking options</span> if your share varies by tracking option.
+                          <div className="absolute -top-1 left-3 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <label className="flex items-center cursor-pointer group">
+                      <input
+                        type="radio"
+                        name="allocationMethod"
+                        checked={isBusinessMethod}
+                        onChange={() => handleMethodChange("BUSINESS")}
+                        className="w-4 h-4 text-xero-dark-blue focus:ring-xero-dark-blue"
+                      />
+                      <span className="ml-2 text-sm text-gray-900">
+                        Allocate by business
+                      </span>
+                    </label>
+                    
+                    <label className={`flex items-center group ${categoriesSetUp && currentData.trackingCategory !== "" ? 'cursor-pointer' : 'cursor-not-allowed'}`}>
+                      <input
+                        type="radio"
+                        name="allocationMethod"
+                        checked={!isBusinessMethod}
+                        onChange={() => handleMethodChange("OPTIONS")}
+                        disabled={!categoriesSetUp || currentData.trackingCategory === ""}
+                        className="w-4 h-4 text-xero-dark-blue focus:ring-xero-dark-blue disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      <span className={`ml-2 text-sm ${categoriesSetUp && currentData.trackingCategory !== "" ? 'text-gray-900' : 'text-gray-400'}`}>
+                        Allocate by tracking options
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Business-level allocation input - Above tracking category */}
+                {isBusinessMethod && (
+                  <div className="mb-6">
+                    <AllocationInputWithDate
+                      value={currentData.businessAllocation}
+                      onChange={handleBusinessAllocationChange}
+                      effectiveDate={businessEffectiveDate}
+                      onDateChange={handleBusinessEffectiveDateChange}
+                      hasHistory={currentData.businessAllocationHistory && currentData.businessAllocationHistory.length > 0}
+                      onShowHistory={() => handleShowHistory('BUSINESS')}
+                      dateWarning={getDateWarning(businessEffectiveDate)}
+                      hasError={showValidationErrors && getValidationErrors().emptyBusinessAllocation}
+                      showDateField={false}
+                    />
+                    
+                    {/* Additional allocation changes - nested border only after first change row */}
+                    {businessAdditionalChanges.length > 0 ? (
+                    <div className="mt-4 border-l-2 border-gray-200 pl-4 min-w-0">
+                          <div className="space-y-3">
+                            {businessAdditionalChanges.map(change => {
+                              const validationErrors = getValidationErrors();
+                              const wasValidated = validatedBusinessChangeIds.includes(change.id);
+                              const hasAllocationError = showValidationErrors && wasValidated && validationErrors.emptyAdditionalAllocations.includes(change.id);
+                              const hasDateError = showValidationErrors && wasValidated && validationErrors.emptyAdditionalDates.includes(change.id);
+                              
+                              return (
+                                <div key={change.id}>
+                                  <div className="flex flex-wrap items-start gap-3 min-w-0">
+                                    <div className="flex-shrink-0">
+                                      <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+                                        Allocation
+                                      </label>
+                                      <PercentageInput
+                                        value={change.percentage}
+                                        onChange={(value) => handleUpdateBusinessAdditionalChange(change.id, 'percentage', value)}
+                                        hasError={hasAllocationError}
+                                      />
+                                      {hasAllocationError && (
+                                        <p className="text-xs text-red-600 mt-1">Required</p>
+                                      )}
+                                    </div>
+                                    {/* Date + X stay together; outer row wraps allocation vs (date+X) */}
+                                    <div className="flex flex-nowrap items-start gap-2 min-w-0 shrink-0">
+                                      <div className="min-w-0">
+                                        <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+                                          Effective date
+                                        </label>
+                                        <div>
+                                          <DateInput
+                                            value={change.date}
+                                            onChange={(value) => handleUpdateBusinessAdditionalChange(change.id, 'date', value)}
+                                            className="w-full max-w-[200px]"
+                                            hasError={hasDateError || !!businessDateErrors[change.id]}
+                                          />
+                                          {hasDateError && !businessDateErrors[change.id] && (
+                                            <p className="text-xs text-red-600 mt-1 max-w-[200px]">Required</p>
+                                          )}
+                                          {businessDateErrors[change.id] && (
+                                            <p className="text-xs text-red-600 mt-1 max-w-[200px]">{businessDateErrors[change.id]}</p>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveBusinessAdditionalChange(change.id)}
+                                        className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 mt-[35px]"
+                                        title="Remove"
+                                      >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        <div className="mt-3 text-left">
+                          <button
+                            type="button"
+                            onClick={handleAddBusinessAllocationChange}
+                            disabled={rateLimitCount >= 10}
+                            className={`text-sm text-left ${rateLimitCount >= 10 ? 'text-gray-400 cursor-not-allowed' : 'text-xero-dark-blue hover:text-blue-700'}`}
+                          >
+                            + Add allocation change
+                          </button>
+                        </div>
+                    </div>
+                    ) : (
+                    <div className="mt-3 text-left">
+                      <button
+                        type="button"
+                        onClick={handleAddBusinessAllocationChange}
+                        disabled={rateLimitCount >= 10}
+                        className={`text-sm text-left ${rateLimitCount >= 10 ? 'text-gray-400 cursor-not-allowed' : 'text-xero-dark-blue hover:text-blue-700'}`}
+                      >
+                        + Add allocation change
+                      </button>
+                    </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Tracking Category Section or Empty State */}
+                {categoriesSetUp ? (
+                  <>
+                    <div className="mb-6 pt-6 border-t border-gray-200 min-w-0">
+                      <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+                        Tracking category
+                      </label>
+                      <div className="flex items-start gap-2 min-w-0 w-full flex-nowrap">
+                        <div className="min-w-[168px] flex-1 max-w-[250px]">
+                          <select
+                            value={currentData.trackingCategory}
+                            onChange={(e) => {
+                              handleCategoryChange(e.target.value);
+                              if (e.target.value !== "") setShowValidationErrors(false);
+                            }}
+                            className={`tracking-category-select px-3 py-1.5 border rounded text-sm focus:outline-none focus:ring-1 ${
+                              showValidationErrors && getValidationErrors().emptyCategory
+                                ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                                : 'border-gray-300 focus:ring-xero-dark-blue focus:border-xero-dark-blue'
+                            } bg-white`}
+                          >
+                            <option value=""></option>
+                            {availableCategories.map(cat => (
+                              <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                          </select>
+                          {showValidationErrors && getValidationErrors().emptyCategory && (
+                            <p className="text-xs text-red-600 mt-1">Select a tracking category to save</p>
+                          )}
+                        </div>
+                        {currentData.trackingCategory !== "" && (
+                          <button
+                            onClick={handleClearCategory}
+                            className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 mt-1.5"
+                            title="Clear tracking category"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                {/* Show tracking options when categories are set up */}
+                  <div className="pt-6 border-t border-gray-200">
+                    {/* Tracking Options List */}
+                    {currentData.trackingOptions.map((option) => {
+                      const usedNames = currentData.trackingOptions
+                        .filter(opt => opt.id !== option.id)
+                        .map(opt => opt.name);
+                      const availableOptions = getAvailableOptionsForCategory(currentData.trackingCategory);
+                      const isCategorySelected = currentData.trackingCategory !== "";
+                      const validationErrors = getValidationErrors();
+                      const hasNameError = showValidationErrors && validationErrors.emptyOptions.includes(option.id);
+                      const hasAllocationError = showValidationErrors && validationErrors.emptyTrackingOptionAllocations.includes(option.id);
+                      const hasError = hasNameError || hasAllocationError;
+                      const additionalChanges = trackingOptionAdditionalChanges[option.id] || [];
+                      
+                      return (
+                        <div key={option.id}>
+                          <TrackingOptionRow
+                            option={option}
+                            allocation={option.allocation}
+                            onAllocationChange={(value) => handleOptionAllocationChange(option.id, value)}
+                            onNameChange={(name) => handleOptionNameChange(option.id, name)}
+                            readOnly={isBusinessMethod}
+                            onDelete={() => handleDeleteOptionClick(option.id)}
+                            availableNames={availableOptions}
+                            usedNames={usedNames}
+                            isTrackingCategorySelected={isCategorySelected}
+                            isFirstOption={option.id === 1}
+                            showDeleteButton={isCategorySelected}
+                            hasError={hasNameError}
+                            hasAllocationError={hasAllocationError}
+                            onFocus={() => setShowValidationErrors(false)}
+                            effectiveDate={trackingOptionDates[option.id] || ''}
+                            onDateChange={(date) => handleTrackingOptionEffectiveDateChange(option.id, date)}
+                            hasHistory={option.allocationHistory && option.allocationHistory.length > 0}
+                            onShowHistory={() => handleShowHistory('OPTION', option.id)}
+                            dateWarning={getDateWarning(trackingOptionDates[option.id])}
+                          />
+                          
+                          {/* Allocation changes: nested border only after first change row; + Add sits outside until then */}
+                          {!isBusinessMethod && (
+                            additionalChanges.length > 0 ? (
+                            <div className="mt-2 border-l-2 border-gray-200 pl-4 min-w-0">
+                                <div className="space-y-3">
+                                  {additionalChanges.map(change => {
+                                    const validationErrors = getValidationErrors();
+                                    const optionAllocationErrors = validationErrors.emptyTrackingOptionAdditionalAllocations[option.id] || [];
+                                    const optionDateErrors = validationErrors.emptyTrackingOptionAdditionalDates[option.id] || [];
+                                    const wasValidated = (validatedTrackingOptionChangeIds[option.id] || []).includes(change.id);
+                                    const hasAllocationError = showValidationErrors && wasValidated && optionAllocationErrors.includes(change.id);
+                                    const hasDateError = showValidationErrors && wasValidated && optionDateErrors.includes(change.id);
+                                    const existingDateError = (trackingOptionDateErrors[option.id] || {})[change.id];
+                                    
+                                    return (
+                                      <div key={change.id}>
+                                        <div className="flex flex-wrap items-start gap-3 min-w-0">
+                                          <div className="flex-shrink-0">
+                                            <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+                                              Allocation
+                                            </label>
+                                            <PercentageInput
+                                              value={change.percentage}
+                                              onChange={(value) => handleUpdateTrackingOptionAdditionalChange(option.id, change.id, 'percentage', value)}
+                                              hasError={hasAllocationError}
+                                            />
+                                            {hasAllocationError && (
+                                              <p className="text-xs text-red-600 mt-1">Required</p>
+                                            )}
+                                          </div>
+                                          <div className="flex flex-nowrap items-start gap-2 min-w-0 shrink-0">
+                                            <div className="min-w-0">
+                                              <label className="block text-sm text-gray-700 mb-1.5 min-h-[20px]">
+                                                Effective date
+                                              </label>
+                                              <div>
+                                                <DateInput
+                                                  value={change.date}
+                                                  onChange={(value) => handleUpdateTrackingOptionAdditionalChange(option.id, change.id, 'date', value)}
+                                                  className="w-full max-w-[200px]"
+                                                  hasError={hasDateError || !!existingDateError}
+                                                />
+                                                {hasDateError && !existingDateError && (
+                                                  <p className="text-xs text-red-600 mt-1 max-w-[200px]">Required</p>
+                                                )}
+                                                {existingDateError && (
+                                                  <p className="text-xs text-red-600 mt-1 max-w-[200px]">{existingDateError}</p>
+                                                )}
+                                              </div>
+                                            </div>
+                                            <button
+                                              type="button"
+                                              onClick={() => handleRemoveTrackingOptionAdditionalChange(option.id, change.id)}
+                                              className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 mt-[35px]"
+                                              title="Remove"
+                                            >
+                                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                              </svg>
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              <div className="mt-3 pb-4 text-left">
+                                <button
+                                  type="button"
+                                  onClick={() => handleAddTrackingOptionAllocationChange(option.id)}
+                                  disabled={rateLimitCount >= 10}
+                                  className={`text-sm text-left ${rateLimitCount >= 10 ? 'text-gray-400 cursor-not-allowed' : 'text-xero-dark-blue hover:text-blue-700'}`}
+                                >
+                                  + Add allocation change
+                                </button>
+                              </div>
+                            </div>
+                            ) : (
+                            <div className="mt-2 pb-4 text-left">
+                              <button
+                                type="button"
+                                onClick={() => handleAddTrackingOptionAllocationChange(option.id)}
+                                disabled={rateLimitCount >= 10}
+                                className={`text-sm text-left ${rateLimitCount >= 10 ? 'text-gray-400 cursor-not-allowed' : 'text-xero-dark-blue hover:text-blue-700'}`}
+                              >
+                                + Add allocation change
+                              </button>
+                            </div>
+                            )
+                          )}
+                        </div>
+                      );
+                    })}
+
+                    {/* Add another tracking option button - Only enabled when category selected and options exist */}
+                    <div className="mt-4 text-left">
+                      <button 
+                        type="button"
+                        onClick={handleAddOption}
+                        disabled={currentData.trackingCategory === "" || !currentData.trackingOptions.some(opt => opt.name !== "") || rateLimitCount >= 10}
+                        className={`text-sm text-left inline-flex items-center justify-start gap-1.5 font-medium ${
+                          currentData.trackingCategory !== "" && currentData.trackingOptions.some(opt => opt.name !== "") && rateLimitCount < 10
+                            ? 'text-xero-dark-blue hover:text-blue-700 cursor-pointer'
+                            : 'text-gray-400 cursor-not-allowed'
+                        }`}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add another tracking option
+                      </button>
+                    </div>
+                  </div>
+                  </>
+                ) : (
+                  <div className="pt-6 border-t border-gray-200">
+                    {/* Empty state when no tracking categories set up */}
+                    <div className="py-8 text-center">
+                      <h3 className="text-base font-semibold text-gray-900 mb-1.5">
+                        No tracking categories have been set up
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4 max-w-md mx-auto">
+                        Set up tracking categories and options in accounting settings to allocate transactions to tracking options
+                      </p>
+                      <button
+                        onClick={() => {}}
+                        className="px-3 py-1.5 border border-gray-300 text-xero-dark-blue rounded text-sm font-medium hover:bg-blue-50 transition-colors cursor-default"
+                      >
+                        Go to tracking category settings
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      {/* Save confirmation modal */}
+      <ConfirmationModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={() => { confirmSaveRef.current && confirmSaveRef.current(); }}
+        title="Confirm allocation changes"
+        message="Are you sure you want to save these changes? This will apply for all tax years."
+        confirmText="Confirm"
+      />
+
+      {/* Clear Tracking Category Modal */}
+      <ConfirmationModal
+        isOpen={showClearCategoryModal}
+        onClose={() => setShowClearCategoryModal(false)}
+        onConfirm={confirmClearCategory}
+        title="Clear tracking category"
+        message="This will clear the tracking category and all tracking options. Do you want to continue?"
+        confirmText="Clear"
+      />
+
+      {/* Change Tracking Category Modal */}
+      <ConfirmationModal
+        isOpen={showChangeCategoryModal}
+        onClose={() => {
+          setShowChangeCategoryModal(false);
+          setPendingCategory("");
+        }}
+        onConfirm={confirmCategoryChange}
+        title="Change tracking category"
+        message="Changing a tracking category will remove all tracking options for a business. Are you sure you want to continue?"
+        confirmText="Confirm"
+      />
+
+      {/* Cancel Modal - Different content based on trigger source and save history */}
+      <ConfirmationModal
+        isOpen={showCancelModal}
+        onClose={() => {
+          setShowCancelModal(false);
+          setCancelTriggeredByNav(false);
+        }}
+        onConfirm={() => {
+          setCurrentData(cloneData(savedData));
+          setShowCancelModal(false);
+          setCancelTriggeredByNav(false);
+          setShowValidationErrors(false);
+          setValidatedBusinessChangeIds([]);
+          setValidatedTrackingOptionChangeIds({});
+          // Reset date fields when canceling
+          setBusinessEffectiveDate('');
+          setTrackingOptionDates({});
+          setShowBusinessDateField(false);
+          setShowTrackingOptionDateFields({});
+          // Reset prompts
+          setShowBusinessChangePrompt(false);
+          setShowTrackingOptionChangePrompts({});
+        }}
+        title={cancelTriggeredByNav ? "Unsaved changes" : "Cancel changes"}
+        message={cancelTriggeredByNav ? "Are you sure you want to leave? Any unsaved changes will be lost." : "Are you sure you want to revert to your last saved changes?"}
+        confirmText={cancelTriggeredByNav ? "Leave" : "Confirm"}
+      />
+
+      {/* Delete tracking option confirmation (when option has allocation change rows) */}
+      <ConfirmationModal
+        isOpen={showDeleteTrackingOptionModal}
+        onClose={() => {
+          setShowDeleteTrackingOptionModal(false);
+          setPendingDeleteOptionId(null);
+        }}
+        onConfirm={confirmDeleteTrackingOption}
+        title="Remove tracking option"
+        message="This will remove the tracking option and all of its allocation changes. Are you sure you want to continue?"
+        confirmText="Remove"
+      />
+
+      {/* History Modal */}
+      <HistoryModal
+        isOpen={showHistoryModal}
+        onClose={() => setShowHistoryModal(false)}
+        title={historyModalData.type === 'BUSINESS' ? "Business Allocation History" : 
+               historyModalData.type === 'OPTION' ? 
+                 `${currentData.trackingOptions.find(opt => opt.id === historyModalData.optionId)?.name || 'Tracking Option'} Allocation History` : 
+                 "Ownership History"}
+        history={historyModalData.history}
+        onEditEntry={handleEditHistoryEntry}
+        onDeleteEntry={handleDeleteHistoryEntry}
+      />
+
+      {/* Edit History Entry Modal */}
+      <EditHistoryModal
+        isOpen={showEditHistoryModal}
+        onClose={() => {
+          setShowEditHistoryModal(false);
+          setEditingHistoryEntry(null);
+        }}
+        onSave={handleSaveHistoryEntry}
+        entry={editingHistoryEntry}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        message="Settings saved successfully"
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
+
+      {/* Developer Panel */}
+      <DeveloperPanel
+        onShowEmptyState={showEmptyState}
+        onShowCategoriesSetUp={showCategoriesSetUp}
+      />
+    </>
+  );
+};
+
+// Render the app
+ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

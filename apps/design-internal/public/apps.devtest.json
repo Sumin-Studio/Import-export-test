@@ -1,0 +1,122 @@
+{
+  "design-internal": {
+    "name": "Design Internal Home",
+    "description": "Lists all available apps and prototypes",
+    "vercelProjectId": "prj_fake000",
+    "latestUpdate": "2026 Mar 1",
+    "url": "https://design-internal.vercel.app",
+    "tags": ["app"],
+    "authors": []
+  },
+
+  "short-app": {
+    "name": "Short App",
+    "description": "Brief description.",
+    "vercelProjectId": "prj_fake001",
+    "latestUpdate": "2026 Mar 5",
+    "url": "https://short-app-xro.vercel.app",
+    "tags": ["app"],
+    "authors": ["Ada Lovelace"]
+  },
+
+  "long-name-design-vision-prototype-example": {
+    "name": "Very Long App Name That Might Wrap Or Overflow In The Card",
+    "description": "This prototype explores a reimagined billing experience end-to-end. It covers invoice creation, approval workflows, payment reconciliation, and multi-currency handling. The intent is to validate the IA and visual hierarchy before committing to a full build cycle.",
+    "vercelProjectId": "prj_fake002",
+    "latestUpdate": "2026 Jan 10",
+    "url": "https://long-name-xro.vercel.app",
+    "tags": ["prototype"],
+    "authors": ["Ada Lovelace", "Grace Hopper", "Margaret Hamilton"]
+  },
+
+  "no-url-yet": {
+    "name": "Not Yet Deployed",
+    "description": "This app hasn't been deployed yet — vercelProjectId and url are null.",
+    "vercelProjectId": null,
+    "latestUpdate": "2026 Mar 7",
+    "url": null,
+    "tags": ["app"],
+    "authors": ["Alan Turing"]
+  },
+
+  "external-tool": {
+    "name": "External Repo Tool",
+    "description": "Lives in a separate GitHub repo and is deployed independently. Only registered here for the showcase.",
+    "vercelProjectId": null,
+    "latestUpdate": "2026 Feb 20",
+    "url": "https://external-tool.example.com",
+    "repositoryUrl": "https://github.com/example-org/external-tool",
+    "tags": ["prototype", "external"],
+    "authors": ["Grace Hopper"]
+  },
+
+  "multi-tag-app": {
+    "name": "Multi-Tag Entry",
+    "description": "Tagged as both app and prototype to test dual categorisation rendering.",
+    "vercelProjectId": "prj_fake003",
+    "latestUpdate": "2026 Feb 28",
+    "url": "https://multi-tag-xro.vercel.app",
+    "tags": ["app", "prototype"],
+    "authors": ["Ada Lovelace", "Alan Turing"]
+  },
+
+  "deleted-old-project": {
+    "name": "Deleted Project",
+    "description": "This entry is tagged deleted and should never appear in the UI.",
+    "vercelProjectId": "prj_fake004",
+    "latestUpdate": "2024 Jun 01",
+    "url": null,
+    "tags": ["prototype", "deleted"],
+    "authors": ["Someone Past"]
+  },
+
+  "ancient-prototype": {
+    "name": "Ancient Prototype",
+    "description": "Last updated a long time ago — tests how old dates render in the card.",
+    "vercelProjectId": "prj_fake005",
+    "latestUpdate": "2024 Mar 15",
+    "url": "https://ancient-prototype-xro.vercel.app",
+    "tags": ["prototype"],
+    "authors": ["Margaret Hamilton"]
+  },
+
+  "unicode-stress-test": {
+    "name": "Ünïcödé & Spëcïàl Chàrs 🧪",
+    "description": "Tests rendering of non-ASCII characters: curly quotes \u201clike this\u201d, em-dashes\u2014like this, and emoji 🎨🗂️✅. Useful for catching encoding edge cases.",
+    "vercelProjectId": "prj_fake006",
+    "latestUpdate": "2026 Mar 1",
+    "url": "https://unicode-xro.vercel.app",
+    "tags": ["app"],
+    "authors": ["Ñoño Martínez"]
+  },
+
+  "no-authors": {
+    "name": "No Authors Entry",
+    "description": "An entry with an empty authors array — tests that the UI handles missing author data gracefully.",
+    "vercelProjectId": "prj_fake007",
+    "latestUpdate": "2026 Feb 10",
+    "url": "https://no-authors-xro.vercel.app",
+    "tags": ["app"],
+    "authors": []
+  },
+
+  "density-filler-one": {
+    "name": "Density Filler 1",
+    "description": "Extra entry to increase visual density and test grid/list layout with more cards.",
+    "vercelProjectId": "prj_fake008",
+    "latestUpdate": "2026 Mar 3",
+    "url": "https://density-filler-one-xro.vercel.app",
+    "tags": ["prototype"],
+    "authors": ["Ada Lovelace"]
+  },
+
+  "density-filler-two": {
+    "name": "Density Filler 2",
+    "description": "Another filler entry for layout density testing.",
+    "vercelProjectId": "prj_fake009",
+    "latestUpdate": "2026 Mar 4",
+    "url": "https://density-filler-two-xro.vercel.app",
+    "tags": ["app"],
+    "authors": ["Grace Hopper", "Margaret Hamilton"]
+  }
+}

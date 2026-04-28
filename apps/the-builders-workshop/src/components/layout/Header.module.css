@@ -1,0 +1,151 @@
+/* Workshop shell header — brand bar (aligned with design-internal workshop) */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--brand);
+  font-family: var(--font-nora), ui-sans-serif, system-ui, sans-serif;
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+  height: 48px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  white-space: nowrap;
+  text-decoration: none;
+  margin-right: 8px;
+}
+
+.title:hover {
+  text-decoration: none;
+  color: #ffffff;
+  opacity: 0.92;
+}
+
+.title:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.userContainer {
+  position: relative;
+  margin-left: auto;
+}
+
+.userEmail {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  padding: 0 0.5rem;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s, opacity 0.15s;
+}
+
+.userEmail:hover {
+  color: #ffffff;
+}
+
+.userEmail:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.userPopover {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  right: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  padding: 0.75rem;
+  min-width: 260px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.userDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.userLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.userValue {
+  font-size: 0.875rem;
+  color: var(--foreground);
+  word-break: break-all;
+}
+
+.popoverDivider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.25rem 0;
+}
+
+.signOutButton {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  border-radius: calc(var(--radius) - 4px);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.signOutButton:hover {
+  background: var(--background);
+}
+
+@media (max-width: 768px) {
+  .headerInner {
+    padding: 0 0.75rem;
+  }
+
+  .userContainer {
+    margin-left: auto;
+  }
+
+  .userEmail {
+    font-size: 0.6875rem;
+    padding: 0 0.25rem;
+  }
+
+  .userPopover {
+    right: 0.25rem;
+    min-width: 220px;
+  }
+}

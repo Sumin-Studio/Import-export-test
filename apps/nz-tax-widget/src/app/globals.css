@@ -1,0 +1,420 @@
+@import "tailwindcss";
+
+@theme {
+  --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --breakpoint-nav-883: 883px;
+  --breakpoint-nav-1049: 1169px;
+  --breakpoint-nav-1168: 1288px;
+  --breakpoint-nav-1100: 1220px;
+  --breakpoint-nav-1200: 1320px;
+  --breakpoint-nav-1245: 1245px;
+  --breakpoint-nav-1403: 1403px;
+  --breakpoint-nav-1440: 1440px;
+
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 800px;
+  --breakpoint-lg: 1000px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-2xl: 1600px;
+  --breakpoint-3xl: 1900px;
+
+  /* Brand & Action Colors */
+  --color-brand-primary: rgb(0 120 200); /* #0078c8 */
+  --color-brand-primary-hover: rgb(0 115 191); /* #0073BF */
+  --color-brand-secondary: rgb(0, 60, 100); /* #003c64 */
+  --color-action-primary: rgb(0 120 200); /* #0078c8 */
+  --color-action-secondary: rgb(0 73 122); /* #00497a */
+  --color-action-tertiary: rgb(231 246 254); /* #e7f6fe */
+  --color-action-quaternary: rgb(142 211 249); /* #8ed3f9 */
+
+  /* Semantic Colors */
+  --color-positive: rgb(0 138 62); /* #008a3e */
+  --color-positive-light: rgb(19 169 114); /* #13a972 */
+  --color-negative: rgb(220 50 70); /* #dc3246 */
+  --color-negative-dark: rgb(222 14 64); /* #de0e40 */
+
+  /* Content Colors */
+  --color-content-primary: rgb(0 10 30); /* #000a1e */
+  --color-content-secondary: rgb(89 96 109); /* #59606d */
+  --color-content-tertiary: rgb(0 42 70); /* #002a46 */
+  --color-content-muted: rgb(129 132 141); /* #81848d */
+  --color-content-disabled: rgb(166 169 176); /* #a6a9b0 */
+
+  /* Background Colors */
+  --color-background-primary: rgb(242 243 244); /* #f2f3f4 */
+  --color-background-secondary: rgb(252 252 252); /* #fcfcfc */
+  --color-background-tertiary: rgb(230 231 233); /* #e6e7e9 */
+  --color-background-hover: rgb(239 241 242); /* #eff1f2 */
+  --color-background-info: rgb(242 248 252); /* #F2F8FC */
+
+  /* Border Colors */
+  --color-border-primary: rgb(204 206 210); /* #ccced2 */
+  --color-border-secondary: rgb(230 231 233); /* #e6e7e9 */
+
+  /* Navigation */
+  --color-nav-background: rgba(44, 61, 82, 1); /* #2c3d52 */
+  --color-nav-text: rgb(64 71 86); /* #404756 */
+
+  /* Avatar/Badge Colors */
+  --color-avatar-bg: rgb(158 238 253); /* #9EEEFD */
+  --color-avatar-text: rgb(21 77 88); /* #154D58 */
+
+  /* Typography Scale */
+  --font-size-xs: 11px;
+  --line-height-xs: 16px;
+  --font-size-sm: 13px;
+  --line-height-sm: 16px;
+  --font-size-sm-relaxed: 13px;
+  --line-height-sm-relaxed: 20px;
+  --font-size-sm-loose: 13px;
+  --line-height-sm-loose: 24px;
+  --font-size-base: 15px;
+  --line-height-base: 20px;
+  --font-size-base-relaxed: 15px;
+  --line-height-base-relaxed: 24px;
+  --font-size-md: 17px;
+  --line-height-md: 24px;
+  --font-size-md-tall: 17px;
+  --line-height-md-tall: 28px;
+  --font-size-lg: 21px;
+  --line-height-lg: 26px;
+  --font-size-lg-relaxed: 21px;
+  --line-height-lg-relaxed: 32px;
+  --font-size-xl: 24px;
+  --line-height-xl: 28px;
+  --font-size-xl-relaxed: 24px;
+  --line-height-xl-relaxed: 32px;
+  --font-size-2xl: 32px;
+  --line-height-2xl: 32px;
+
+  /* Additional Typography (standalone without pairs) */
+  --font-size-xxs: 9px;
+  --font-size-xs-alt: 12px;
+  --font-size-sm-alt: 14px;
+  --font-size-lg-alt: 19px;
+  --font-size-xl-alt: 22px;
+
+  /* Note: Standalone line-height utilities (leading-*) are not supported in Tailwind v4's @theme block.
+     Use arbitrary values like leading-[20px], leading-[24px], leading-[18px] in your components instead.
+     The text-* utilities above automatically include their paired line-heights. */
+
+  /* Spacing & Sizing */
+  --spacing-widget-width: 440px;
+  --spacing-widget-height: 522px;
+  --spacing-widget-height-short: 251px;
+  --spacing-widget-min-height: 521px;
+  --spacing-modal-width: 400px;
+  --spacing-container-sm: 480px;
+  --spacing-container-md: 960px;
+  --spacing-container-lg: 1424px;
+  --spacing-container-xl: 1884px;
+  --spacing-container-2xl: 1900px;
+
+  /* Custom Spacing (beyond default 0-96) */
+  --spacing-0\.5: 0.125rem; /* 2px */
+  --spacing-1\.5: 0.375rem; /* 6px */
+  --spacing-2\.25: 0.5625rem; /* 9px */
+  --spacing-2\.75: 0.6875rem; /* 11px */
+  --spacing-3\.5: 0.875rem; /* 14px */
+  --spacing-5\.5: 1.375rem; /* 22px */
+  --spacing-5\.75: 1.4375rem; /* 23px */
+  --spacing-6\.5: 1.625rem; /* 26px */
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 30px;
+  --radius-pill: 48px;
+  --radius-full: 100px;
+}
+
+@utility container {
+  max-width: 440px;
+  @media (min-width: 1000px) {
+    max-width: 900px;
+  }
+  @media (min-width: 1440px) {
+    max-width: 1360px;
+  }
+  @media (min-width: 1900px) {
+    max-width: 1820px;
+  }
+}
+
+button {
+  @apply cursor-pointer;
+}
+
+select {
+  @apply cursor-pointer appearance-none bg-no-repeat outline-none;
+  background-position: right 10px center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' fill='none'%3E%3Cpath fill='%23000A1E' fill-rule='evenodd' d='M0 0L5 5L10 0H0Z' clip-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+.jax-input {
+  border-radius: 20px;
+  opacity: 0.6;
+  background: linear-gradient(112deg, #1759ff 14.43%, #2babf8 85.57%);
+  filter: blur(8px);
+}
+
+.tooltip {
+  @apply !bg-content-primary/100 !rounded-[3px] !px-2 !py-1 !text-[13px] !leading-[20px] !text-white shadow-[0px_0px_0px_0px_rgba(255,255,255,0.34),0px_3px_6px_0px_rgba(0,10,30,0.20)] group-data-[active]:!opacity-0;
+}
+
+.react-tooltip__show {
+  @apply !opacity-100;
+}
+
+@layer utilities {
+  @keyframes border-pulse {
+    0% {
+      border-color: #ccced2;
+    }
+    100% {
+      border-color: #e6e7e9;
+    }
+  }
+
+  .border-pulse {
+    animation: border-pulse 0.7s ease-in alternate infinite;
+  }
+
+  /** Tailor composer — voice “waveform” bars (ChatGPT / Claude–style feedback) */
+  @keyframes tailor-voice-bar {
+    0%,
+    100% {
+      transform: scaleY(0.28);
+      opacity: 0.55;
+    }
+    50% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  .tailor-voice-bar {
+    transform-origin: bottom;
+    animation: tailor-voice-bar 0.52s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tailor-voice-bar {
+      animation: none;
+      opacity: 0.85;
+      transform: scaleY(0.65);
+    }
+  }
+
+  @keyframes tailor-listening-ring {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(23, 89, 255, 0.22);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(23, 89, 255, 0.08);
+    }
+  }
+
+  .tailor-mic-listening {
+    animation: tailor-listening-ring 1.4s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tailor-mic-listening {
+      animation: none;
+      box-shadow: 0 0 0 3px rgba(23, 89, 255, 0.12);
+    }
+  }
+
+  /** Dashboard — widgets after leaving Tailor (slide up + fade) */
+  @keyframes tailor-widget-entrance-in {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .tailor-widget-entrance-in {
+    animation: tailor-widget-entrance-in 0.58s cubic-bezier(0.22, 1, 0.36, 1)
+      forwards;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tailor-widget-entrance-in {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /**
+   * Tailor submit — thin indeterminate line (ChatGPT / Claude–style), no full-screen gradient motion.
+   */
+  @keyframes tailor-ai-stream-sweep {
+    0% {
+      transform: translate3d(-120%, 0, 0);
+      opacity: 0.65;
+    }
+    45% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(220%, 0, 0);
+      opacity: 0.65;
+    }
+  }
+
+  .tailor-ai-stream-bar {
+    height: 100%;
+    width: min(38%, 280px);
+    border-radius: 9999px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 120, 200, 0.08) 22%,
+      rgba(0, 120, 200, 0.42) 50%,
+      rgba(0, 120, 200, 0.08) 78%,
+      transparent 100%
+    );
+    animation: tailor-ai-stream-sweep 1.45s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tailor-ai-stream-bar {
+      animation: none;
+      width: 32%;
+      max-width: 200px;
+      margin-inline: auto;
+      transform: none;
+      opacity: 0.55;
+    }
+  }
+
+  @keyframes tailor-thinking-dot-bounce {
+    0%,
+    80%,
+    100% {
+      opacity: 0.35;
+      transform: translateY(0);
+    }
+    40% {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+  }
+
+  .tailor-thinking-dot {
+    animation: tailor-thinking-dot-bounce 1.15s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tailor-thinking-dot {
+      animation: none;
+      opacity: 0.55;
+    }
+  }
+
+  /**
+   * Tailor composer — soft outer glow (sky / cyan / lavender) behind the white card;
+   * matches “luminous border” reference; interior stays solid white.
+   */
+  .tailor-composer-orbit {
+    background-image: linear-gradient(
+      128deg,
+      rgb(95, 175, 255) 0%,
+      rgb(70, 205, 238) 35%,
+      rgb(150, 155, 255) 68%,
+      rgb(115, 185, 255) 100%
+    );
+    background-size: 240% 240%;
+    background-position: 42% 38%;
+    opacity: 0.88;
+    filter: blur(22px) saturate(1.12);
+    will-change: background-position, filter;
+    animation: tailor-composer-orbit-drift 18s ease-in-out infinite;
+  }
+
+  @keyframes tailor-composer-orbit-drift {
+    0%,
+    100% {
+      background-position: 38% 32%;
+      filter: blur(22px) saturate(1.1);
+    }
+    33% {
+      background-position: 62% 48%;
+      filter: blur(24px) saturate(1.18);
+    }
+    66% {
+      background-position: 48% 22%;
+      filter: blur(23px) saturate(1.14);
+    }
+  }
+
+  .tailor-composer-orbit.tailor-composer-orbit--listening {
+    animation-duration: 11s;
+    opacity: 0.96;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tailor-composer-orbit,
+    .tailor-composer-orbit.tailor-composer-orbit--listening {
+      animation: none;
+      will-change: auto;
+      background-position: 50% 40%;
+      filter: blur(20px) saturate(1.08);
+      opacity: 0.88;
+    }
+  }
+}
+
+/* React Grid Layout Optimizations */
+.react-grid-item.react-grid-placeholder {
+  background: #e7e6e8 !important;
+  opacity: 1 !important;
+  @apply rounded-xl;
+}
+
+/* Performance optimizations for react-grid-layout */
+.react-grid-item {
+  /* Use GPU acceleration for transforms */
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+
+  /* Smooth transitions */
+  transition-property: transform;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+.react-grid-item.react-draggable-dragging {
+  /* Optimize dragging performance */
+  will-change: transform;
+  transition: none !important;
+  z-index: 100;
+}
+
+.react-grid-item.cssTransforms {
+  /* Ensure GPU acceleration during transforms */
+  transition-property: transform;
+}
+
+.react-grid-layout {
+  /* Contain layout calculations to this element */
+  contain: layout style;
+}
+
+/* Disable transitions when not customizing to reduce reflows */
+.layout:not(.customizing) .react-grid-item {
+  transition: none !important;
+}

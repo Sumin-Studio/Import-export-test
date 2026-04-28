@@ -1,0 +1,15 @@
+---
+description: Next.js dev cache, CSS, and 500s — never mix stale .next with Turbopack/webpack.
+globs: next.config.ts,package.json,scripts/clean-next.mjs,scripts/dev-clean.sh
+alwaysApply: false
+---
+
+# Next.js dev stability (this repo)
+
+- **Symptom:** Unstyled pages, blank error pages, `Cannot find module './NNNN.js'`, or 500s in dev. Often **not** a Tailwind/CSS bug — broken or **mixed** `.next` output after branch switches, killing the dev server mid-compile, or alternating **webpack** (`next dev`) and **Turbopack** (`next dev --turbopack`) without a clean.
+- **Default:** `npm run dev` and `npm run dev:fast` both run `clean` then `next dev -p 3000`. Prefer either for normal work.
+- **Faster restarts:** `npm run dev:skip-clean` only when the cache is known good (e.g. same session, no webpack ↔ turbopack switch).
+- **Turbopack:** `npm run dev:turbo` runs `clean` first; do not use `dev:skip-clean` right after switching from turbopack without `clean` or full `dev`.
+- **Recovery:** `npm run dev:clean` (kills :3000, clean, start) or `npm run clean && npm run dev:skip-clean`.
+- **Avoid** `router.push` / `router.refresh` immediately after closing a full-screen client modal or other large client updates toward another heavy route; prefer `window.location.assign` plus `sessionStorage` (or similar) if you see `__webpack_modules__[moduleId] is not a function` in dev.
+- **Implementation:** `scripts/clean-next.mjs` (cross-platform `.next` removal); `next.config.ts` sets `webpack.cache = false` in dev.

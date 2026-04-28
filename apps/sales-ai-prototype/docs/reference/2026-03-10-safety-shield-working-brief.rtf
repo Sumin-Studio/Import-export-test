@@ -1,0 +1,278 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0 Arial;}{\f1 Arial Bold;}}
+\fs24
+\b Safety Shield\par
+\b0 Working Brief\par
+\par
+\b Date:\b0 2026-03-10\par
+\b Audience:\b0 Product, Design, Engineering, Data Science, and Leadership\par
+\b Status:\b0 Working draft\par
+\b Purpose:\b0 Define the problem Safety Shield solves, how it should work at a high level, where it fits in Xero, and which scenarios are most useful for an initial prototype.\par
+\par
+\b Research basis\par
+\b0
+This brief is not based on cited user research. It is grounded in product and stakeholder alignment (kickoff with Rory, Tauqir, Jon; Chong/Bharathi strategy; Bill AI workshop problem scoring), competitive framing (Ramp, BILL, QBO, Brex safety/fraud features), and related internal work on approvals and duplicate detection. A customer research plan for the agent suite - including Safety Shield - was called out at the AI Agent Squad kickoff (2026-03-06) as required (Merv/David); that plan is the intended follow-up to validate assumptions with users.\par
+\par
+For a full picture of what existing research is relevant, what we do not yet know, and recommended next steps, see docs/reference/2026-03-10-safety-shield-user-research-and-gaps.md.\par
+\par
+\b Executive Summary\par
+\b0
+Safety Shield is a bill-risk detection layer designed to help customers avoid paying the wrong thing, paying twice, or missing a suspicious signal before money moves. Its role is not to optimize payment timing or own approval workflow end to end. Its role is to identify bills and bill patterns that deserve a second look, explain why they are risky, and route the user into the safest next action.\par
+\par
+The opportunity is to shift bill approval from a manual, flat review process into an exception-based experience. Instead of making approvers inspect every bill with equal effort, Safety Shield should elevate the small number of bills that look duplicated, unfamiliar, abnormal, or operationally risky.\par
+\par
+The recommended first slice is narrow and explainable:\par
+1. Exact or near-duplicate bills\par
+2. First-time suppliers with unusually large bill values\par
+3. Familiar suppliers with materially abnormal amount spikes\par
+\par
+These scenarios map well to the current prototype direction, are easier to explain to users, and create a credible human-in-the-loop story for an initial release.\par
+\par
+\b The Problem\par
+\b0
+Customers currently carry too much responsibility for catching obvious AP risk manually. In practice, this means:\par
+\par
+- duplicate bills can slip through the workflow\par
+- unusual supplier behavior can appear without enough context\par
+- abnormal bill values require manual checking and judgment\par
+- approvers are often forced into blind review rather than evidence-backed decisions\par
+- some risks are only discovered close to payment time, or after the fact\par
+\par
+For a business owner, finance lead, or approver, the problem is simple: they want to move quickly, but they do not want to accidentally approve a duplicate, miss a suspicious change, or send money where it should not go.\par
+\par
+Safety Shield exists to reduce that cognitive burden by helping Xero surface the bills that matter most.\par
+\par
+\b Why It Matters\par
+\b0
+This work matters for both customers and Xero.\par
+\par
+\b Customer value\par
+\b0
+- Protects cash flow from avoidable loss caused by duplicates, suspicious bills, or poor approval decisions\par
+- Reduces the effort required to review bills safely\par
+- Improves confidence in using Xero as a place to approve and pay\par
+\par
+\b Business value for Xero\par
+\b0
+- Strengthens Xero's position as an active system of protection, not just a passive system of record\par
+- Supports the broader "protect cash flow" narrative alongside Bill Runner and Approval Automation\par
+- Creates a reusable detection capability that can appear across multiple surfaces\par
+\par
+\b Competitive value\par
+\b0
+Some capabilities in this space are already table stakes, particularly duplicate detection and basic audit logging. More differentiated value is likely to come from:\par
+\par
+- anomaly detection that is easy to understand\par
+- supplier trust and change detection\par
+- suspicious payment-detail changes\par
+- grouping risky activity into a coherent story\par
+- making the next action easy, rather than simply raising an alert\par
+\par
+\b What Safety Shield Is\par
+\b0
+Safety Shield is a shared detection and evidence layer for bill risk.\par
+\par
+Its job is to answer four questions:\par
+1. Does this bill deserve a second look?\par
+2. Why does it deserve a second look?\par
+3. How certain is the system?\par
+4. What is the safest next action before money moves?\par
+\par
+At a high level, Safety Shield should:\par
+- monitor bills and related signals continuously\par
+- detect anomalies, suspicious patterns, or hard-rule violations\par
+- explain the evidence in plain language\par
+- assign a risk level and confidence posture\par
+- route the bill into the safest next action lane\par
+\par
+\b What Safety Shield Is Not\par
+\b0
+Safety Shield should remain distinct from adjacent capabilities.\par
+\par
+\b Not Bill Approval\par
+\b0
+Bill Approval owns routing, approval policy, review flow, and handoff decisions once a bill needs human action.\par
+\par
+\b Not Bill Runner\par
+\b0
+Bill Runner owns payment timing, liquidity management, and plan optimization.\par
+\par
+\b Not a full fraud investigation system\par
+\b0
+Safety Shield can detect and elevate risk, but it does not replace deeper verification, external remediation, or capital solutions.\par
+\par
+This distinction matters because Safety Shield may appear inside approval or payment moments, but its remit is still detection, explanation, and routing.\par
+\par
+\b Product Shape\par
+\b0
+Safety Shield works best as a shared capability with multiple UI consumers, not as a single isolated feature.\par
+\par
+The most likely experience shapes are:\par
+\par
+\b 1. Inline risk surfacing\par
+\b0
+Flags in bills lists, approval queues, and payment preparation moments.\par
+\par
+\b 2. Evidence-first review\par
+\b0
+A bill detail or side panel that explains why the system intervened and what the user should do next.\par
+\par
+\b 3. Proactive summaries\par
+\b0
+Spotlight-style surfaces that pull the most important issues to the top before the user discovers them manually.\par
+\par
+This leads to a simple journey:\par
+1. Monitor\par
+2. Detect or flag\par
+3. Provide evidence\par
+4. Take action\par
+5. Capture the decision and audit trail\par
+\par
+\b Target User\par
+\b0
+The initial target user is likely a small or medium business customer who is approving or preparing bills for payment.\par
+\par
+This could include:\par
+- business owners\par
+- finance managers\par
+- office managers\par
+- approvers responsible for releasing supplier payments\par
+\par
+The common need is not deep forensic analysis. It is quick, trustworthy support at the moment a decision matters.\par
+\par
+\b Initial Problems To Solve\par
+\b0
+The first set of problems should be narrow, believable, and easy to explain.\par
+\par
+\b Recommended sequence\par
+\b0
+1. Duplicate or repeat-risk bills\par
+2. First-time suppliers with unusually large bill values\par
+3. Familiar suppliers with abnormal amount spikes\par
+4. Higher-context fraud signals, such as bank-detail changes\par
+5. Pattern-based risk across multiple bills\par
+\par
+The first three are the strongest candidates for an initial prototype because they are concrete, understandable, and already align with the current Safety Shield prototype direction.\par
+\par
+\b Scenario Summary\par
+\b0
+\b Highly solvable scenarios\par
+\b0
+\b Exact duplicate before approval\par
+\b0
+The system identifies a likely duplicate with strong evidence and recommends blocking or removing it from the normal flow.\par
+\par
+\b First-time supplier with unusually large bill\par
+\b0
+The system cannot prove fraud, but the bill is clearly risky enough to require explicit review.\par
+\par
+\b Trade-off scenarios\par
+\b0
+\b Bank-detail change on a critical supplier\par
+\b0
+The system detects a strong fraud signal, but delaying payment introduces operational risk.\par
+\par
+\b Recurring supplier with an abnormal amount spike\par
+\b0
+The supplier is known, but the bill value is outside the normal range and needs explanation.\par
+\par
+\b Many small bills, one bigger pattern\par
+\b0
+No single bill is alarming by itself, but a cluster creates a meaningful risk story.\par
+\par
+\b Fail-gracefully scenarios\par
+\b0
+\b Helpful but inconclusive\par
+\b0
+The system sees enough to interrupt, but not enough to recommend one confident path.\par
+\par
+\b Too late to prevent, but still worth catching\par
+\b0
+The system identifies a problem after scheduling or payment, so the value shifts from prevention to containment and follow-up.\par
+\par
+\b Logic Principles\par
+\b0
+The first version should likely combine three things:\par
+\par
+\b Deterministic rules\par
+\b0
+Use high-confidence checks where the system can act strongly and explain clearly.\par
+\par
+Examples:\par
+- exact or near-duplicate matches\par
+- known hard-rule violations\par
+- payment-detail changes close to due date\par
+\par
+\b Heuristics and risk scoring\par
+\b0
+Use lighter anomaly logic where certainty is lower but the signal is still worth surfacing.\par
+\par
+Examples:\par
+- first-time suppliers\par
+- abnormal supplier amount ranges\par
+- unusual clustered spend patterns\par
+\par
+\b Human-in-the-loop control\par
+\b0
+The early experience should favor interruption, explanation, and traceability over invisible automation.\par
+\par
+Likely actions include:\par
+- approve anyway\par
+- request review\par
+- hold or remove from flow\par
+- investigate externally\par
+\par
+\b Data Inputs Likely Required\par
+\b0
+The first version will likely depend on:\par
+- supplier identity and bill history\par
+- invoice or reference numbers\par
+- bill amount, tax, due date, and status\par
+- line items and coding context\par
+- historical amount ranges by supplier or category\par
+- approval and payment state\par
+- payment method and bank-detail history\par
+- override and review decisions captured in-product\par
+\par
+Future versions may benefit from:\par
+- OCR-level duplicate detection\par
+- cross-customer trust or fraud signals\par
+- broader network intelligence\par
+\par
+\b What Needs To Be True\par
+\b0
+The main assumptions to align on are:\par
+1. Xero-only data is enough to produce a believable first version for a few high-confidence scenarios.\par
+2. Users will trust an interruption if the evidence is simple, specific, and recognizable.\par
+3. Safety Shield should remain a distinct detection layer even when embedded inside other experiences.\par
+4. The first release should prefer human review over quiet automation.\par
+5. The launch surfaces should be narrow enough to feel coherent.\par
+\par
+\b Open Questions\par
+\b0
+- Which signals should hard-stop a bill versus simply warn?\par
+- How much evidence is enough for users to trust the interruption?\par
+- Which scenarios belong in Safety Shield versus Approval Automation or Bill Runner?\par
+- Where should the first release live: bills list, detail, approval queue, Spotlight, or some combination?\par
+- How should the system learn from overrides without becoming opaque?\par
+\par
+\b Recommendation\par
+\b0
+The best next move is to treat Safety Shield as a focused, explainable protection layer and prototype a narrow first version around the three strongest scenarios:\par
+1. duplicates\par
+2. first-time supplier plus unusually large bill\par
+3. familiar supplier plus abnormal amount spike\par
+\par
+From there, the team can test:\par
+- whether the evidence feels trustworthy\par
+- whether the interaction pattern feels useful in-product\par
+- where the experience should live in Xero\par
+- which additional signals are worth investing in next\par
+\par
+\b Related Documents\par
+\b0
+- docs/reference/2026-03-10-safety-shield-user-research-and-gaps.md (research basis, related research, gaps, next steps)\par
+- docs/reference/2026-03-10-safety-shield-detection-scenarios-and-logic-flows.md\par
+- docs/meeting-notes/2026-03-09-rory-safety-shield-bill-approval-daily.md\par
+- docs/meeting-notes/2026-03-06-safety-shield-kickoff.md\par
+}

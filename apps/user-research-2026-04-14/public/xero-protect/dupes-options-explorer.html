@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dupes + Xero Protect — options explorer</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --text: #111827;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --accent: #1d4ed8;
+        --accent-soft: #eff6ff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 15px;
+        line-height: 1.55;
+        color: var(--text);
+        background: var(--bg);
+      }
+      .shell { max-width: 56rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
+      h1 { font-size: 1.5rem; font-weight: 650; letter-spacing: -0.03em; margin: 0 0 0.35rem; }
+      .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
+      nav.tabs {
+        display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.5rem;
+        padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+      }
+      nav.tabs button {
+        font: inherit; font-size: 0.8rem; padding: 0.4rem 0.65rem; border-radius: 999px;
+        border: 1px solid var(--border); background: #fff; color: var(--text); cursor: pointer;
+        transition: background 0.15s, border-color 0.15s, color 0.15s;
+      }
+      nav.tabs button:hover { border-color: #cbd5e1; background: #f9fafb; }
+      nav.tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+      section.panel { display: none; animation: fade 0.2s ease; }
+      section.panel.active { display: block; }
+      @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+      section.panel h2 { font-size: 1.1rem; font-weight: 650; margin: 0 0 0.75rem; letter-spacing: -0.02em; }
+      .viz {
+        border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem;
+        margin: 1rem 0 1.25rem; background: #f4f4f5;
+      }
+      .viz svg { display: block; width: 100%; height: auto; }
+      .viz-caption { font-size: 0.75rem; color: var(--muted); margin-top: 0.65rem; text-align: center; }
+      table.opt { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 0.75rem 0; }
+      table.opt th, table.opt td { border: 1px solid var(--border); padding: 0.45rem 0.55rem; text-align: left; vertical-align: top; }
+      table.opt th { background: #f9fafb; font-weight: 600; width: 22%; }
+      ul.tight { margin: 0.4rem 0 0; padding-left: 1.1rem; }
+      ul.tight li { margin: 0.2rem 0; }
+      .rec {
+        margin-top: 1rem; padding: 0.75rem 1rem; border-left: 3px solid var(--accent);
+        background: #f8fafc; font-size: 0.92rem;
+      }
+      .rec::before { content: "Recommendation · "; font-weight: 650; color: var(--accent); }
+      code { font-size: 0.85em; background: #f3f4f6; padding: 0.1em 0.35em; border-radius: 4px; }
+      .implications {
+        background: var(--accent-soft); border: 1px solid #bfdbfe; border-radius: 8px;
+        padding: 0.85rem 1rem; margin-top: 1rem;
+      }
+      .implications strong {
+        display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em;
+        color: #1e40af; margin-bottom: 0.35rem;
+      }
+      table.phase-table { font-size: 0.78rem; }
+      table.phase-table th { width: 14%; background: #f1f5f9; }
+      table.phase-table td, table.phase-table th { padding: 0.4rem 0.45rem; vertical-align: top; }
+      .note { font-size: 0.8rem; color: var(--muted); margin: 0.5rem 0 0; }
+      h3 { font-size: 0.95rem; font-weight: 650; margin: 1.25rem 0 0.5rem; color: #334155; }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <h1>Dupes + Xero Protect</h1>
+      <p class="sub">Click a topic. List strips are <strong>full width</strong> (stacked, not side by side). Static reference.</p>
+
+      <nav class="tabs" role="tablist" aria-label="Topics">
+        <button type="button" role="tab" aria-selected="true" aria-controls="p1" id="t1">1 · Replace vs coexist</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="p2" id="t2">2 · Where it shows</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="p3" id="t3">3 · Quick view</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="p4" id="t4">4 · Dismissals</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="p5" id="t5">5 · Prototype vs Closed Beta</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="p6" id="t6">6 · Phases & roadmap</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="p7" id="t7">7 · Open questions & supersede</button>
+      </nav>
+
+      <section class="panel active" role="tabpanel" id="p1" aria-labelledby="t1">
+        <h2>1. Replace legacy dupes or live beside them?</h2>
+        <div class="viz" aria-hidden="true">
+          <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="sh"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.12"/></filter>
+            </defs>
+            <text x="10" y="16" fill="#52525b" font-size="11" font-weight="600" font-family="system-ui">A · Coexistence (bills list)</text>
+            <rect x="8" y="22" width="504" height="168" rx="6" fill="#ffffff" stroke="#d4d4d8" filter="url(#sh)"/>
+            <rect x="16" y="30" width="488" height="22" rx="3" fill="#fafafa" stroke="#e4e4e7"/>
+            <text x="24" y="45" fill="#a1a1aa" font-size="9" font-family="system-ui">Search bills…</text>
+            <rect x="16" y="58" width="488" height="36" rx="2" fill="#fafafa" stroke="#e7e5e4"/>
+            <rect x="16" y="58" width="4" height="36" fill="#d6d3d1"/>
+            <text x="28" y="74" fill="#44403c" font-size="10" font-weight="600" font-family="system-ui">Duplicate bills</text>
+            <text x="28" y="87" fill="#78716c" font-size="8" font-family="system-ui">Review suggested · Open duplicate review</text>
+            <rect x="16" y="100" width="488" height="40" rx="2" fill="#eff6ff" stroke="#93c5fd"/>
+            <rect x="16" y="100" width="4" height="40" fill="#3b82f6"/>
+            <text x="28" y="118" fill="#1e3a8a" font-size="10" font-weight="600" font-family="system-ui">Xero Protect</text>
+            <text x="28" y="131" fill="#1d4ed8" font-size="8" font-family="system-ui">2 items · Possible bank change · Duplicate risk</text>
+            <line x1="16" y1="152" x2="504" y2="152" stroke="#e4e4e7"/>
+            <rect x="16" y="158" width="488" height="10" rx="1" fill="#f4f4f5"/>
+            <rect x="16" y="172" width="488" height="10" rx="1" fill="#f4f4f5"/>
+          </svg>
+          <p class="viz-caption">Both strips span the list; they stack vertically (legacy duplicate prompt, then Protect).</p>
+        </div>
+        <div class="viz" aria-hidden="true">
+          <svg viewBox="0 0 520 118" xmlns="http://www.w3.org/2000/svg">
+            <text x="10" y="16" fill="#52525b" font-size="11" font-weight="600" font-family="system-ui">B · Supersede later (single full-width strip)</text>
+            <rect x="8" y="22" width="504" height="86" rx="6" fill="#ffffff" stroke="#d4d4d8"/>
+            <rect x="16" y="30" width="488" height="22" rx="3" fill="#fafafa" stroke="#e4e4e7"/>
+            <text x="24" y="45" fill="#a1a1aa" font-size="9" font-family="system-ui">Search bills…</text>
+            <rect x="16" y="58" width="488" height="42" rx="2" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+            <rect x="16" y="58" width="4" height="42" fill="#1d4ed8"/>
+            <text x="28" y="76" fill="#1e3a8a" font-size="10" font-weight="600" font-family="system-ui">Xero Protect</text>
+            <text x="28" y="91" fill="#1e40af" font-size="8" font-family="system-ui">Includes duplicates · Same resolve actions as today (parity)</text>
+          </svg>
+          <p class="viz-caption">One primary strip once legacy flows are fully replaced.</p>
+        </div>
+        <table class="opt">
+          <tr><th>A · Coexistence</th><td>Keep full-width duplicate prompt + full-width Protect; measure before removing legacy.</td></tr>
+          <tr><th>B · Supersede</th><td>One primary path; legacy goes away when resolve flows match or beat today.</td></tr>
+          <tr><th>C · Story vs system</th><td>“Protect” in narrative; two systems may still run under the hood for a while.</td></tr>
+        </table>
+        <div class="rec">Coexistence through Closed Beta &amp; Open Beta → full <strong>supersede</strong> (single Xero Protect story) targets <strong>GA</strong>. Use parity checklist + metrics before cutting legacy dupes.</div>
+      </section>
+
+      <section class="panel" role="tabpanel" id="p2" aria-labelledby="t2" hidden>
+        <h2>2. Who owns the duplicate story in the UI?</h2>
+        <div class="viz" aria-hidden="true">
+          <svg viewBox="0 0 520 188" xmlns="http://www.w3.org/2000/svg">
+            <text x="10" y="15" fill="#52525b" font-size="11" font-weight="600" font-family="system-ui">Split — two full-width rows (same list)</text>
+            <rect x="8" y="20" width="504" height="158" rx="6" fill="#fff" stroke="#d4d4d8"/>
+            <rect x="16" y="28" width="488" height="22" rx="3" fill="#fafafa" stroke="#e4e4e7"/>
+            <text x="24" y="43" fill="#a1a1aa" font-size="9" font-family="system-ui">Search…</text>
+            <rect x="16" y="56" width="488" height="34" rx="2" fill="#fafafa" stroke="#e7e5e4"/>
+            <rect x="16" y="56" width="4" height="34" fill="#d6d3d1"/>
+            <text x="28" y="72" fill="#44403c" font-size="9" font-weight="600" font-family="system-ui">Legacy · Duplicate review</text>
+            <text x="28" y="84" fill="#78716c" font-size="7.5" font-family="system-ui">Full resolve + pair matching (today’s flow)</text>
+            <rect x="16" y="96" width="488" height="36" rx="2" fill="#eff6ff" stroke="#93c5fd"/>
+            <rect x="16" y="96" width="4" height="36" fill="#3b82f6"/>
+            <text x="28" y="112" fill="#1e3a8a" font-size="9" font-weight="600" font-family="system-ui">Protect · “Has dupes” + other risks</text>
+            <text x="28" y="124" fill="#1d4ed8" font-size="7.5" font-family="system-ui">Trust + routing; detail can still use legacy duplicate UI</text>
+            <line x1="16" y1="142" x2="504" y2="142" stroke="#e4e4e7"/>
+            <rect x="16" y="148" width="488" height="22" rx="2" fill="#fafafa"/>
+            <text x="24" y="162" fill="#71717a" font-size="8" font-family="system-ui">ACME · $240 · Awaiting payment</text>
+          </svg>
+          <p class="viz-caption">Never side by side at the top — always stacked, each 100% of the content width.</p>
+        </div>
+        <div class="viz" aria-hidden="true">
+          <svg viewBox="0 0 520 108" xmlns="http://www.w3.org/2000/svg">
+            <text x="10" y="14" fill="#52525b" font-size="11" font-weight="600" font-family="system-ui">Unified (prototype dupeUnification) — one full-width Protect strip</text>
+            <rect x="8" y="20" width="504" height="78" rx="6" fill="#fff" stroke="#d4d4d8"/>
+            <rect x="16" y="28" width="488" height="20" rx="3" fill="#fafafa" stroke="#e4e4e7"/>
+            <rect x="16" y="54" width="488" height="36" rx="2" fill="#dbeafe" stroke="#1d4ed8"/>
+            <rect x="16" y="54" width="4" height="36" fill="#1d4ed8"/>
+            <text x="28" y="70" fill="#1e3a8a" font-size="9" font-weight="600" font-family="system-ui">Xero Protect · Duplicates + risks in one place</text>
+            <text x="28" y="82" fill="#1e40af" font-size="7.5" font-family="system-ui">List + detail both use this path (needs parity work)</text>
+          </svg>
+        </div>
+        <table class="opt">
+          <tr><th>Split</th><td>Protect surfaces “has dupes”; legacy banner/review still owns full resolve until merged.</td></tr>
+          <tr><th>Unified</th><td>All dupes through Protect (<code>dupeUnification</code>).</td></tr>
+          <tr><th>List-first</th><td>Banner + Protect strips remain the main entry; hard to remove.</td></tr>
+        </table>
+        <div class="rec">Ship split for real builds; unified as future story + prototype demo.</div>
+      </section>
+
+      <section class="panel" role="tabpanel" id="p3" aria-labelledby="t3" hidden>
+        <h2>3. Quick view: match prod or ideal?</h2>
+        <div class="viz" aria-hidden="true">
+          <svg viewBox="0 0 520 248" xmlns="http://www.w3.org/2000/svg">
+            <text x="10" y="14" fill="#52525b" font-size="11" font-weight="600" font-family="system-ui">Prod-style (narrow panel, full-width rows inside)</text>
+            <rect x="8" y="20" width="504" height="108" rx="6" fill="#ffffff" stroke="#a1a1aa" stroke-dasharray="4 3"/>
+            <text x="16" y="36" fill="#18181b" font-size="10" font-weight="600" font-family="system-ui">Bill · ACME Marketing</text>
+            <line x1="16" y1="44" x2="496" y2="44" stroke="#e4e4e7"/>
+            <rect x="16" y="52" width="488" height="28" rx="2" fill="#fffbeb" stroke="#fcd34d"/>
+            <text x="24" y="64" fill="#92400e" font-size="8" font-family="system-ui">Review recommended · Amount higher than usual</text>
+            <text x="24" y="74" fill="#a16207" font-size="7" font-family="system-ui">No primary pay / approve in QV from All tab (example)</text>
+            <rect x="16" y="86" width="488" height="32" rx="2" fill="#fafafa" stroke="#e4e4e7"/>
+            <text x="24" y="102" fill="#71717a" font-size="8" font-family="system-ui">Line items…</text>
+            <text x="16" y="124" fill="#a1a1aa" font-size="7" font-family="system-ui">Footer actions omitted or secondary</text>
+            <text x="10" y="144" fill="#52525b" font-size="11" font-weight="600" font-family="system-ui">Ideal — same width, CTAs restored</text>
+            <rect x="8" y="150" width="504" height="88" rx="6" fill="#f0fdf4" stroke="#059669"/>
+            <text x="16" y="166" fill="#18181b" font-size="10" font-weight="600" font-family="system-ui">Bill · ACME Marketing</text>
+            <line x1="16" y1="174" x2="496" y2="174" stroke="#bbf7d0"/>
+            <rect x="16" y="182" width="488" height="26" rx="2" fill="#ecfdf5" stroke="#6ee7b7"/>
+            <text x="24" y="198" fill="#065f46" font-size="8" font-family="system-ui">Risk callout + Approve / Schedule payment (full width row)</text>
+            <rect x="16" y="212" width="120" height="18" rx="3" fill="#059669"/>
+            <text x="52" y="224" fill="#fff" font-size="8" font-weight="600" font-family="system-ui">Approve</text>
+          </svg>
+          <p class="viz-caption">Alerts stay full width inside the drawer; tension is whether primary actions appear (ideal) or not (some prod cases).</p>
+        </div>
+        <table class="opt">
+          <tr><th>Match prod</th><td>Attach engineering to current behaviour and “where does CTA attach?”.</td></tr>
+          <tr><th>Ideal</th><td>CTAs in quick view as north star; prod catches up.</td></tr>
+        </table>
+        <div class="rec">Name both modes: “prod parity” vs “target QV” so design and eng align.</div>
+      </section>
+
+      <section class="panel" role="tabpanel" id="p4" aria-labelledby="t4" hidden>
+        <h2>4. Dismissals</h2>
+        <div class="viz" aria-hidden="true">
+          <svg viewBox="0 0 520 168" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="8" width="504" height="150" rx="6" fill="#fff" stroke="#d4d4d8"/>
+            <text x="20" y="28" fill="#18181b" font-size="11" font-weight="600" font-family="system-ui">Bill detail</text>
+            <text x="488" y="28" fill="#a1a1aa" font-size="14" font-family="system-ui">×</text>
+            <rect x="16" y="40" width="488" height="44" rx="2" fill="#f8fafc" stroke="#cbd5e1"/>
+            <rect x="16" y="40" width="4" height="44" fill="#64748b"/>
+            <text x="28" y="58" fill="#0f172a" font-size="9" font-weight="600" font-family="system-ui">Xero Protect</text>
+            <text x="28" y="72" fill="#475569" font-size="8" font-family="system-ui">Dismiss hides this block until bill changes — org vs user TBD</text>
+            <rect x="16" y="94" width="488" height="52" rx="2" fill="#fafafa" stroke="#e4e4e7"/>
+            <text x="24" y="112" fill="#52525b" font-size="8" font-family="system-ui">Payments · Schedule · $240.00</text>
+            <text x="24" y="128" fill="#71717a" font-size="7" font-family="system-ui">Primary CTA row (full width of content)</text>
+          </svg>
+          <p class="viz-caption">Dismiss (X) semantics still need PM+eng: org-wide vs per-user, resurface rules.</p>
+        </div>
+        <table class="opt">
+          <tr><th>Org-wide</th><td>One dismiss for the org — simpler; higher blast radius.</td></tr>
+          <tr><th>Per-user</th><td>More state; clearer accountability.</td></tr>
+        </table>
+        <div class="rec">Do not block UX exploration; lock persistence rules before shipping real data.</div>
+      </section>
+
+      <section class="panel" role="tabpanel" id="p5" aria-labelledby="t5" hidden>
+        <h2>5. Prototype toggles vs Closed Beta product</h2>
+        <p class="note"><strong>Closed Beta &amp; Open Beta:</strong> keep legacy duplicate detection and UI in market. <strong>GA:</strong> “awesome” state — Xero Protect fully supersedes legacy dupes.</p>
+        <div class="viz" aria-hidden="true">
+          <svg viewBox="0 0 520 132" xmlns="http://www.w3.org/2000/svg">
+            <text x="10" y="14" fill="#52525b" font-size="11" font-weight="600" font-family="system-ui">Gear demo — optional toggles (full-width preview)</text>
+            <rect x="8" y="20" width="504" height="52" rx="6" fill="#eef2ff" stroke="#818cf8"/>
+            <text x="16" y="38" fill="#3730a3" font-size="9" font-family="system-ui">Unify dupes · Group by supplier · Hide QV CTAs</text>
+            <text x="16" y="54" fill="#6366f1" font-size="7.5" font-family="system-ui">For research / internal comms — not default Closed Beta behaviour</text>
+            <text x="10" y="86" fill="#52525b" font-size="11" font-weight="600" font-family="system-ui">Closed Beta intent — keep list simple</text>
+            <rect x="8" y="92" width="504" height="32" rx="6" fill="#ecfdf5" stroke="#34d399"/>
+            <text x="16" y="108" fill="#065f46" font-size="9" font-family="system-ui">Coexistence strips · No default grouping · QV CTAs when feasible</text>
+          </svg>
+        </div>
+        <div class="rec">Prototype toggles = storytelling; Closed Beta defaults stay simple unless PM adopts them. Full supersede preview = GA story.</div>
+      </section>
+
+      <section class="panel" role="tabpanel" id="p6" aria-labelledby="t6" hidden>
+        <h2>6. Phases & roadmap (program snapshot)</h2>
+        <p class="note">Dates TBC except Open Beta target <strong>Xerocon London (6 July)</strong>. Closed Beta = reference customers; Open Beta = wider; GA = general availability — <strong>full supersede</strong> (“awesome” unified Xero Protect for dupes).</p>
+        <table class="opt phase-table">
+          <tr>
+            <th></th>
+            <th>Closed Beta</th>
+            <th>Open Beta</th>
+            <th>GA</th>
+            <th>Future</th>
+          </tr>
+          <tr>
+            <th>Protect surfaces</th>
+            <td>List, detail, quick view — dismissible alerts; org-wide dismissal + history</td>
+            <td>+ Banner / action centre on list; alerts <strong>attached to CTAs</strong> on detail &amp; QV; shield hover</td>
+            <td>+ Payment prep screen; bank-detail change / mismatch; improved dups service; network-level signals</td>
+            <td>Custom rules; other agents; payroll / platform; Spotlight entry; revamped Purchases Overview</td>
+          </tr>
+          <tr>
+            <th>Dupes (scope)</th>
+            <td>Legacy dupes <strong>stay</strong> — coexist with Protect; do not supersede yet</td>
+            <td>Legacy dupes <strong>still in</strong> — richer Protect (banner/action centre, CTA attach, etc.); still not full supersede</td>
+            <td><strong>Awesome version:</strong> Xero Protect <strong>fully supersedes</strong> legacy duplicate experience + improved detection</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <th>AI / ML</th>
+            <td>None — rule-based checks; hard-coded risk copy</td>
+            <td>Rule-based + <strong>LLM summarisation</strong> of alerts</td>
+            <td>LLM + suggested actions; move toward ML for identification where appropriate</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <th>Where Protect shows</th>
+            <td colspan="2">Bills list, bill detail, bill quick view</td>
+            <td>+ Payment preparation</td>
+            <td>Payroll, AR, other agent journeys</td>
+          </tr>
+        </table>
+        <h3>Supported use cases (by phase idea)</h3>
+        <p class="note">Phase 1: first-time supplier, anomalous bill value. Phase 2: duplicates (existing functionality). Rare/severe: bank detail change, mismatch. Later: fuzzy dupes, budget, PO/receipt checks.</p>
+        <h3>Key external dependencies (Bills)</h3>
+        <ul class="tight">
+          <li>New <strong>bill-level</strong> endpoint for dupes at list level</li>
+          <li><strong>Horizon / domain events</strong> — additional bill events (request raised; migration in flight)</li>
+        </ul>
+      </section>
+
+      <section class="panel" role="tabpanel" id="p7" aria-labelledby="t7" hidden>
+        <h2>7. Open questions, supersede &amp; risks</h2>
+        <h3>Design / product checklist</h3>
+        <ul class="tight">
+          <li><strong>Exit criteria</strong> — When can legacy duplicate surfaces shrink?</li>
+          <li><strong>Surface ownership</strong> — Protect vs legacy for list / detail / QV.</li>
+          <li><strong>QV</strong> — “Prod today” vs “target” (CTAs).</li>
+          <li><strong>Supersede design</strong> — Full target when legacy retires.</li>
+          <li><strong>Dismissals</strong> — Resurface rules (org-wide settled for product; history/notes schema).</li>
+          <li><strong>Noise</strong> — False positives before broader rollout.</li>
+        </ul>
+        <h3>7 open questions — dupes supersede (engineering)</h3>
+        <ol class="tight">
+          <li><strong>Data source mismatch</strong> — Legacy dupes from ICN (draft → paid/deleted). Protect Horizon events today skew <strong>approved bills</strong>. Superseding does not cleanly replace coverage.</li>
+          <li><strong>Non-approved screens</strong> — Continue bill-level dupe flagging (shield + top banner) for Draft / Awaiting approval / paid etc., or only Awaiting payment?</li>
+          <li><strong>Org vs bill-level access</strong> — Current UI often fetches <strong>all dupes for an org</strong>. Bill-level lookup per documentId is a different pattern; BFF/UI refactor scope unknown.</li>
+          <li><strong>Feature flag</strong> — Work to flag new unified Xero Protect view vs legacy.</li>
+          <li><strong>Dupe detailed view</strong> — Does existing comparison/resolution screen stay as-is under a Protect wrapper, or change?</li>
+          <li><strong>ICN → Horizon</strong> — Long-term alignment so Protect can cover the same lifecycle as ICN-backed dupes (migration / dual-read period TBD).</li>
+          <li><strong>Supersede E2E scope</strong> — Front + backend unknowns bundled; depends on resolving 1–5 and legacy ASPX / modern split.</li>
+        </ol>
+        <p class="note">Beta tickets: ADDAPI duplicate bill endpoint; BFF merging shield + duplicates payload; LLM summarisation (effort <strong>?</strong>); list banner/action centre; CTA merge on detail/QV (lifecycle-dependent); supersede front+back (<strong>?</strong>).</p>
+        <h3>Estimates (snapshot)</h3>
+        <ul class="tight">
+          <li><strong>Closed Beta ship work (≈1 Jun 2026)</strong> — ~41d grand total with buffer; ~38 usable days in window; legacy bill detail <strong>unknown</strong> days.</li>
+          <li><strong>Open Beta build</strong> — ~15d + unknowns + 3d buffer; several <code>?d</code> items (LLM, CTA merge, supersede path, legacy).</li>
+        </ul>
+        <h3>General risks</h3>
+        <ul class="tight">
+          <li><strong>Solo engineer</strong> — No handoff slack; research/future-phase work competes with Closed Beta delivery.</li>
+          <li><strong>Bills PR review latency</strong> — Timezones; need named reviewer upfront.</li>
+          <li><strong>First-time patterns</strong> — New services, Horizon consumer, ADDAPI pods — estimate overrun risk.</li>
+        </ul>
+        <div class="implications">
+          <strong>Takeaway</strong>
+          <strong>Closed Beta &amp; Open Beta:</strong> legacy dupes remain in product; Protect adds alongside (coexistence). <strong>GA:</strong> target the unified “awesome” supersede. Prototypes can show GA early. Top-of-list UI stays <strong>stacked full-width strips</strong>.
+        </div>
+      </section>
+    </div>
+
+    <script>
+      (function () {
+        var tabs = document.querySelectorAll("[role=\"tab\"]");
+        var panels = document.querySelectorAll("[role=\"tabpanel\"]");
+        function show(id) {
+          panels.forEach(function (p) {
+            var on = p.id === id;
+            p.classList.toggle("active", on);
+            p.hidden = !on;
+          });
+          tabs.forEach(function (t) {
+            var on = t.getAttribute("aria-controls") === id;
+            t.setAttribute("aria-selected", on ? "true" : "false");
+          });
+        }
+        tabs.forEach(function (tab) {
+          tab.addEventListener("click", function () {
+            show(tab.getAttribute("aria-controls"));
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

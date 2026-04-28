@@ -1,0 +1,187 @@
+/**
+ * Composer Component
+ *
+ * Input field for chat messages with send button.
+ * Three states: default, active (focus), typing.
+ */
+
+/* ===== Composer Container ===== */
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-xsmall);
+}
+
+/* ===== Composer Input Wrapper ===== */
+.composer__wrapper {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-surface);
+  border: var(--border-light);
+  border-radius: var(--radius-composer);
+  padding: var(--s-xsmall) var(--s-small);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Focus/Active state - blue gradient glow */
+.composer__wrapper:focus-within {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--color-bg-surface), 0 0 0 4px var(--color-blue);
+  background:
+    linear-gradient(var(--color-bg-surface), var(--color-bg-surface)) padding-box,
+    var(--gradient-jax) border-box;
+  border: 2px solid transparent;
+}
+
+/* ===== Input Row (textarea + actions) ===== */
+.composer__input-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-xsmall);
+}
+
+/* ===== Textarea ===== */
+.composer__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: var(--font-size-medium);
+  line-height: var(--font-line-height-standard);
+  color: var(--color-text-primary);
+  padding: var(--s-xsmall) 0;
+  min-height: 24px;
+  max-height: 200px;
+}
+
+.composer__input::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+/* ===== Actions Row ===== */
+.composer__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--s-2xsmall);
+}
+
+/* ===== Icon Buttons (Add, Send) ===== */
+.composer__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-max);
+  transition: background 0.15s ease;
+}
+
+.composer__btn:hover {
+  background: var(--color-neutral-grey-7);
+}
+
+.composer__btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--color-text-icon);
+  stroke-width: 1.5;
+  fill: none;
+}
+
+/* ===== Add Button ===== */
+.composer__btn--add {
+  color: var(--color-text-icon);
+}
+
+.composer__btn--add svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== Send Button ===== */
+.composer__btn--send {
+  border: 1.5px solid var(--color-border-light);
+}
+
+.composer__btn--send svg {
+  stroke: var(--color-text-icon);
+}
+
+/* Send button active state (when there's input) */
+.composer__btn--send.is-active {
+  background: var(--color-blue);
+  border-color: var(--color-blue);
+}
+
+.composer__btn--send.is-active svg {
+  stroke: var(--color-white);
+}
+
+.composer__btn--send.is-active:hover {
+  background: var(--color-blue-bright);
+  border-color: var(--color-blue-bright);
+}
+
+/* ===== Disclaimer ===== */
+.composer__disclaimer {
+  font-size: var(--font-size-xsmall);
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: var(--font-line-height-tight);
+}
+
+.composer__disclaimer a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.composer__disclaimer a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Compact Variant (single-line) ===== */
+.composer--compact .composer__wrapper {
+  flex-direction: row;
+  align-items: center;
+  padding: var(--s-2xsmall) var(--s-xsmall);
+  border-radius: var(--radius-max);
+}
+
+.composer--compact .composer__input {
+  padding: var(--s-2xsmall) var(--s-xsmall);
+  min-height: 20px;
+}
+
+.composer--compact .composer__btn {
+  width: 32px;
+  height: 32px;
+}
+
+.composer--compact .composer__btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.composer--compact .composer__actions {
+  padding-top: 0;
+}
+
+/* ===== Error State ===== */
+.composer__error {
+  background: var(--color-bg-negative);
+  border: var(--border-error);
+  border-radius: var(--radius-md);
+  padding: var(--s-xsmall) var(--s-small);
+  margin-bottom: var(--s-xsmall);
+}
+
+.composer__error-text {
+  font-size: var(--font-size-small);
+  color: var(--color-text-negative);
+}
