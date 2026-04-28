@@ -33,7 +33,7 @@ export function BankRulesListMount({ onOpenImport }: { onOpenImport?: () => void
       isImportView={false}
       onOpenImport={onOpenImport}
     >
-      <div className={`${BANK_RULES_PAGE_CONTENT} space-y-4 px-4 py-6`}>
+      <div className={`${BANK_RULES_PAGE_CONTENT} max-w-[1200px] space-y-4 py-6`}>
         <div className="relative">
           <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#59606d]">
             <Search className="size-[18px]" strokeWidth={1.3} aria-hidden />

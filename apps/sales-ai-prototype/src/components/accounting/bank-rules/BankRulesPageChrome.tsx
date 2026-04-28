@@ -217,12 +217,12 @@ export function BankRulesPageChrome(props: BankRulesPageChromeProps) {
           </nav>
 
           <div className="grid w-full min-h-[52px] items-end gap-x-2 gap-y-2 border-b border-[#ccced2] px-4 pb-0 sm:min-h-[48px] sm:grid-cols-[minmax(0,auto)_1fr_minmax(0,auto)] sm:items-end sm:gap-x-4 md:gap-x-6">
-            <h1 className="mt-0 mx-0 mb-[5px] flex shrink-0 items-center self-end text-[24px] font-bold leading-none text-[#000a1e] sm:min-h-[32px] sm:pr-2 sm:pb-0.5 md:pr-3">
+            <h1 className="mt-0 mx-0 mb-[5px] flex shrink-0 items-center self-end text-[18px] font-bold leading-none text-[#000a1e] sm:min-h-[32px] sm:pr-2 sm:pb-0.5 md:pr-3">
               Bank rules
             </h1>
 
             <div
-              className="flex min-w-0 flex-wrap items-end justify-center justify-self-stretch -mb-px sm:flex-nowrap sm:pb-0"
+              className="flex min-w-0 flex-wrap items-start justify-start justify-self-stretch -mb-px sm:flex-nowrap sm:pb-0"
               role="tablist"
               aria-label="Bank rule type"
             >
